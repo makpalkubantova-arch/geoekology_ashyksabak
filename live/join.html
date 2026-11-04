@@ -73,6 +73,13 @@ input[type=text], input[inputmode] { font: inherit; font-size: 22px; font-weight
 .apple { width: 110px; height: 120px; margin: 0 auto; display: block; animation: pop .6s cubic-bezier(.2,.9,.3,1.3) both; }
 .ghead { border-radius: 22px; padding: 18px; color: #5A3A00; background: linear-gradient(160deg, #FFF3CF, #FFD877); box-shadow: 0 1px 0 rgba(255,255,255,.6) inset, 0 14px 28px -16px rgba(150,100,0,.6); }
 .ghead h2 { font-size: 24px; }
+.ready { text-align: center; padding: 18px 0; }
+.ready p { font-family: var(--display); font-weight: 800; font-size: 22px; color: var(--muted); }
+.ready b { display: inline-grid; place-items: center; width: 120px; height: 120px; margin-top: 10px; border-radius: 50%; font-family: var(--display); font-weight: 900; font-size: 72px; color: #fff; background: linear-gradient(180deg, var(--amber2), var(--amber)); box-shadow: 0 16px 30px -14px rgba(224,122,31,.8); animation: pop .6s cubic-bezier(.2,.9,.3,1.4) both; }
+#w .opt { animation: optin .5s cubic-bezier(.2,.9,.3,1.25) both; }
+#w .opt:nth-child(2) { animation-delay: .07s; } #w .opt:nth-child(3) { animation-delay: .14s; } #w .opt:nth-child(4) { animation-delay: .21s; }
+.card { animation: rise .45s ease both; }
+@keyframes optin { from { opacity: 0; transform: translateY(18px) scale(.94); } to { opacity: 1; transform: none; } }
 textarea { font: inherit; font-size: 16px; padding: 10px 12px; border-radius: 14px; border: 2px solid var(--line); width: 100%; min-height: 80px; resize: vertical; }
 .lvl { font-weight: 800; padding: 4px 12px; border-radius: 999px; }
 .lvl.hi { background: var(--good-bg); color: #13603A; } .lvl.mid { background: #FFF1D6; color: #8A5300; } .lvl.low { background: var(--bad-bg); color: #8A2414; }
@@ -217,9 +224,12 @@ textarea { font: inherit; font-size: 16px; padding: 10px 12px; border-radius: 14
     const m = game.meta, q = Q[m.q];
     draft = q.t === 'order' ? [] : q.t === 'num' ? '' : null;
     app.innerHTML = teambar() + '<div class="card glass"><div class="row" style="justify-content:space-between"><span class="pill">' + (m.q + 1) + ' / ' + Q.length + '</span><span class="pill" id="sec">' + q.time + ' с</span></div><div class="timebar"><i id="tb" style="width:100%"></i></div><p class="q">' + esc(q.q) + '</p>' + (q.hint ? '<p class="muted" style="font-weight:700">' + esc(q.hint) + '</p>' : '') + '<div id="w"></div></div>';
-    drawW(); const st = m.starts[m.q];
-    tick = setInterval(() => { const left = Math.max(0, st + q.time * 1000 - be.now()); const s = Math.ceil(left / 1000);
-      const tb = $('tb'); if (tb) tb.style.width = (left / (q.time * 1000) * 100) + '%'; const sc = $('sec'); if (sc) sc.textContent = s + ' с';
+    const st = m.starts[m.q] + ECO.LEAD; let shown = false;
+    const w0 = $('w'); if (w0 && be.now() < st) w0.innerHTML = '<div class="ready"><p>Дайындал!</p><b id="cd">3</b></div>'; else { drawW(); shown = true; }
+    tick = setInterval(() => { const now = be.now();
+      if (!shown) { if (now < st) { const c = $('cd'); if (c) { const v = String(Math.ceil((st - now) / 1000)); if (c.textContent !== v) { c.textContent = v; c.style.animation = 'none'; void c.offsetWidth; c.style.animation = ''; } } return; } shown = true; drawW(); }
+      const total = ECO.qtime(q, game.meta, game.meta.q); const left = Math.max(0, st + total - now); const s = Math.ceil(left / 1000);
+      const tb = $('tb'); if (tb) tb.style.width = (left / total * 100) + '%'; const sc = $('sec'); if (sc) sc.textContent = s + ' с';
       if (left <= 0) { clearInterval(tick); const w = $('w'); if (w) w.innerHTML = '<p class="wait">Уақыт бітті!</p>'; } }, 200);
   }
   function drawW() {
@@ -239,18 +249,18 @@ textarea { font: inherit; font-size: 16px; padding: 10px 12px; border-radius: 14
   }
   async function submit(v) {
     const m = game.meta; if (m.phase !== 'question') return;
-    const st = m.starts[m.q]; if (be.now() > st + Q[m.q].time * 1000 + 1500) return;
+    const st = m.starts[m.q] + ECO.LEAD; if (be.now() < st || be.now() > st + ECO.qtime(Q[m.q], m, m.q) + 1500) return;
     clearInterval(tick);
     app.querySelectorAll('#w button').forEach((b) => { b.disabled = true; });
     try { await be.set(G + '/answers/' + m.q + '/' + be.uid, { v: v, t: be.TS }); } catch (e) {}
   }
   function vLocked(a) {
-    const m = game.meta; const sec = Math.max(0.1, ((a.t || be.now()) - m.starts[m.q]) / 1000).toFixed(1);
+    const m = game.meta; const sec = Math.max(0.1, ((a.t || be.now()) - m.starts[m.q] - ECO.LEAD) / 1000).toFixed(1);
     app.innerHTML = teambar() + '<div class="card glass locked"><div class="big-mark neutral">✓</div><h2>Жауап қабылданды</h2><p class="muted" style="font-weight:800">' + sec + ' секундта · жауабың: ' + esc(ECO.answerText(Q[m.q], a.v)) + '</p><p class="wait">Нәтижені күт…</p><div class="dotsload"><i></i><i></i><i></i></div></div>';
   }
   function vResult() {
     const m = game.meta, q = Q[m.q]; const a = ((game.answers || {})[m.q] || {})[be.uid];
-    const p = ECO.points(q, a, m.starts[m.q]); const res = ECO.compute(game); const me = res.rows.find((r) => r.uid === be.uid) || { rank: '—', score: 0 };
+    const p = ECO.points(q, a, m.starts[m.q], ECO.qtime(q, m, m.q)); const res = ECO.compute(game); const me = res.rows.find((r) => r.uid === be.uid) || { rank: '—', score: 0 };
     const tr = res.teamRows.find((x) => x.i === myTeam());
     app.innerHTML = teambar() + '<div class="card glass locked"><div class="big-mark ' + (p ? 'ok' : 'no') + '">' + (p ? '✓' : '✗') + '</div><h2>' + (p ? 'Дұрыс!' : a ? 'Қате' : 'Жауап берілмеді') + '</h2><p class="plus" style="color:' + (p ? 'var(--good)' : 'var(--bad)') + '">+' + p + '</p>' +
       '<p class="muted" style="font-weight:800">Дұрыс жауап: ' + esc(ECO.answerText(q)) + '</p>' + (q.why ? '<p class="muted" style="font-weight:700">' + esc(q.why) + '</p>' : '') + '<p class="muted" style="font-weight:700;font-size:12px">' + esc(q.src) + '</p></div>' +

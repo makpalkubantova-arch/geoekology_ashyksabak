@@ -42,12 +42,15 @@
     return String(v);
   };
   /* ұпай: дұрыс жауап 500 + жылдамдыққа 500-ге дейін */
-  ECO.points = function (q, ans, startedAt) {
+  ECO.LEAD = 3000; /* сұрақ шыққан соң 3 секунд дайындық (3-2-1) */
+  ECO.qtime = function (q, meta, qi) { const ext = meta && meta.ext && meta.ext[qi]; return (q.time + (typeof ext === 'number' ? ext : 0)) * 1000; };
+  ECO.points = function (q, ans, startedAt, totalMs) {
     if (!ans || !ECO.isRight(q, ans.v)) return 0;
-    const raw = (ans.t || startedAt) - startedAt;
-    if (raw > q.time * 1000 + 2000) return 0;
-    const el = Math.max(0, Math.min(q.time * 1000, raw));
-    return Math.round(500 + 500 * (1 - el / (q.time * 1000)));
+    const total = totalMs || q.time * 1000; const st = startedAt + ECO.LEAD;
+    const raw = (ans.t || st) - st;
+    if (raw > total + 2000) return 0;
+    const el = Math.max(0, Math.min(total, raw));
+    return Math.round(500 + 500 * (1 - el / total));
   };
   /* барлық ойыншының нәтижесін есептеу */
   ECO.compute = function (game) {
@@ -56,8 +59,8 @@
     const rows = Object.keys(players).map((uid) => {
       let score = 0, correct = 0, time = 0, wrong = [];
       asked.forEach((qi) => {
-        const q = ECO.QUESTIONS[qi]; const a = answers[qi] && answers[qi][uid]; const p = ECO.points(q, a, starts[qi]);
-        score += p; if (p > 0) { correct++; time += (a.t - starts[qi]) / 1000; } else wrong.push(qi);
+        const q = ECO.QUESTIONS[qi]; const a = answers[qi] && answers[qi][uid]; const p = ECO.points(q, a, starts[qi], ECO.qtime(q, game.meta, qi));
+        score += p; if (p > 0) { correct++; time += Math.max(0, a.t - starts[qi] - ECO.LEAD) / 1000; } else wrong.push(qi);
       });
       return { uid, name: players[uid].name, team: teams[uid], score, correct, total: asked.length, time: correct ? time / correct : 0, wrong };
     }).sort((a, b) => b.score - a.score || b.correct - a.correct || a.name.localeCompare(b.name));

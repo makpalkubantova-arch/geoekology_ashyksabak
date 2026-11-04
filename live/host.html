@@ -136,6 +136,32 @@
 .cmts { display: flex; flex-direction: column; gap: 6px; max-height: 220px; overflow: auto; }
 .cmts p { background: rgba(255,255,255,.85); border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px; font-weight: 600; }
 
+/* анимациялар */
+.qbody { position: relative; }
+.qbody .opts, .qbody .optlist, .qbody .numbox { filter: blur(8px); opacity: .35; transition: filter .5s ease, opacity .5s ease; }
+.qbody.live .opts, .qbody.live .optlist, .qbody.live .numbox { filter: none; opacity: 1; }
+.qbody.live .opt { animation: optin .55s cubic-bezier(.2,.9,.3,1.25) both; }
+.qbody.live .opt:nth-child(2) { animation-delay: .08s; } .qbody.live .opt:nth-child(3) { animation-delay: .16s; } .qbody.live .opt:nth-child(4) { animation-delay: .24s; }
+.getready { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; z-index: 3; transition: opacity .4s ease; }
+.getready.gone { opacity: 0; pointer-events: none; }
+.getready p { font-family: var(--display); font-weight: 900; font-size: clamp(22px, 2.4vw, 36px); color: var(--ink); }
+.getready b { display: grid; place-items: center; width: clamp(110px, 11vw, 170px); aspect-ratio: 1; border-radius: 50%; font-family: var(--display); font-weight: 900; font-size: clamp(64px, 7vw, 110px); color: #fff; background: linear-gradient(180deg, var(--amber2), var(--amber)); box-shadow: 0 0 0 12px rgba(247,178,74,.25), 0 24px 40px -18px rgba(224,122,31,.9); animation: pop .6s cubic-bezier(.2,.9,.3,1.4) both; }
+.flash { position: fixed; inset: 0; z-index: 35; display: grid; place-items: center; pointer-events: none; background: radial-gradient(circle, rgba(255,255,255,.6), rgba(255,255,255,0) 70%); }
+.flash b { font-family: var(--display); font-weight: 900; font-size: clamp(40px, 6vw, 96px); padding: 18px 36px; border-radius: 30px; color: #fff; animation: flashin .9s cubic-bezier(.2,.9,.3,1.3) both; box-shadow: 0 30px 60px -20px rgba(0,0,0,.45); }
+.flash.all b { background: linear-gradient(180deg, #5FCB8B, #1F8A55); }
+.flash.time b { background: linear-gradient(180deg, #FF8A75, #D2452F); }
+@keyframes flashin { 0% { transform: scale(.3) rotate(-6deg); opacity: 0; } 60% { transform: scale(1.08) rotate(1deg); opacity: 1; } 100% { transform: scale(1); } }
+@keyframes optin { from { opacity: 0; transform: translateY(22px) scale(.94); } to { opacity: 1; transform: none; } }
+.qhead { animation: rise .5s ease both; }
+.qt h2 { animation: textin .7s cubic-bezier(.2,.9,.3,1) both; }
+@keyframes textin { from { opacity: 0; transform: translateY(12px); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+.slide > *, .lb > *, .reveal > *, .cols3 > *, .kz > *, .g7 > *, .side3 > *, .counters > * { animation: rise .6s cubic-bezier(.2,.9,.3,1) both; }
+.slide > *:nth-child(2), .lb > *:nth-child(2), .reveal > *:nth-child(2), .cols3 > *:nth-child(2), .kz > *:nth-child(2), .g7 > *:nth-child(2), .side3 > *:nth-child(2), .counters > *:nth-child(2) { animation-delay: .12s; }
+.slide > *:nth-child(3), .cols3 > *:nth-child(3), .kz > *:nth-child(3), .g7 > *:nth-child(3), .side3 > *:nth-child(3), .counters > *:nth-child(3) { animation-delay: .24s; }
+.g7 > *:nth-child(4) { animation-delay: .32s; } .g7 > *:nth-child(5) { animation-delay: .4s; } .g7 > *:nth-child(6) { animation-delay: .48s; } .g7 > *:nth-child(7) { animation-delay: .56s; } .g7 > *:nth-child(8) { animation-delay: .64s; }
+.boxp li { animation: rise .5s ease both; } .boxp li:nth-child(2) { animation-delay: .15s; } .boxp li:nth-child(3) { animation-delay: .3s; } .boxp li:nth-child(4) { animation-delay: .45s; }
+.correct { animation: pop .6s cubic-bezier(.2,.9,.3,1.3) both !important; }
+.shead h1 { animation: textin .8s cubic-bezier(.2,.9,.3,1) both; }
 /* оқулық сілтемесі: кішкене бұрыш белгісі */
 .pg { position: absolute; z-index: 2; right: 12px; bottom: 10px; font-size: 12px; font-weight: 800; letter-spacing: .3px; color: var(--muted); background: rgba(255,255,255,.88); border: 1px solid var(--line); border-radius: 999px; padding: 3px 9px; }
 .shead .pg { top: 10px; bottom: auto; }
@@ -661,21 +687,33 @@
     const m = game.meta, q = Q[m.q]; const len = 2 * Math.PI * 44;
     app.innerHTML = topbar() + '<div class="qhead glass"><div class="qn">' + (m.q + 1) + '/' + Q.length + '<small>сұрақ</small></div><div class="qt"><h2>' + esc(q.q) + '</h2>' + (q.hint ? '<p class="hint">' + esc(q.hint) + '</p>' : '') + '</div><span class="pg">' + esc(q.src) + '</span>' +
       '<div class="ring" id="ring"><svg viewBox="0 0 100 100" aria-hidden="true"><defs><linearGradient id="rg" x1="0" x2="1"><stop offset="0" stop-color="#F7B24A"/><stop offset="1" stop-color="#E07A1F"/></linearGradient></defs><circle cx="50" cy="50" r="44" fill="#fff" stroke="rgba(20,43,38,.08)" stroke-width="10"/><circle class="arc" cx="50" cy="50" r="44" fill="none" stroke="url(#rg)" stroke-width="10" stroke-linecap="round" stroke-dasharray="' + len + ' ' + len + '"/></svg><div class="n">' + q.time + '</div></div></div>' +
-      qBody(q) + '<div class="answered" id="ans">' + answeredCards() + '</div><div class="ctrl"><button class="gloss" id="rv">Жауапты ашу</button></div>';
+      '<div class="qbody" id="qbody">' + qBody(q) + '<div class="getready" id="gr"><p>Дайындалыңдар!</p><b id="cd">3</b></div></div><div class="answered" id="ans">' + answeredCards() + '</div><div class="ctrl"><button class="plain" id="ext">+15 секунд</button><button class="gloss" id="rv">Жауапты ашу</button></div>';
     $('rv').onclick = reveal;
-    clearInterval(tick);
+    $('ext').onclick = () => { const mm = game.meta; const cur = (mm.ext && mm.ext[mm.q]) || 0; const upd = {}; upd['ext/' + mm.q] = cur + 15; be.update(G + '/meta', upd); };
+    clearInterval(tick); revealing = false;
     tick = setInterval(() => {
       const mm = game.meta; if (!mm || mm.phase !== 'question') return clearInterval(tick);
-      const st = mm.starts && mm.starts[mm.q]; if (!st || typeof st !== 'number') return;
-      const left = Math.max(0, Math.ceil((st + q.time * 1000 - be.now()) / 1000));
-      const r = $('ring'); if (r) { r.querySelector('.n').textContent = left; r.querySelector('.arc').setAttribute('stroke-dasharray', (len * left / q.time) + ' ' + len); r.classList.toggle('low', left <= 5); }
-      if (left <= 0) { clearInterval(tick); reveal(); }
+      const s0 = mm.starts && mm.starts[mm.q]; if (!s0 || typeof s0 !== 'number') return;
+      const st = s0 + ECO.LEAD, now = be.now(), gr = $('gr');
+      if (now < st) { const v = String(Math.ceil((st - now) / 1000)); const c = $('cd'); if (c && c.textContent !== v) { c.textContent = v; c.style.animation = 'none'; void c.offsetWidth; c.style.animation = ''; } return; }
+      if (gr && !gr.classList.contains('gone')) { gr.classList.add('gone'); $('qbody').classList.add('live'); }
+      const total = ECO.qtime(q, mm, mm.q);
+      const left = Math.max(0, Math.ceil((st + total - now) / 1000));
+      const r = $('ring'); if (r) { r.querySelector('.n').textContent = left; r.querySelector('.arc').setAttribute('stroke-dasharray', (len * Math.min(1, left * 1000 / total)) + ' ' + len); r.classList.toggle('low', left <= 5); }
+      if (left <= 0) { clearInterval(tick); flashThen('Уақыт бітті!', 'time'); }
     }, 250);
+  }
+  let revealing = false;
+  function flashThen(text, kind) {
+    if (revealing) return; revealing = true; clearInterval(tick);
+    document.body.insertAdjacentHTML('beforeend', '<div class="flash ' + kind + '" id="flash"><b>' + text + '</b></div>');
+    if (kind === 'all') confetti(90);
+    setTimeout(() => { const f = $('flash'); if (f) f.remove(); reveal(); }, 1500);
   }
   function updateQuestion() {
     const a = $('ans'); if (a) a.innerHTML = answeredCards();
     const players = game.players || {}; const ans = (game.answers || {})[game.meta.q] || {};
-    const n = Object.keys(players).length; if (n && Object.keys(players).every((u) => ans[u])) setTimeout(reveal, 700);
+    const n = Object.keys(players).length; if (n && Object.keys(players).every((u) => ans[u])) flashThen('Барлығы жауап берді!', 'all');
   }
   function reveal() { if (game.meta && game.meta.phase === 'question') { clearInterval(tick); be.update(G + '/meta', { phase: 'reveal' }); } }
 
@@ -699,7 +737,7 @@
     app.innerHTML = topbar() + '<div class="qhead glass"><div class="qn">' + (m.q + 1) + '/' + Q.length + '<small>сұрақ</small></div><div class="qt"><h2>' + esc(q.q) + '</h2></div><div></div></div>' +
       '<div class="reveal"><div style="display:flex;flex-direction:column;gap:14px;min-width:0"><div class="correct glass"><p class="eyebrow" style="color:var(--good)">Дұрыс жауап</p><h2' + (ECO.answerText(q).length > 60 ? ' class="long"' : '') + '>' + esc(ECO.answerText(q)) + '</h2>' + (q.why ? '<p class="muted" style="font-weight:700">' + esc(q.why) + '</p>' : '') + '<span class="pg">' + esc(q.src) + '</span></div>' +
       '<div class="dist glass"><p class="eyebrow">Жауаптар · ' + ids.length + ' оқушы</p>' + dist + '</div></div>' +
-      '<div style="display:flex;flex-direction:column;gap:14px;min-width:0"><div class="fast glass"><p class="eyebrow">Ең жылдам дұрыс жауап</p>' + (fast.length ? fast.map((u, k) => '<div class="frow" style="animation-delay:' + (k * .15) + 's"><span class="medal m' + (k + 1) + '">' + (k + 1) + '</span><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis">' + esc(players[u].name) + '</span><span class="dot" style="background:' + T[teams[u]].c2 + '"></span><span class="pill">' + ((ans[u].t - st) / 1000).toFixed(1) + ' с</span></div>').join('') : '<p class="muted" style="font-weight:700">Дұрыс жауап болмады.</p>') + '</div>' +
+      '<div style="display:flex;flex-direction:column;gap:14px;min-width:0"><div class="fast glass"><p class="eyebrow">Ең жылдам дұрыс жауап</p>' + (fast.length ? fast.map((u, k) => '<div class="frow" style="animation-delay:' + (k * .15) + 's"><span class="medal m' + (k + 1) + '">' + (k + 1) + '</span><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis">' + esc(players[u].name) + '</span><span class="dot" style="background:' + T[teams[u]].c2 + '"></span><span class="pill">' + (Math.max(0, ans[u].t - st - ECO.LEAD) / 1000).toFixed(1) + ' с</span></div>').join('') : '<p class="muted" style="font-weight:700">Дұрыс жауап болмады.</p>') + '</div>' +
       '<div class="answered">' + [0, 1, 2].map((i) => '<div class="acard glass"><div class="h"><span style="color:' + T[i].ink + '">' + tname(i) + '</span><b>' + teamOk[i][0] + ' / ' + teamOk[i][1] + '</b></div><div class="track"><i style="width:' + (teamOk[i][1] ? teamOk[i][0] / teamOk[i][1] * 100 : 0) + '%;background:' + grad(i) + '"></i></div><p class="muted" style="font-weight:700;font-size:13px">дұрыс жауап берді</p></div>').join('') + '</div></div></div>' +
       '<div class="ctrl"><button class="plain" id="lbb">Рейтинг</button><button class="gloss" id="nx">' + esc(nextLabel(false)) + '</button></div>';
     requestAnimationFrame(() => setTimeout(() => app.querySelectorAll('.bar').forEach((b) => { b.style.width = b.dataset.w + '%'; }), 80));
