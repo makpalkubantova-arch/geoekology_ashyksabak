@@ -358,11 +358,11 @@
     { id: 'join', kind: 'join', min: 3, short: 'Топтар', title: 'Топқа бөлу', note: '' },
     { id: 'video', kind: 'slide', min: 2, short: 'Бейне', title: '2050 жылдан SOS', note: 'Экрандағы бейнені мұқият қара: Жерге не болды?' },
     { id: 'goal', kind: 'slide', min: 2, short: 'Мақсат', title: 'Мақсат және бағалау', note: 'Әркім жеке ұпай жинайды. Топ ұпайы — мүшелерінің орташа ұпайы.' },
-    { id: 'learn1', kind: 'slide', min: 5, short: '20-сурет', title: '20-сурет: ықпалдың 7 түрі', note: 'Экранға қара: табиғатқа әсердің 7 түрі.' },
-    { id: 'learn2', kind: 'slide', min: 3, short: '21-сурет', title: '21-сурет: жылыжай эффектісі', note: '343, 103, 168 сандарын есте сақта.' },
-    { id: 'learn3', kind: 'slide', min: 3, short: 'Қазақстан', title: 'Қазақстандағы мысалдар', note: 'Әр мысал 20-суреттегі қай түрге жатады? Ойлан.' },
-    { id: 'r1', kind: 'round', min: 9, short: '1-раунд', title: '1-раунд: Білім', from: 0, to: 5 },
-    { id: 'r2', kind: 'round', min: 9, short: '2-раунд', title: '2-раунд: Логика және өмір', from: 6, to: Q.length - 1 },
+    { id: 'learn1', kind: 'slide', min: 5, short: '20-сурет', title: '20-сурет: антропогендік факторлардың ықпалы', note: '20-сурет: табиғатқа антропогендік факторлардың ықпалы.' },
+    { id: 'learn2', kind: 'slide', min: 3, short: '21-сурет', title: '21-сурет: жылыжай эффектісі', note: '21-сурет: 343, 103, 168 және 240 Вт/м² мәндерін есте сақта.' },
+    { id: 'learn3', kind: 'slide', min: 3, short: 'Қазақстан', title: 'Қазақстандағы мысалдар', note: 'Әр мысал 20-суреттегі қай ықпалға жатады? Талда.' },
+    { id: 'r1', kind: 'round', min: 9, short: '1-раунд', title: '1-раунд: Ұғымдар мен деректер', from: 0, to: 5 },
+    { id: 'r2', kind: 'round', min: 9, short: '2-раунд', title: '2-раунд: Себеп-салдар және өмірмен байланыс', from: 6, to: Q.length - 1 },
     { id: 'results', kind: 'results', min: 3, short: 'Нәтиже', title: 'Қорытынды және бағалау', note: 'Өз нәтижеңді телефоннан қара.' },
     { id: 'feedback', kind: 'feedback', min: 3, short: 'Пікір', title: 'Кері байланыс', note: '' },
     { id: 'home', kind: 'slide', min: 2, short: 'Үйге', title: 'Үй тапсырмасы', note: 'Жылыжай эффектісінің климаттың өзгеруіне әсері туралы шағын эссе жаз (оқулық, 56-б.). Бір жаңа дерек қос: WMO бойынша 2024 жыл — бақылау тарихындағы ең ыстық жыл (~+1,55°C).' }
@@ -463,18 +463,18 @@
 
   /* ---------- SLIDES ---------- */
   const SEVEN = [
-    ['forest', 'Құрлықтағы ормандардың жойылуы', 'Орман — биологиялық ресурс. Ормандар құрлықтың 26,8%-ын алып жатыр.', 'bg_cut'],
-    ['erosion', 'Топырақтың эрозиямен антропогендік бұзылуы', 'Жыл сайын тек эрозия есебінен 6–7 млн га жер айналымнан шығады.'],
-    ['desert', 'Антропогендік шөлейттену', 'Халық санының өсуі мен жердің толық игерілуі шөлейттенуді күшейтеді.', 'bg_desert'],
-    ['pollution', 'Табиғи ортаның антропогендік ластануы', 'Өнеркәсіп, көлік, қалдықтар ауаны, суды, топырақты ластайды.', 'bg_factory'],
-    ['greenhouse', 'Жылыжай эффектісінің пайда болуы', 'Газдар жылуды ұстап қалады: 343 → 103 → 168 Вт/м² (21-сурет).', 'bg_heat'],
-    ['water', 'Табиғи айналымдардың бұзылуы', 'Бүгінгі басты мәселе — судың ластануы.', 'bg_oil'],
-    ['sprout', 'Табиғаттың өзін-өзі қалпына келтіру қабілетінің төмендеуі', 'Табиғат адам бұзған жерді қалпына келтіріп үлгермейді.']
+    ['forest', 'Құрлықтағы ормандардың жойылуы', 'Орман ресурстары — биологиялық ресурстардың маңызды түрі. Ормандар бүкіл құрлықтың 26,8%-ын алып жатыр.', 'bg_cut'],
+    ['erosion', 'Топырақтың қарқынды эрозиясымен антропогендік бұзылуы', 'Жыл сайын тек эрозия есебінен 6–7 млн га жер айналымнан шығып қалады.'],
+    ['desert', 'Антропогендік шөлейттену', 'Жер шарында жылына 50–70 мың км² құнарлы жер жарамсыз болып табылуда.', 'bg_desert'],
+    ['pollution', 'Табиғи ортаның антропогендік ластануы', 'Өндірістік және тұрмыстық қалдықтармен ластанған сулар гидросфераның барлық дерлік бөлігіне таралуда.', 'bg_factory'],
+    ['greenhouse', 'Жылыжай эффектісінің пайда болуы', 'Жылыжай газдары жер бетінің жылулық сәулеленуін ұстап қалады (21-сурет).', 'bg_heat'],
+    ['water', 'Қоршаған ортада табиғи айналымдардың бұзылуы', 'Су айналымы — үздіксіз тізбек: бір буынындағы өзгеріс бүкіл тізбектегі өзгерістерге себепші болады.', 'bg_oil'],
+    ['sprout', 'Табиғи ортаның өзін-өзі қалпына келтіру қабілетінің төмендеуі', 'Антропогендік ықпал ортаның өзгеру шектерінен асқанда, табиғи орта бұрынғы күйіне орала алмайды.']
   ];
   const KZ = [
-    { v: 'bg_aral', h: 'Арал теңізі', p: 'Өзен суы егін суаруға алынып, теңіз тартылды. 2021–2025 жылдары Арал табанының 920 мың га-дан астамына сексеуіл отырғызылды.', s: 'ҚР Экология министрлігі, 2025', a: '3. Антропогендік шөлейттену · 6. Айналымдардың бұзылуы' },
+    { v: 'bg_aral', h: 'Арал теңізі', p: 'Өзен суы егін суаруға алынып, теңіз тартылды. 2021–2025 жылдары Арал табанының 920 мың га-дан астамына сексеуіл отырғызылды.', s: 'ҚР Экология министрлігі, 2025', a: '3. Антропогендік шөлейттену · 6. Қоршаған ортада табиғи айналымдардың бұзылуы' },
     { v: 'bg_factory', h: 'Теміртау', p: 'Металлургия комбинатының түтіні ауаны ластайды. 2025 жылы ірі кәсіпорындардың шығарындысы 2022 жылмен салыстырғанда 7,2%-ға азайды.', s: 'ҚР Экология министрлігі, 2025', a: '4. Табиғи ортаның антропогендік ластануы' },
-    { v: 'v_balk', h: 'Балқаш көлі', p: 'Іле суы су қоймасы мен суаруға алынады. 2025 жылдың қаңтар–маусымында көл деңгейі 32 см көтеріліп, 341,87 м болды.', s: 'bizmedia.kz, 17.07.2025', a: '6. Табиғи айналымдардың бұзылуы' }
+    { v: 'v_balk', h: 'Балқаш көлі', p: 'Іле суы су қоймасы мен суаруға алынады. 2025 жылдың қаңтар–маусымында көл деңгейі 32 см көтеріліп, 341,87 м болды.', s: 'bizmedia.kz, 17.07.2025', a: '6. Қоршаған ортада табиғи айналымдардың бұзылуы' }
   ];
   function bgv(name) { return '<video class="bgv" src="media/' + name + '.mp4" autoplay muted loop playsinline aria-hidden="true"></video>'; }
   function vid(src, cls, attrs) { return '<video class="' + cls + '" src="media/' + src + '.mp4" playsinline preload="metadata" ' + (attrs || 'controls') + '></video>'; }
@@ -496,32 +496,32 @@
       setTimeout(() => confetti(70), 1500);
     } else if (s.id === 'video') {
       h = '<div class="split">' + vid('v_intro', 'vidbig', 'controls poster="media/poster.jpg"') +
-        '<div class="boxp glass"><p class="eyebrow">Проблемалық сұрақ</p><h2>2050 жыл. Жерден SOS-хабар келді.</h2><p>Бейнеден кейін ойланыңдар:</p><ol><li>Жерге не болды?</li><li>Оған адамның қандай әрекеттері себеп болды?</li><li>Мұны әлі де өзгертуге бола ма?</li></ol><p class="muted">Жауапты бүгінгі сабақтың соңында тексереміз.</p><div class="row"><button class="gloss" id="nx">Келесі →</button></div></div></div>';
+        '<div class="boxp glass"><p class="eyebrow">Проблемалық сұрақ</p><h2>Табиғи ортаның өзгеруіне не себеп болды?</h2><p>Бейнені қарап, талдаңдар:</p><ol><li>Бейнеде табиғи ортаның қандай өзгерістері көрсетілді?</li><li>Олардың себебі табиғи ма, антропогендік пе? Дәлелдеңдер.</li><li>Бұл өзгерістерді азайтуға бола ма?</li></ol><p class="muted">Жауапты сабақтың соңында қайта қарастырамыз.</p><div class="row"><button class="gloss" id="nx">Келесі →</button></div></div></div>';
     } else if (s.id === 'goal') {
-      h = '<div class="shead glass vbg">' + bgv('bg_river') + '<p class="eyebrow">Сабақтың мақсаты</p><h1>Табиғатқа әсер ететін антропогендік факторларды топтастырып, олардың салдарын Қазақстан мысалдарымен түсіндіру</h1></div>' +
-        '<div class="cols3"><div class="boxp glass"><p class="eyebrow">Бағалау критерийлері</p><ul><li>20-суреттегі ықпалдың 7 түрін ажыратады</li><li>Себеп-салдарды түсіндіреді (Арал, жылыжай эффектісі)</li><li>Оқулықтағы білімді Қазақстан мысалымен байланыстырады</li></ul></div>' +
+      h = '<div class="shead glass vbg">' + bgv('bg_river') + '<p class="eyebrow">Сабақтың мақсаты</p><h1>Табиғатқа әсер ететін антропогендік факторларды топтастыру</h1></div>' +
+        '<div class="cols3"><div class="boxp glass"><p class="eyebrow">Бағалау критерийлері</p><ul><li>Антропогендік факторлардың ықпалын 20-сурет бойынша 7 топқа жіктейді</li><li>Жылыжай эффектісінің пайда болуын 21-сурет бойынша түсіндіреді</li><li>Табиғи айналымдардың бұзылуын себеп-салдар тізбегімен дәлелдейді</li><li>Қазақстан мысалдарын ықпал түрлерімен сәйкестендіреді</li></ul></div>' +
         '<div class="boxp glass"><p class="eyebrow">Ұпай қалай есептеледі</p><ul><li>Дұрыс жауап — <b>500</b> ұпай</li><li>Жылдамдыққа — <b>+500-ге дейін</b> бонус</li><li>Қате немесе уақыт бітсе — 0</li><li>Топ ұпайы — мүшелерінің <b>орташа</b> ұпайы</li></ul></div>' +
         '<div class="boxp glass"><p class="eyebrow">Деңгейлер</p><div class="lvlrow"><div style="background:var(--good-bg);color:#13603A"><b>85%+</b>Жоғары</div><div style="background:#FFF1D6;color:#8A5300"><b>50%+</b>Орта</div><div style="background:var(--bad-bg);color:#8A2414"><b>&lt;50%</b>Қолдау қажет</div></div><p class="muted">Деңгей дұрыс жауаптардың үлесі бойынша. Әркім өз нәтижесін телефоннан көреді.</p></div></div>' +
         '<div class="ctrl"><button class="gloss" id="nx">Жаңа тақырыпқа →</button></div>';
     } else if (s.id === 'learn1') {
-      h = '<div class="shead glass vbg">' + bgv('bg_earth') + '<span class="pg">Оқулық · 54-б.</span><p class="eyebrow">20-сурет · модель</p><h1>Табиғатқа антропогендік ықпалдың 7 түрі</h1><p class="lead">Карточканы басып ашыңдар. Ашпас бұрын сыныптан сұраңыз: бұл қай түр болуы мүмкін?</p></div>' +
+      h = '<div class="shead glass vbg">' + bgv('bg_earth') + '<span class="pg">Оқулық · 54-б.</span><p class="eyebrow">20-сурет</p><h1>Табиғатқа антропогендік факторлардың ықпалы</h1><p class="lead">Карточканы ашпас бұрын суретке қарап болжам жасаңдар: бұл ықпалдың қай тобы және оның салдары қандай?</p></div>' +
         '<div class="g7">' + SEVEN.map((c, k) => '<button class="gc closed" data-g="' + k + '"><img src="' + ECO.IMG(c[0]) + '" alt="">' + (c[3] ? '<video src="media/' + c[3] + '.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>' : '') + '<span class="num">' + (k + 1) + '</span><span class="t"><b>' + esc(c[1]) + '</b><span>' + esc(c[2]) + '</span></span></button>').join('') +
-        '<div class="gc key"><b>7</b><p style="font-weight:800">түр — бүгінгі кодтың бірінші саны. Екінші саны 21-суретте жасырын.</p></div></div>' +
-        '<div class="ctrl"><button class="plain" id="all">Бәрін ашу</button><button class="gloss" id="nx">21-сурет →</button></div>';
+        '<div class="gc key"><p class="eyebrow" style="color:var(--amber)">Табиғи ортаны сипаттайтын көрсеткіштер</p><p style="font-weight:800;font-size:clamp(14px,1.2vw,18px)">тұрақтылық, икемділік, инерция, сыйымдылық және ортаның өзгеру шектері</p></div></div>' +
+        '<div class="ctrl"><button class="plain" id="all">Бәрін ашу</button><button class="gloss" id="nx">21-сурет: жылыжай эффектісі →</button></div>';
     } else if (s.id === 'learn2') {
-      h = '<div class="shead glass vbg">' + bgv('bg_heat') + '<span class="pg">Оқулық · 55-б.</span><p class="eyebrow">21-сурет · жылыжай эффектісі</p><h1>Жер неге қызып барады?</h1><p class="lead">Күн жылуы келеді, бір бөлігі қайтады, қалғанын жылыжай газдары ұстап қалады.</p></div>' +
+      h = '<div class="shead glass vbg">' + bgv('bg_heat') + '<span class="pg">Оқулық · 55-б.</span><p class="eyebrow">21-сурет</p><h1>Жылыжай эффектісінің пайда болуы</h1><p class="lead">Атмосфера күн радиациясын өткізеді, ал жылыжай газдары жер бетінің жылулық сәулеленуін ұстап қалады.</p></div>' +
         '<div class="split">' + vid('v_greenhouse', 'vidbig', 'controls muted loop') +
         '<div class="boxp glass"><p class="eyebrow">21-суреттегі сандар</p><div class="counters">' +
-        [[343, 'Келетін күн радиациясы', 'Вт/м² · атмосфераға келеді'], [103, 'Шағылған радиация', 'Вт/м² · ғарышқа қайтады'], [168, 'Жер бетін жылытатын энергия', 'Вт/м² · жылыжай газдары жылуды ұстайды']].map((c) => '<div class="counter glass"><b data-to="' + c[0] + '">0</b><span>' + c[1] + '</span><small>' + c[2] + '</small></div>').join('') +
-        '</div><p class="muted">Код: 7 (түр) + 168 (Вт/м²) = <b>7168</b></p><div class="row"><button class="gloss" id="nx">Қазақстан мысалдары →</button></div></div></div>';
+        [[343, 'Келетін радиация', 'Вт/м² · күн радиациясы таза атмосфера арқылы өтеді'], [103, 'Шағылған радиация', 'Вт/м² · күн радиациясының бір бөлігі кері шығарылады'], [168, 'Жер бетін жылытатын күн энергиясы', 'Вт/м² · күн энергиясы жер бетіне жұтылады'], [240, 'Ғарышқа кететін инфрақызыл радиация', 'Вт/м² · бір бөлігін жылыжай газдары ұстап қалады']].map((c) => '<div class="counter glass"><b data-to="' + c[0] + '">0</b><span>' + c[1] + '</span><small>' + c[2] + '</small></div>').join('') +
+        '</div><div class="row"><button class="gloss" id="nx">Қазақстан мысалдары →</button></div></div></div>';
     } else if (s.id === 'learn3') {
-      h = '<div class="shead glass vbg">' + bgv('bg_desert') + '<p class="eyebrow">Өмірмен байланыс · 2025 жылғы деректер</p><h1>Бұл мысалдар 20-суреттегі қай түрге жатады?</h1><p class="lead">Бейнені қосыңыз, сынып жауап берген соң «Жауабы» батырмасын басыңыз.</p></div>' +
+      h = '<div class="shead glass vbg">' + bgv('bg_desert') + '<p class="eyebrow">Өмірмен байланыс · 2025 жылғы деректер</p><h1>Қазақстандағы мысалдар 20-суреттегі қай ықпалға жатады?</h1><p class="lead">Әр мысалды талдап, ықпал тобын анықтаңдар. Содан кейін «Жауабы» батырмасы арқылы тексеріңдер.</p></div>' +
         '<div class="kz">' + KZ.map((c, k) => '<div class="kzc glass">' + vid(c.v, '', 'controls muted loop autoplay') + '<div class="b"><h3>' + esc(c.h) + '</h3><p>' + esc(c.p) + '</p><p class="src">' + esc(c.s) + '</p><div id="ka' + k + '"><button class="plain" data-ka="' + k + '">Жауабы</button></div></div></div>').join('') + '</div>' +
         '<div class="ctrl"><button class="gloss" id="nx">1-раундты бастау →</button></div>';
     } else if (s.id === 'home') {
       h = '<div class="split">' + vid('v_valley', 'vidbig', 'controls muted loop autoplay') +
-        '<div class="boxp glass"><span class="pg">Оқулық · 56-б.</span><p class="eyebrow">Үй тапсырмасы</p><h2>Шағын эссе</h2><p>«Жылыжай эффектісінің климаттың өзгеруіне әсері» туралы шағын эссе жазыңдар.</p><p>Эссеге бір жаңа дерек қосыңдар: WMO мәліметінше, 2024 жыл бақылау тарихындағы ең ыстық жыл болды (өнеркәсіпке дейінгі деңгейден ~1,55°C жоғары).</p>' +
-        '<p class="eyebrow" style="margin-top:6px">Проблемалық сұраққа оралайық</p><p>2050 жылғы Жерді өзгертуге бола ма? Бүгін білгендеріңмен бір сөйлеммен жауап бер.</p><div class="row"><button class="gloss" id="nx">Сабақ аяқталды</button></div></div></div>';
+        '<div class="boxp glass"><span class="pg">Оқулық · 56-б.</span><p class="eyebrow">Үй тапсырмасы</p><h2>Шағын эссе</h2><p>Жылыжай эффектісінің климаттың өзгеруіне әсері туралы шағын эссе жазыңдар.</p><p>Табиғатқа әсер ететін антропогендік факторларды азайту үшін қандай ұсыныс беруге болады? Эссенің соңында екі ұсыныс жазыңдар.</p><p>Эссеге бір жаңа дерек қосыңдар: WMO мәліметінше, 2024 жыл бақылау тарихындағы ең ыстық жыл болды (өнеркәсіпке дейінгі деңгейден ~1,55°C жоғары).</p>' +
+        '<p class="eyebrow" style="margin-top:6px">Проблемалық сұраққа оралайық</p><p>Табиғи ортаның өзгерістерін азайтуға бола ма? Бүгінгі сабақта алған біліміңе сүйеніп, бір сөйлеммен жауап бер.</p><div class="row"><button class="gloss" id="nx">Сабақ аяқталды</button></div></div></div>';
     }
     app.innerHTML = topbar() + '<div class="slide">' + h + '</div>';
     if ($('qr')) makeQR($('qr'), 256);
@@ -685,7 +685,7 @@
   }
   function mountQuestion() {
     const m = game.meta, q = Q[m.q]; const len = 2 * Math.PI * 44;
-    app.innerHTML = topbar() + '<div class="qhead glass"><div class="qn">' + (m.q + 1) + '/' + Q.length + '<small>сұрақ</small></div><div class="qt"><h2>' + esc(q.q) + '</h2>' + (q.hint ? '<p class="hint">' + esc(q.hint) + '</p>' : '') + '</div><span class="pg">' + esc(q.src) + '</span>' +
+    app.innerHTML = topbar() + '<div class="qhead glass"><div class="qn">' + (m.q + 1) + '/' + Q.length + '<small>сұрақ</small></div><div class="qt"><h2>' + esc(q.q) + '</h2>' + ((q.hint || q.ins) ? '<p class="hint">' + esc(q.hint || q.ins) + '</p>' : '') + '</div><span class="pg">' + esc(q.src) + '</span>' +
       '<div class="ring" id="ring"><svg viewBox="0 0 100 100" aria-hidden="true"><defs><linearGradient id="rg" x1="0" x2="1"><stop offset="0" stop-color="#F7B24A"/><stop offset="1" stop-color="#E07A1F"/></linearGradient></defs><circle cx="50" cy="50" r="44" fill="#fff" stroke="rgba(20,43,38,.08)" stroke-width="10"/><circle class="arc" cx="50" cy="50" r="44" fill="none" stroke="url(#rg)" stroke-width="10" stroke-linecap="round" stroke-dasharray="' + len + ' ' + len + '"/></svg><div class="n">' + q.time + '</div></div></div>' +
       '<div class="qbody" id="qbody">' + qBody(q) + '<div class="getready" id="gr"><p>Дайындалыңдар!</p><b id="cd">3</b></div></div><div class="answered" id="ans">' + answeredCards() + '</div><div class="ctrl"><button class="plain" id="ext">+15 секунд</button><button class="gloss" id="rv">Жауапты ашу</button></div>';
     $('rv').onclick = reveal;
