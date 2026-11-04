@@ -472,8 +472,9 @@
     { ph: 1, id: 'learn3', kind: 'slide', min: 3, short: 'Қазақстан', title: 'Қазақстандағы мысалдар', note: 'Әр мысал 7 топтың қайсысына жатады? Талда.' },
     { ph: 2, id: 'relay', kind: 'relay', min: 5, short: 'Тақтада', title: 'Тақтадағы эстафета', note: 'Әр топтан кезекпен бір оқушы тақтаға шығады. Экранға қара!' },
     { ph: 2, id: 'r1', kind: 'round', min: 7, short: '1-раунд', title: '1-раунд: Ұғымдар мен деректер', from: 0, to: 5 },
-    { ph: 3, id: 'r2', kind: 'round', min: 7, short: 'Бекіту', title: 'Бекіту: себеп-салдар және өмірмен байланыс', from: 6, to: Q.length - 1 },
-    { ph: 3, id: 'results', kind: 'results', min: 2, short: 'Нәтиже', title: 'Қорытынды және бағалау', note: 'Өз нәтижеңді телефоннан қара.' },
+    { ph: 3, id: 'recap', kind: 'slide', min: 2, short: 'Шолу', title: 'Бекіту: бейне-шолу', note: 'Бейнені қарап, өз жауабыңды тексер: әр көрініс 20-суреттегі қай топқа жатады?' },
+    { ph: 3, id: 'r2', kind: 'round', min: 6, short: '2-раунд', title: '2-раунд: себеп-салдар және өмірмен байланыс', from: 6, to: Q.length - 1 },
+    { ph: 3, id: 'results', kind: 'results', min: 1, short: 'Нәтиже', title: 'Қорытынды және бағалау', note: 'Өз нәтижеңді телефоннан қара.' },
     { ph: 4, id: 'feedback', kind: 'feedback', min: 3, short: 'Пікір', title: 'Кері байланыс', note: '' },
     { ph: 4, id: 'home', kind: 'slide', min: 2, short: 'Үйге', title: 'Үй тапсырмасы', note: 'Жылыжай эффектісінің климаттың өзгеруіне әсері туралы шағын эссе жаз (оқулық, 56-б.). Бір жаңа дерек қос: WMO бойынша 2024 жыл — бақылау тарихындағы ең ыстық жыл (~+1,55°C).' }
   ];
@@ -689,6 +690,9 @@
         '<div class="ghsplit"><div class="glass ghd">' + GHSVG + '</div><div class="boxp glass ghsteps"><p class="eyebrow">Қадам бойынша</p><ol id="ghl">' + GH.map((t, k) => '<li data-gs="' + (k + 1) + '">' + t + '</li>').join('') + '</ol>' +
         '<div class="row"><button class="plain" id="ghp">← Алдыңғы</button><button class="gloss" id="ghn">Келесі қадам →</button></div><p class="muted" id="ghc" style="font-weight:800"></p>' +
         '<p class="nfbox">Жаңа дерек: 2024 жылы атмосферадағы CO₂ мөлшері 423,9 ppm-ге жетті (WMO). 2024 жыл — бақылау тарихындағы ең ыстық жыл, өнеркәсіпке дейінгі кезеңнен шамамен 1,55°C жылы (WMO).</p><div class="row"><button class="plain" id="nx">Қазақстан мысалдары →</button></div></div></div>';
+    } else if (s.id === 'recap') {
+      h = '<div class="split">' + vid('v_film', 'vidbig', 'controls poster="media/poster_film.jpg"') +
+        '<div class="boxp glass"><span class="pg">Оқулық · 54–56-б.</span><p class="eyebrow">Бекіту · бейне-шолу</p><h2>Өз жауабыңды тексер</h2><p>Сабақ басындағы бейнені енді жазуларымен қайта көреміз.</p><ol><li>Проблемалық сұраққа берген жауабың дұрыс па еді?</li><li>Әр көрініс 20-суреттегі 7 топтың қайсысына жатады?</li><li>Қай ықпал басқа ықпалды күшейтеді? Мысал келтір.</li></ol><p class="muted">Бейнеден кейін 2-раундқа өтеміз: 6 сұрақ телефоннан.</p><div class="row"><button class="gloss" id="nx">2-раунд →</button></div></div></div>';
     } else if (s.id === 'learn3') {
       h = '<div class="shead glass vbg">' + bgv('bg_desert') + '<p class="eyebrow">Өмірмен байланыс · 2025 жылғы деректер</p><h1>Қазақстандағы мысалдар 20-суреттегі қай ықпалға жатады?</h1><p class="lead">Әр мысалды талдап, ықпал тобын анықтаңдар. Содан кейін «Жауабы» батырмасы арқылы тексеріңдер.</p></div>' +
         '<div class="kz">' + KZ.map((c, k) => '<div class="kzc glass">' + vid(c.v, '', 'controls muted loop autoplay') + '<div class="b"><h3>' + esc(c.h) + '</h3><p>' + esc(c.p) + '</p><p class="src">' + esc(c.s) + '</p><div id="ka' + k + '"><button class="plain" data-ka="' + k + '">Жауабы</button></div></div></div>').join('') + '</div>' +
