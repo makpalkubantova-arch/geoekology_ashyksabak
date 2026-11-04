@@ -654,7 +654,7 @@
     let h = '';
     if (s.id === 'title') {
       const words = ['Ашық', 'сабағымызға', 'қош', 'келдіңіздер!'];
-      const MON = ['қаңтар', 'ақпан', 'наурыз', 'сәуір', 'мамыр', 'маусым', 'шілде', 'тамыз', 'қыркүйек', 'қазан', 'қараша', 'желтоқсан']; const dt = new Date(); const today = dt.getDate() + ' ' + MON[dt.getMonth()] + ' ' + dt.getFullYear() + ' ж.';
+      const MON = ['қаңтар', 'ақпан', 'наурыз', 'сәуір', 'мамыр', 'маусым', 'шілде', 'тамыз', 'қыркүйек', 'қазан', 'қараша', 'желтоқсан']; const today = '13 қараша 2026 ж.';
       h = '<div class="hero welcome"><video src="media/bg_earth.mp4" poster="' + ECO.IMG('earth') + '" autoplay muted loop playsinline aria-hidden="true"></video><div class="in">' +
         '<div class="schoolbar fadein"><span class="crest">№9<br>IT</span><span><small>Түркістан облысы · Жетісай ауданы</small><b>Дінмұхамед Қонаев атындағы №9 ІТ мектеп-лицей</b></span></div>' +'<span class="authbadge fadein" style="animation-delay:.2s"><i>★</i>Ашық сабақтың авторлық моделі</span>' +'<p class="eyebrow fadein" style="animation-delay:.3s">География · 10 «Б» сынып · №205 кабинет</p>' +
         '<h1 class="wtitle">' + words.map((w, k) => '<span class="go" style="animation-delay:' + (0.25 + k * 0.28) + 's,' + (1.6 + k * 0.1) + 's">' + w + '</span>').join('') + '</h1>' +
