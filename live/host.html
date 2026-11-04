@@ -694,7 +694,7 @@
         '<div class="kz">' + KZ.map((c, k) => '<div class="kzc glass">' + vid(c.v, '', 'controls muted loop autoplay') + '<div class="b"><h3>' + esc(c.h) + '</h3><p>' + esc(c.p) + '</p><p class="src">' + esc(c.s) + '</p><div id="ka' + k + '"><button class="plain" data-ka="' + k + '">Жауабы</button></div></div></div>').join('') + '</div>' +
         '<div class="ctrl"><button class="gloss" id="nx">Тақтадағы эстафета →</button></div>';
     } else if (s.id === 'home') {
-      h = '<div class="split">' + vid('v_valley', 'vidbig', 'controls muted loop autoplay') +
+      h = '<div class="split">' + vid('bg_sprout', 'vidbig', 'muted loop autoplay') +
         '<div class="boxp glass"><span class="pg">Оқулық · 56-б.</span><p class="eyebrow">Үй тапсырмасы</p><h2>Шағын эссе</h2><p>Жылыжай эффектісінің климаттың өзгеруіне әсері туралы шағын эссе жазыңдар.</p><p>Табиғатқа әсер ететін антропогендік факторларды азайту үшін қандай ұсыныс беруге болады? Эссенің соңында екі ұсыныс жазыңдар.</p><p>Эссеге бір жаңа дерек қосыңдар: WMO мәліметінше, 2024 жыл бақылау тарихындағы ең ыстық жыл болды (өнеркәсіпке дейінгі деңгейден ~1,55°C жоғары).</p>' +
         '<p class="eyebrow" style="margin-top:6px">Проблемалық сұраққа оралайық</p><p>Табиғи ортаның өзгерістерін азайтуға бола ма? Бүгінгі сабақта алған біліміңе сүйеніп, бір сөйлеммен жауап бер.</p><div class="row"><button class="gloss" id="nx">Сабақ аяқталды</button></div></div></div>';
     }
@@ -879,7 +879,7 @@
   function mountFeedback() {
     leafSeen = new Set(); appleSeen = new Set(); clearInterval(quoteTimer);
     const n = Object.keys(game.players || {}).length;
-    app.innerHTML = topbar() + '<div class="slide"><div class="shead glass vbg">' + bgv('bg_river') + '<p class="eyebrow">Кері байланыс · рефлексия</p><h1>Экоуәде ағашы</h1><p class="lead">Оқушылар телефоннан бір сөйлем жазады: әр сөйлем — бір жапырақ. Ұстаздардың пікірі — алтын алма.</p></div>' +
+    app.innerHTML = topbar() + '<div class="slide"><div class="shead glass vbg">' + bgv('bg_sprout') + '<p class="eyebrow">Кері байланыс · рефлексия</p><h1>Экоуәде ағашы</h1><p class="lead">Оқушылар телефоннан бір сөйлем жазады: әр сөйлем — бір жапырақ. Ұстаздардың пікірі — алтын алма.</p></div>' +
       '<div class="treewrap"><div class="treecard glass"><p class="cnt"><b id="lcnt">0</b> / ' + n + ' жапырақ</p>' + treeSvg() + '</div>' +
       '<div class="side3"><div class="quote glass"><p class="eyebrow">Ағаштағы ойлар</p><span id="qlabel"></span><span id="qleaf"></span><p class="qtext" id="qtext">Алғашқы жапырақты күтеміз…</p><p class="muted" style="font-weight:700;font-size:14px">Оқушылар атсыз көрсетіледі. Жапырақты не алманы басып, пікірді ашыңыз.</p></div>' +
       '<div class="guestqr glass"><div id="gqr"></div><div><p class="eyebrow">Құрметті ұстаздар</p><p>«Екі жұлдыз, бір тілек»: сканерлеп, пікіріңізді жазыңыз. Ол ағашта <b>алтын алма</b> болып шығады.</p><p><b class="n" id="gcnt">0</b> ұстаз пікірі</p></div></div>' +
