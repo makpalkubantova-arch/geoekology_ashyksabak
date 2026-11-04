@@ -180,6 +180,13 @@
 /* 45 минуттық сабақ: уақыт жолағы, кезеңдер, слайдтар */
 #app { padding-bottom: 96px; }
 .lbar { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; padding: 8px 14px; border-radius: 18px; font-weight: 800; }
+.cdown { display: flex; align-items: center; gap: 10px; padding: 6px 8px 6px 6px; border-radius: 18px; background: linear-gradient(180deg, #F2FBF5, #E2F4E8); border: 1px solid #BFE3CC; }
+.cdown svg { width: 54px; height: 54px; flex: none; }
+.cdown small { display: block; font-size: 11px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; color: #2E7A4E; }
+.cdown b { font-family: var(--display); font-weight: 900; font-size: clamp(26px, 2.6vw, 38px); font-variant-numeric: tabular-nums; line-height: 1; color: #14532F; }
+.cdown .plain { padding: 6px 10px; font-size: 13px; }
+.cdown.warn { background: linear-gradient(180deg, #FFF6E2, #FFE7B8); border-color: #F2C36B; } .cdown.warn b { color: #8A5300; animation: pulse 1s ease infinite; }
+.cdown.done { background: linear-gradient(180deg, #FFE9E4, #FBD3CA); border-color: #F0A091; } .cdown.done b { color: var(--bad); }
 .lbar .stg { font-family: var(--display); font-weight: 900; font-size: clamp(16px, 1.5vw, 21px); margin-right: auto; }
 .lbar .clock { font-family: var(--display); font-weight: 900; font-variant-numeric: tabular-nums; font-size: clamp(16px, 1.5vw, 21px); }
 .lbar .over { color: var(--bad); }
@@ -261,6 +268,24 @@
 .gc.key { background: linear-gradient(160deg, #FFF6E6, #FFE2B8); color: var(--ink); display: flex; flex-direction: column; justify-content: center; gap: 8px; padding: 16px; }
 .gc.key::after { display: none; }
 .gc.key b { font-family: var(--display); font-size: clamp(26px, 3vw, 46px); color: var(--amber); }
+.gc .sph { position: absolute; z-index: 1; top: 14px; right: 12px; left: 60px; text-align: right; font-size: 12px; font-weight: 800; letter-spacing: .4px; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.6); }
+.gc { min-height: clamp(230px, 34vh, 330px); }
+.gc .t span { font-size: clamp(12px, .95vw, 15px) !important; }
+.gc .t b { font-size: clamp(14px, 1.2vw, 18px) !important; }
+.gc .nf { display: block; margin-top: 6px; font-style: normal; font-weight: 800; font-size: .92em; color: #FFE2A6; }
+.nfbox { border-left: 4px solid var(--amber); background: #FFF7E8; border-radius: 10px; padding: 8px 12px; font-weight: 700 !important; font-size: clamp(13px, 1.1vw, 16px) !important; }
+.ghsplit { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+@media (max-width: 980px) { .ghsplit { grid-template-columns: minmax(0, 1fr); } }
+.ghd { padding: 10px; } .ghd svg { width: 100%; display: block; border-radius: 16px; }
+.ghd .gs { opacity: 0; transition: opacity .5s ease; } .ghd .gs.on { opacity: 1; }
+.ghd .gs.on .ar { stroke-dasharray: 700; animation: drawar 1.1s ease both; }
+.ghd .gs.on .ar.dash { stroke-dasharray: 3 14; animation: none; }
+@keyframes drawar { from { stroke-dashoffset: 700; } to { stroke-dashoffset: 0; } }
+.ghd .mol { animation: float 3s ease-in-out infinite alternate; }
+@keyframes float { from { transform: translateY(-4px); } to { transform: translateY(4px); } }
+.ghsteps ol { gap: 6px; }
+.ghsteps li { opacity: .38; transition: opacity .4s ease, background .4s ease; border-radius: 12px; padding: 6px 8px; cursor: pointer; font-size: clamp(14px, 1.15vw, 17px) !important; }
+.ghsteps li.on { opacity: 1; } .ghsteps li.cur { background: #FFF1D6; }
 .counters { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
 .counter { padding: 14px 18px; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 14px; align-items: center; }
 .counter b { grid-row: span 2; font-family: var(--display); font-weight: 900; font-size: clamp(36px, 4vw, 64px); font-variant-numeric: tabular-nums; min-width: 3ch; }
@@ -339,6 +364,10 @@
   let capsule = null; try { capsule = JSON.parse(localStorage.getItem('eco_teams_v1') || 'null'); } catch (e) {}
   const teamNames = (capsule && capsule.names) || T.map((t) => t.name);
   const existing = await be.get(G + '/meta');
+  if (existing && typeof existing.created === 'number' && be.now() - existing.created > 3 * 3600000 && (existing.host === be.uid || be.demo)) {
+    try { localStorage.removeItem('ecolive_host_code'); localStorage.removeItem('ecolive_p2p_' + code); } catch (e) {}
+    location.replace('host.html'); return;
+  }
   if (!existing) await be.set(G + '/meta', { host: be.uid, phase: 'slide', stage: 0, stageTitle: 'Сәлемдесу', stageNote: 'Телефоныңды дайында. Келесі кезеңде QR-код шығады.', stageStart: be.TS, q: -1, created: be.TS, teamNames });
   else if (existing.stage === undefined && existing.phase === 'lobby' && existing.host === be.uid) await be.update(G + '/meta', { phase: 'slide', stage: 0, stageTitle: 'Сәлемдесу', stageNote: '', stageStart: be.TS });
   else if (existing.host !== be.uid && !be.demo) { app.innerHTML = '<div class="glass" style="padding:20px"><h2>Бұл код бос емес</h2><p class="muted">Басқа құрылғыда осы кодпен ойын ашылған.</p><button class="gloss" id="nw">Жаңа ойын ашу</button></div>'; $('nw').onclick = () => { try { localStorage.removeItem('ecolive_host_code'); } catch (e) {} location.href = 'host.html'; }; return; }
@@ -358,9 +387,9 @@
     { id: 'join', kind: 'join', min: 3, short: 'Топтар', title: 'Топқа бөлу', note: '' },
     { id: 'video', kind: 'slide', min: 2, short: 'Бейне', title: '2050 жылдан SOS', note: 'Экрандағы бейнені мұқият қара: Жерге не болды?' },
     { id: 'goal', kind: 'slide', min: 2, short: 'Мақсат', title: 'Мақсат және бағалау', note: 'Әркім жеке ұпай жинайды. Топ ұпайы — мүшелерінің орташа ұпайы.' },
-    { id: 'learn1', kind: 'slide', min: 5, short: '20-сурет', title: '20-сурет: антропогендік факторлардың ықпалы', note: '20-сурет: табиғатқа антропогендік факторлардың ықпалы.' },
-    { id: 'learn2', kind: 'slide', min: 3, short: '21-сурет', title: '21-сурет: жылыжай эффектісі', note: '21-сурет: 343, 103, 168 және 240 Вт/м² мәндерін есте сақта.' },
-    { id: 'learn3', kind: 'slide', min: 3, short: 'Қазақстан', title: 'Қазақстандағы мысалдар', note: 'Әр мысал 20-суреттегі қай ықпалға жатады? Талда.' },
+    { id: 'learn1', kind: 'slide', min: 5, short: '7 топ', title: 'Адамның табиғатқа ықпалы: 7 топ', note: 'Адамның шаруашылық әрекеті табиғатқа қалай әсер етеді? Оқулықта (20-сурет) бұл ықпал 7 топқа жіктелген.' },
+    { id: 'learn2', kind: 'slide', min: 3, short: 'Жылыжай', title: 'Жылыжай эффектісі қалай пайда болады', note: 'Экрандағы сызбаны қадам бойынша бақыла: 343, 103, 168 және 240 Вт/м² мәндерін есте сақта.' },
+    { id: 'learn3', kind: 'slide', min: 3, short: 'Қазақстан', title: 'Қазақстандағы мысалдар', note: 'Әр мысал 7 топтың қайсысына жатады? Талда.' },
     { id: 'r1', kind: 'round', min: 9, short: '1-раунд', title: '1-раунд: Ұғымдар мен деректер', from: 0, to: 5 },
     { id: 'r2', kind: 'round', min: 9, short: '2-раунд', title: '2-раунд: Себеп-салдар және өмірмен байланыс', from: 6, to: Q.length - 1 },
     { id: 'results', kind: 'results', min: 3, short: 'Нәтиже', title: 'Қорытынды және бағалау', note: 'Өз нәтижеңді телефоннан қара.' },
@@ -374,7 +403,7 @@
   function goStage(i) {
     if (i < 0 || i >= STAGES.length) return;
     const s = STAGES[i], m = game.meta || {};
-    const upd = { stage: i, stageTitle: s.title, stageNote: s.note || '', stageStart: be.TS };
+    const upd = { stage: i, stageTitle: s.title, stageNote: s.note || '', stageStart: be.TS, stageExtra: 0 };
     if (!m.lessonStart && i > 0) upd.lessonStart = be.TS;
     if (s.kind === 'slide') upd.phase = 'slide';
     else if (s.kind === 'join') upd.phase = 'lobby';
@@ -403,12 +432,16 @@
     return r >= 0 && STAGES[r + 1] ? STAGES[r + 1].title + ' →' : 'Қорытынды →';
   }
 
-  const mmss = (ms) => { ms = Math.max(0, ms); const s = Math.floor(ms / 1000); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+  const mmss = (ms) => { ms = Math.max(0, ms); const s = Math.floor(ms / 1000); return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); };
+  const stageTotal = () => { const s = STAGES[curStage()], m = game.meta || {}; return s ? (s.min + (m.stageExtra || 0)) * 60000 : 0; };
+  let overFlag = '';
   function lessonBar() {
     const i = curStage(); if (i < 0) return '';
     const s = STAGES[i];
     const before = STAGES.slice(0, i).reduce((a, x) => a + x.min, 0);
-    return '<div class="lbar glass"><span class="stg">' + (i + 1) + '. ' + esc(s.title) + '</span><span class="pill">Жоспар: ' + s.min + ' мин</span><span class="pill">Кезеңде: <span class="clock" id="stc">0:00</span></span><span class="pill">Сабақ: <span class="clock" id="lsc">0:00</span> / ' + TOTAL + ':00</span>' +
+    const L2 = 2 * Math.PI * 20;
+    return '<div class="lbar glass"><div class="cdown" id="cdw"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="20" fill="none" stroke="rgba(20,43,38,.1)" stroke-width="5"/><circle id="cdr" cx="24" cy="24" r="20" fill="none" stroke="url(#cdg)" stroke-width="5" stroke-linecap="round" stroke-dasharray="' + L2 + ' ' + L2 + '" transform="rotate(-90 24 24)"/><defs><linearGradient id="cdg"><stop offset="0" stop-color="#5FCB8B"/><stop offset="1" stop-color="#1F8A55"/></linearGradient></defs></svg><div><small>Тапсырма уақыты</small><b id="cdn">00:00</b></div><button class="plain" id="addm" title="Кезеңге 1 минут қосу">+1 мин</button></div>' +
+      '<span class="stg">' + (i + 1) + '. ' + esc(s.title) + '</span><span class="pill">Кезеңде: <span class="clock" id="stc">00:00</span></span><span class="pill">Сабақ: <span class="clock" id="lsc">00:00</span> / ' + TOTAL + ':00</span>' +
       '<div class="lprog">' + STAGES.map((x, k) => '<i style="width:' + (x.min / TOTAL * 100) + '%;background:' + (k < i ? '#43B36B' : k === i ? 'linear-gradient(90deg,#F7B24A,#E07A1F)' : 'transparent') + ';' + (k ? 'border-left:2px solid rgba(255,255,255,.9)' : '') + '"></i>').join('') + '</div>' +
       '<span class="muted" style="font-weight:700;font-size:13px;flex-basis:100%">Жоспар бойынша бұл кезең ' + before + '–' + (before + s.min) + '-минуттарда.</span></div>';
   }
@@ -431,6 +464,7 @@
     $('sp').onclick = () => goStage(curStage() - 1);
     $('sn').onclick = () => goStage(curStage() + 1);
     const on = document.querySelector('.stepper .on'); if (on && on.scrollIntoView) on.scrollIntoView({ block: 'nearest', inline: 'center' });
+    if ($('addm')) $('addm').onclick = () => be.update(G + '/meta', { stageExtra: ((game.meta || {}).stageExtra || 0) + 1 });
     clockTick();
   }
   function makeQR(el, size, url) {
@@ -452,6 +486,18 @@
     const st = $('stc'), ls = $('lsc');
     if (st && typeof m.stageStart === 'number') { const ms = be.now() - m.stageStart; st.textContent = mmss(ms); st.classList.toggle('over', s && ms > s.min * 60000); }
     if (ls && typeof m.lessonStart === 'number') { const ms = be.now() - m.lessonStart; ls.textContent = mmss(ms); ls.classList.toggle('over', ms > TOTAL * 60000); }
+    const cn = $('cdn'), cr = $('cdr'), cw = $('cdw');
+    if (cn && typeof m.stageStart === 'number') {
+      const tot = stageTotal(), left = Math.max(0, tot - (be.now() - m.stageStart)); const L2 = 2 * Math.PI * 20;
+      cn.textContent = mmss(left + 999); if (cr) cr.setAttribute('stroke-dasharray', (L2 * left / tot) + ' ' + L2);
+      cw.classList.toggle('warn', left > 0 && left <= 30000); cw.classList.toggle('done', left <= 0);
+      const key = curStage() + ':' + m.stageStart + ':' + (m.stageExtra || 0);
+      if (left <= 0 && overFlag !== key) { overFlag = key; if (m.phase === 'slide' || m.phase === 'lobby' || m.phase === 'feedback' || m.phase === 'end') flashMsg('Уақыт бітті!', 'time'); }
+    }
+  }
+  function flashMsg(text, kind) {
+    document.body.insertAdjacentHTML('beforeend', '<div class="flash ' + kind + '" id="flash2"><b>' + text + '</b></div>');
+    setTimeout(() => { const f = $('flash2'); if (f) f.remove(); }, 1600);
   }
   setInterval(clockTick, 500);
   document.addEventListener('keydown', (e) => {
@@ -463,19 +509,45 @@
 
   /* ---------- SLIDES ---------- */
   const SEVEN = [
-    ['forest', 'Құрлықтағы ормандардың жойылуы', 'Орман ресурстары — биологиялық ресурстардың маңызды түрі. Ормандар бүкіл құрлықтың 26,8%-ын алып жатыр.', 'bg_cut'],
-    ['erosion', 'Топырақтың қарқынды эрозиясымен антропогендік бұзылуы', 'Жыл сайын тек эрозия есебінен 6–7 млн га жер айналымнан шығып қалады.'],
-    ['desert', 'Антропогендік шөлейттену', 'Жер шарында жылына 50–70 мың км² құнарлы жер жарамсыз болып табылуда.', 'bg_desert'],
-    ['pollution', 'Табиғи ортаның антропогендік ластануы', 'Өндірістік және тұрмыстық қалдықтармен ластанған сулар гидросфераның барлық дерлік бөлігіне таралуда.', 'bg_factory'],
-    ['greenhouse', 'Жылыжай эффектісінің пайда болуы', 'Жылыжай газдары жер бетінің жылулық сәулеленуін ұстап қалады (21-сурет).', 'bg_heat'],
-    ['water', 'Қоршаған ортада табиғи айналымдардың бұзылуы', 'Су айналымы — үздіксіз тізбек: бір буынындағы өзгеріс бүкіл тізбектегі өзгерістерге себепші болады.', 'bg_oil'],
-    ['sprout', 'Табиғи ортаның өзін-өзі қалпына келтіру қабілетінің төмендеуі', 'Антропогендік ықпал ортаның өзгеру шектерінен асқанда, табиғи орта бұрынғы күйіне орала алмайды.']
+    ['forest', 'Құрлықтағы ормандардың жойылуы', 'Орман ресурстары — биологиялық ресурстардың маңызды түрі. Ормандар бүкіл құрлықтың 26,8%-ын алып жатыр.', 'bg_cut', 'Орман · биосфера', 'Әлемде 2015–2025 жылдары жыл сайын 10,9 млн га орман кесілді (FAO, 2025).'],
+    ['erosion', 'Топырақтың қарқынды эрозиясымен антропогендік бұзылуы', 'Жыл сайын тек эрозия есебінен 6–7 млн га жер айналымнан шығып қалады.', '', 'Топырақ', 'Әлемде 2015–2019 жылдары жыл сайын кемінде 100 млн га құнарлы жер тозды (UNCCD).'],
+    ['desert', 'Антропогендік шөлейттену', 'Жер шарында жылына 50–70 мың км² құнарлы жер жарамсыз болып табылуда.', 'bg_desert', 'Жер ресурстары', 'Қазақстанның 280 млн га аумағының 165 млн га-сы шөл және шөлейт аймақ (ҚР Экология министрлігі).'],
+    ['pollution', 'Табиғи ортаның антропогендік ластануы', 'Өндірістік және тұрмыстық қалдықтармен ластанған сулар гидросфераның барлық дерлік бөлігіне таралуда.', 'bg_factory', 'Ауа, су, топырақ', 'Әлемде 2022 жылы тұрмыстық ағынды сулардың 42%-ы қауіпсіз тазартылмай төгілді (БҰҰ, UN-Water).'],
+    ['greenhouse', 'Жылыжай эффектісінің пайда болуы', 'Жылыжай газдары жер бетінің жылулық сәулеленуін ұстап қалады.', 'bg_heat', 'Атмосфера · климат', '2024 жылы атмосферадағы CO₂ 423,9 ppm-ге жетті, бір жылда 3,5 ppm-ге өсті — өлшеу басталғалы бергі ең жоғары өсім (WMO).'],
+    ['water', 'Қоршаған ортада табиғи айналымдардың бұзылуы', 'Су айналымы — үздіксіз тізбек: бір буынындағы өзгеріс бүкіл тізбектегі өзгерістерге себепші болады.', 'bg_oil', 'Су айналымы · гидросфера', 'Қапшағай су қоймасынан су жіберілген соң, 2025 жылдың қаңтар–маусымында Балқаш деңгейі 32 см көтерілді.'],
+    ['sprout', 'Табиғи ортаның өзін-өзі қалпына келтіру қабілетінің төмендеуі', 'Антропогендік ықпал ортаның өзгеру шектерінен асқанда, табиғи орта бұрынғы күйіне орала алмайды.', '', 'Бүкіл табиғи орта', 'Қазақстанда жайылымдардың 20–60%-ы тозған; оларды қалпына келтіру үшін ұзақ уақыт қажет (ҚР Экология министрлігі).']
   ];
   const KZ = [
     { v: 'bg_aral', h: 'Арал теңізі', p: 'Өзен суы егін суаруға алынып, теңіз тартылды. 2021–2025 жылдары Арал табанының 920 мың га-дан астамына сексеуіл отырғызылды.', s: 'ҚР Экология министрлігі, 2025', a: '3. Антропогендік шөлейттену · 6. Қоршаған ортада табиғи айналымдардың бұзылуы' },
     { v: 'bg_factory', h: 'Теміртау', p: 'Металлургия комбинатының түтіні ауаны ластайды. 2025 жылы ірі кәсіпорындардың шығарындысы 2022 жылмен салыстырғанда 7,2%-ға азайды.', s: 'ҚР Экология министрлігі, 2025', a: '4. Табиғи ортаның антропогендік ластануы' },
     { v: 'v_balk', h: 'Балқаш көлі', p: 'Іле суы су қоймасы мен суаруға алынады. 2025 жылдың қаңтар–маусымында көл деңгейі 32 см көтеріліп, 341,87 м болды.', s: 'bizmedia.kz, 17.07.2025', a: '6. Қоршаған ортада табиғи айналымдардың бұзылуы' }
   ];
+  const GH = [
+    '<b>Келетін радиация — 343 Вт/м².</b> Күн радиациясы таза атмосфера арқылы өтеді.',
+    '<b>Шағылған радиация — 103 Вт/м².</b> Күн радиациясының бір бөлігі кері шығарылады.',
+    '<b>168 Вт/м².</b> Күн энергиясы жер бетіне жұтылып, оны жылытады.',
+    '<b>Инфрақызыл радиация.</b> Жер беті жылуды көп алып, оны кері береді.',
+    '<b>Жылыжай газдары жылуды ұстап қалады.</b> Инфрақызыл радиацияның бір бөлігін газ молекулалары ұстайды, бір бөлігі (240 Вт/м²) ғарышқа кетеді.'
+  ];
+  const GHSVG = '<svg viewBox="0 0 800 470" role="img" aria-label="Жылыжай эффектісінің сызбасы"><defs>' +
+    '<linearGradient id="gsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#CFE8FB"/><stop offset="1" stop-color="#F3FAFF"/></linearGradient>' +
+    '<linearGradient id="gground" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9CCB7A"/><stop offset="1" stop-color="#6E9E52"/></linearGradient>' +
+    '<radialGradient id="gsun"><stop offset="0" stop-color="#FFF4B0"/><stop offset=".6" stop-color="#FFD24A"/><stop offset="1" stop-color="#F7A928"/></radialGradient>' +
+    '<marker id="ay" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#F2B21B"/></marker>' +
+    '<marker id="ao" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#E8692A"/></marker></defs>' +
+    '<rect width="800" height="470" rx="18" fill="url(#gsky)"/>' +
+    '<text x="430" y="40" text-anchor="middle" font-size="26" font-weight="900" fill="#3A7FC0" letter-spacing="10">АТМОСФЕРА</text>' +
+    '<path d="M0,215 C130,190 270,240 400,215 C530,190 670,240 800,215 L800,262 C670,287 530,237 400,262 C270,287 130,237 0,262 Z" fill="#B9B3C9" opacity=".7"/>' +
+    '<text x="400" y="246" text-anchor="middle" font-size="20" font-weight="900" fill="#4C4566" letter-spacing="3">ЖЫЛЫЖАЙ ГАЗДАРЫ</text>' +
+    [[120, 230], [250, 250], [560, 228], [700, 248]].map((p) => '<g transform="translate(' + p[0] + ',' + p[1] + ')"><g class="mol"><circle r="7" fill="#6B6290"/><circle cx="11" cy="-4" r="5" fill="#9A91BD"/><circle cx="-11" cy="-4" r="5" fill="#9A91BD"/></g></g>').join('') +
+    '<rect y="388" width="800" height="82" fill="url(#gground)"/><text x="30" y="440" font-size="22" font-weight="900" fill="#2F5222">Жер</text>' +
+    '<circle cx="86" cy="96" r="52" fill="url(#gsun)"/><text x="86" y="92" text-anchor="middle" font-size="13" font-weight="900" fill="#7A4A00">Келетін</text><text x="86" y="109" text-anchor="middle" font-size="13" font-weight="900" fill="#7A4A00">343 Вт/м²</text>' +
+    '<g class="gs gs1"><path class="ar" d="M130,128 L330,378" stroke="#F2B21B" stroke-width="16" stroke-linecap="round" fill="none" opacity=".85" marker-end="url(#ay)"/><path class="ar" d="M156,112 L372,380" stroke="#F7C948" stroke-width="10" stroke-linecap="round" fill="none" opacity=".8"/></g>' +
+    '<g class="gs gs2"><path class="ar" d="M268,208 L380,74" stroke="#F2C94C" stroke-width="12" stroke-linecap="round" fill="none" marker-end="url(#ay)"/><rect x="330" y="84" width="200" height="30" rx="10" fill="#fff" opacity=".95"/><text x="430" y="105" text-anchor="middle" font-size="16" font-weight="800" fill="#8A5300">Шағылған · 103 Вт/м²</text></g>' +
+    '<g class="gs gs3"><path class="ar" d="M330,398 L560,398" stroke="#E8692A" stroke-width="18" stroke-linecap="round" fill="none" opacity=".75"/><rect x="290" y="418" width="310" height="30" rx="10" fill="#fff" opacity=".95"/><text x="445" y="439" text-anchor="middle" font-size="16" font-weight="800" fill="#8A3A00">Жер бетін жылытады · 168 Вт/м²</text></g>' +
+    '<g class="gs gs4"><path class="ar" d="M560,382 C575,330 590,300 600,272" stroke="#E8692A" stroke-width="12" stroke-linecap="round" fill="none" marker-end="url(#ao)"/><path class="ar" d="M640,382 C652,330 662,300 670,272" stroke="#E8692A" stroke-width="12" stroke-linecap="round" fill="none" marker-end="url(#ao)"/><rect x="600" y="315" width="190" height="30" rx="10" fill="#fff" opacity=".95"/><text x="695" y="336" text-anchor="middle" font-size="15" font-weight="800" fill="#8A3A00">Инфрақызыл радиация</text></g>' +
+    '<g class="gs gs5"><path class="ar dash" d="M600,214 C592,260 585,310 575,368" stroke="#D2452F" stroke-width="9" stroke-linecap="round" fill="none" marker-end="url(#ao)"/><path class="ar" d="M672,210 L742,70" stroke="#E8692A" stroke-width="12" stroke-linecap="round" fill="none" marker-end="url(#ao)"/><rect x="560" y="106" width="232" height="30" rx="10" fill="#fff" opacity=".95"/><text x="676" y="127" text-anchor="middle" font-size="15" font-weight="800" fill="#8A3A00">Ғарышқа кетеді · 240 Вт/м²</text><rect x="370" y="282" width="210" height="30" rx="10" fill="#fff" opacity=".95"/><text x="475" y="303" text-anchor="middle" font-size="15" font-weight="800" fill="#B0301E">Газдар жылуды ұстап қалады</text></g>' +
+    '</svg>';
   function bgv(name) { return '<video class="bgv" src="media/' + name + '.mp4" autoplay muted loop playsinline aria-hidden="true"></video>'; }
   function vid(src, cls, attrs) { return '<video class="' + cls + '" src="media/' + src + '.mp4" playsinline preload="metadata" ' + (attrs || 'controls') + '></video>'; }
   function mountSlide() {
@@ -504,16 +576,15 @@
         '<div class="boxp glass"><p class="eyebrow">Деңгейлер</p><div class="lvlrow"><div style="background:var(--good-bg);color:#13603A"><b>85%+</b>Жоғары</div><div style="background:#FFF1D6;color:#8A5300"><b>50%+</b>Орта</div><div style="background:var(--bad-bg);color:#8A2414"><b>&lt;50%</b>Қолдау қажет</div></div><p class="muted">Деңгей дұрыс жауаптардың үлесі бойынша. Әркім өз нәтижесін телефоннан көреді.</p></div></div>' +
         '<div class="ctrl"><button class="gloss" id="nx">Жаңа тақырыпқа →</button></div>';
     } else if (s.id === 'learn1') {
-      h = '<div class="shead glass vbg">' + bgv('bg_earth') + '<span class="pg">Оқулық · 54-б.</span><p class="eyebrow">20-сурет</p><h1>Табиғатқа антропогендік факторлардың ықпалы</h1><p class="lead">Карточканы ашпас бұрын суретке қарап болжам жасаңдар: бұл ықпалдың қай тобы және оның салдары қандай?</p></div>' +
-        '<div class="g7">' + SEVEN.map((c, k) => '<button class="gc closed" data-g="' + k + '"><img src="' + ECO.IMG(c[0]) + '" alt="">' + (c[3] ? '<video src="media/' + c[3] + '.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>' : '') + '<span class="num">' + (k + 1) + '</span><span class="t"><b>' + esc(c[1]) + '</b><span>' + esc(c[2]) + '</span></span></button>').join('') +
-        '<div class="gc key"><p class="eyebrow" style="color:var(--amber)">Табиғи ортаны сипаттайтын көрсеткіштер</p><p style="font-weight:800;font-size:clamp(14px,1.2vw,18px)">тұрақтылық, икемділік, инерция, сыйымдылық және ортаның өзгеру шектері</p></div></div>' +
-        '<div class="ctrl"><button class="plain" id="all">Бәрін ашу</button><button class="gloss" id="nx">21-сурет: жылыжай эффектісі →</button></div>';
+      h = '<div class="shead glass vbg">' + bgv('bg_earth') + '<span class="pg">Оқулық · 54-б.</span><p class="eyebrow">Оқулық, 20-сурет</p><h1>Адамның табиғатқа ықпалы: 7 топ</h1><p class="lead"><b>Антропогендік фактор</b> — адамның шаруашылық әрекетінің табиғатқа әсері. Оқулықта бұл әсерлер табиғаттың қай бөлігі өзгеретініне қарай 7 топқа жіктелген. Карточканы ашпас бұрын болжам жасаңдар.</p></div>' +
+        '<div class="g7">' + SEVEN.map((c, k) => '<button class="gc closed" data-g="' + k + '"><img src="' + ECO.IMG(c[0]) + '" alt="">' + (c[3] ? '<video src="media/' + c[3] + '.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>' : '') + '<span class="num">' + (k + 1) + '</span><span class="sph">' + esc(c[4]) + '</span><span class="t"><b>' + esc(c[1]) + '</b><span>' + esc(c[2]) + '<em class="nf">Жаңа дерек: ' + esc(c[5]) + '</em></span></span></button>').join('') +
+        '<div class="gc key"><p class="eyebrow" style="color:var(--amber)">Неге 7 топ?</p><p style="font-weight:800;font-size:clamp(13px,1.1vw,17px)">Әр топ табиғаттың бір бөлігінің өзгерісін көрсетеді: орман, топырақ, жер, ауа мен су, климат, айналымдар және табиғи ортаның өзін-өзі қалпына келтіру қабілеті.</p></div></div>' +
+        '<div class="ctrl"><button class="plain" id="all">Бәрін ашу</button><button class="gloss" id="nx">Жылыжай эффектісі →</button></div>';
     } else if (s.id === 'learn2') {
-      h = '<div class="shead glass vbg">' + bgv('bg_heat') + '<span class="pg">Оқулық · 55-б.</span><p class="eyebrow">21-сурет</p><h1>Жылыжай эффектісінің пайда болуы</h1><p class="lead">Атмосфера күн радиациясын өткізеді, ал жылыжай газдары жер бетінің жылулық сәулеленуін ұстап қалады.</p></div>' +
-        '<div class="split">' + vid('v_greenhouse', 'vidbig', 'controls muted loop') +
-        '<div class="boxp glass"><p class="eyebrow">21-суреттегі сандар</p><div class="counters">' +
-        [[343, 'Келетін радиация', 'Вт/м² · күн радиациясы таза атмосфера арқылы өтеді'], [103, 'Шағылған радиация', 'Вт/м² · күн радиациясының бір бөлігі кері шығарылады'], [168, 'Жер бетін жылытатын күн энергиясы', 'Вт/м² · күн энергиясы жер бетіне жұтылады'], [240, 'Ғарышқа кететін инфрақызыл радиация', 'Вт/м² · бір бөлігін жылыжай газдары ұстап қалады']].map((c) => '<div class="counter glass"><b data-to="' + c[0] + '">0</b><span>' + c[1] + '</span><small>' + c[2] + '</small></div>').join('') +
-        '</div><div class="row"><button class="gloss" id="nx">Қазақстан мысалдары →</button></div></div></div>';
+      h = '<div class="shead glass vbg">' + bgv('bg_heat') + '<span class="pg">Оқулық · 55-б., 21-сурет</span><p class="eyebrow">Сызба бойынша түсіндіру</p><h1>Жылыжай эффектісі қалай пайда болады?</h1><p class="lead"><b>Жылыжай эффектісі</b> — атмосфера күн радиациясын жерге өткізіп, ал жер бетінен шыққан жылуды жылыжай газдары ұстап қалуы. Жылыжайдың шыны шатыры да жылуды осылай сақтайды.</p></div>' +
+        '<div class="ghsplit"><div class="glass ghd">' + GHSVG + '</div><div class="boxp glass ghsteps"><p class="eyebrow">Қадам бойынша</p><ol id="ghl">' + GH.map((t, k) => '<li data-gs="' + (k + 1) + '">' + t + '</li>').join('') + '</ol>' +
+        '<div class="row"><button class="plain" id="ghp">← Алдыңғы</button><button class="gloss" id="ghn">Келесі қадам →</button></div><p class="muted" id="ghc" style="font-weight:800"></p>' +
+        '<p class="nfbox">Жаңа дерек: 2024 жылы атмосферадағы CO₂ мөлшері 423,9 ppm-ге жетті (WMO). 2024 жыл — бақылау тарихындағы ең ыстық жыл, өнеркәсіпке дейінгі кезеңнен шамамен 1,55°C жылы (WMO).</p><div class="row"><button class="plain" id="nx">Қазақстан мысалдары →</button></div></div></div>';
     } else if (s.id === 'learn3') {
       h = '<div class="shead glass vbg">' + bgv('bg_desert') + '<p class="eyebrow">Өмірмен байланыс · 2025 жылғы деректер</p><h1>Қазақстандағы мысалдар 20-суреттегі қай ықпалға жатады?</h1><p class="lead">Әр мысалды талдап, ықпал тобын анықтаңдар. Содан кейін «Жауабы» батырмасы арқылы тексеріңдер.</p></div>' +
         '<div class="kz">' + KZ.map((c, k) => '<div class="kzc glass">' + vid(c.v, '', 'controls muted loop autoplay') + '<div class="b"><h3>' + esc(c.h) + '</h3><p>' + esc(c.p) + '</p><p class="src">' + esc(c.s) + '</p><div id="ka' + k + '"><button class="plain" data-ka="' + k + '">Жауабы</button></div></div></div>').join('') + '</div>' +
@@ -530,6 +601,9 @@
     const playIn = (b) => { const v = b.querySelector('video'); if (v) { const r = v.play(); if (r && r.catch) r.catch(() => {}); } };
     app.querySelectorAll('[data-g]').forEach((b) => b.onclick = () => { b.classList.remove('closed'); b.classList.add('open'); playIn(b); if (!app.querySelector('.gc.closed')) confetti(80); });
     if ($('all')) $('all').onclick = () => { app.querySelectorAll('.gc.closed').forEach((b, k) => setTimeout(() => { b.classList.remove('closed'); b.classList.add('open'); playIn(b); }, k * 180)); setTimeout(() => confetti(80), 1300); };
+    if ($('ghl')) { let gs = 0; const show = (n) => { gs = Math.max(0, Math.min(GH.length, n)); app.querySelectorAll('.gs').forEach((g, k) => g.classList.toggle('on', k < gs)); app.querySelectorAll('[data-gs]').forEach((li, k) => { li.classList.toggle('on', k < gs); li.classList.toggle('cur', k === gs - 1); });
+        $('ghc').textContent = gs >= GH.length ? 'Қорытынды: жылыжай газдары көбейген сайын ғарышқа кететін жылу азайып, жер беті көбірек жылиды.' : gs + ' / ' + GH.length + ' қадам'; $('ghn').textContent = gs >= GH.length ? 'Басынан' : 'Келесі қадам →'; };
+      $('ghn').onclick = () => show(gs >= GH.length ? 0 : gs + 1); $('ghp').onclick = () => show(gs - 1); app.querySelectorAll('[data-gs]').forEach((li) => li.onclick = () => show(+li.dataset.gs)); show(0); }
     app.querySelectorAll('[data-ka]').forEach((b) => b.onclick = () => { const k = +b.dataset.ka; $('ka' + k).innerHTML = '<p class="ans">' + esc(KZ[k].a) + '</p>'; });
     app.querySelectorAll('[data-to]').forEach((el, k) => { const to = +el.dataset.to; const t0 = performance.now() + k * 600;
       const step = (t) => { const p = Math.min(1, Math.max(0, (t - t0) / 1400)); el.textContent = Math.round(to * (1 - Math.pow(1 - p, 3))); if (p < 1) requestAnimationFrame(step); };
