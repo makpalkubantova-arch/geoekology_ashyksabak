@@ -64,11 +64,12 @@
         const q = ECO.QUESTIONS[qi]; const a = answers[qi] && answers[qi][uid]; const p = ECO.points(q, a, starts[qi], ECO.qtime(q, game.meta, qi));
         score += p; if (p > 0) { correct++; time += Math.max(0, a.t - starts[qi] - ECO.LEAD) / 1000; } else wrong.push(qi);
       });
+      score += ((game.meta && game.meta.boardInd) || {})[uid] || 0;
       return { uid, name: players[uid].name, team: teams[uid], score, correct, total: asked.length, time: correct ? time / correct : 0, wrong };
     }).sort((a, b) => b.score - a.score || b.correct - a.correct || a.name.localeCompare(b.name));
     rows.forEach((r, i) => { r.rank = i + 1; });
     const teamRows = ECO.TEAMS.map((t, i) => { const m = rows.filter((r) => r.team === i); const sum = m.reduce((s, r) => s + r.score, 0);
-      return { i, n: m.length, sum, avg: m.length ? Math.round(sum / m.length) : 0, correct: m.reduce((s, r) => s + r.correct, 0) }; })
+      const bonus = ((game.meta && game.meta.boardPts) || {})[i] || 0; return { i, n: m.length, sum, bonus, avg: (m.length ? Math.round(sum / m.length) : 0) + bonus, correct: m.reduce((s, r) => s + r.correct, 0) }; })
       .sort((a, b) => b.avg - a.avg);
     teamRows.forEach((t, k) => { t.rank = k + 1; });
     return { rows, teamRows, asked };

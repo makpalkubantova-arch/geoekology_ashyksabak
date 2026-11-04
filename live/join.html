@@ -80,6 +80,8 @@ input[type=text], input[inputmode] { font: inherit; font-size: 22px; font-weight
 #w .opt:nth-child(2) { animation-delay: .07s; } #w .opt:nth-child(3) { animation-delay: .14s; } #w .opt:nth-child(4) { animation-delay: .21s; }
 .card { animation: rise .45s ease both; }
 @keyframes optin { from { opacity: 0; transform: translateY(18px) scale(.94); } to { opacity: 1; transform: none; } }
+.me-board { border-radius: 22px; padding: 20px; color: #fff; background: linear-gradient(180deg, var(--amber2), var(--amber)); animation: pop .6s cubic-bezier(.2,.9,.3,1.4) both, pulse 1.4s ease 1s infinite; }
+.me-board p { font-family: var(--display); font-weight: 900; font-size: 26px; } .me-board b { font-family: var(--display); font-size: 34px; }
 textarea { font: inherit; font-size: 16px; padding: 10px 12px; border-radius: 14px; border: 2px solid var(--line); width: 100%; min-height: 80px; resize: vertical; }
 .lvl { font-weight: 800; padding: 4px 12px; border-radius: 999px; }
 .lvl.hi { background: var(--good-bg); color: #13603A; } .lvl.mid { background: #FFF1D6; color: #8A5300; } .lvl.low { background: var(--bad-bg); color: #8A2414; }
@@ -170,7 +172,7 @@ textarea { font: inherit; font-size: 16px; padding: 10px 12px; border-radius: 14
     const m = game.meta || {};
     const t = myTeam();
     const myAns = m.q >= 0 ? ((game.answers || {})[m.q] || {})[be.uid] : null;
-    const key = [m.phase, m.q, t, m.phase === 'question' ? !!myAns : '', m.starts && typeof m.starts[m.q] === 'number', m.stage, m.phase === 'feedback' ? !!(game.feedback || {})[be.uid] : ''].join(':');
+    const key = [m.phase === 'relay' ? JSON.stringify(m.relay || {}) + JSON.stringify(m.boardPts || {}) : '', m.phase, m.q, t, m.phase === 'question' ? !!myAns : '', m.starts && typeof m.starts[m.q] === 'number', m.stage, m.phase === 'feedback' ? !!(game.feedback || {})[be.uid] : ''].join(':');
     if (key === mounted) { if (m.phase === 'end') {} return; }
     mounted = key; clearInterval(tick);
     if (m.phase === 'lobby' || m.phase === undefined) return vWait();
@@ -179,6 +181,19 @@ textarea { font: inherit; font-size: 16px; padding: 10px 12px; border-radius: 14
     if (m.phase === 'end') return vEnd();
     if (m.phase === 'slide') return vSlide();
     if (m.phase === 'feedback') return vFeedback();
+    if (m.phase === 'relay') return vRelay();
+  }
+  function vRelay() {
+    const m = game.meta || {}, r = m.relay || {}, t = myTeam(), players = game.players || {};
+    const tn = (i) => esc(((m.teamNames || [])[i]) || T[i].name);
+    let body;
+    if (r.st === 'done') body = '<h2>Эстафета аяқталды</h2><p class="wait">Экранға қара!</p>';
+    else if (r.u && r.u === be.uid) body = '<div class="me-board"><p>Сен тақтаға шығасың!</p><b>' + esc(myName) + '</b></div><p style="font-weight:800;text-align:center">Тақтаға барып, карточканы дұрыс орнына сүйреп апар. 30 секунд бар.</p>';
+    else if (typeof r.t === 'number' && r.t === t) body = '<h2>Тобыңның кезегі!</h2><p class="wait">' + (r.u && players[r.u] ? esc(players[r.u].name) + ' тақтада. Қолдау көрсет!' : 'Тақтаға кім шығады?') + '</p>';
+    else body = '<h2>Қазір: ' + (typeof r.t === 'number' ? tn(r.t) : '') + '</h2><p class="wait">Экранға қарап, жауапты ойлан.</p>';
+    if (r.st === 'ok' && typeof r.t === 'number') body += '<p class="plus" style="color:var(--good);text-align:center">' + tn(r.t) + ': +200</p>';
+    app.innerHTML = teambar() + '<div class="card glass" style="text-align:center">' + body + '</div>';
+    if (r.u === be.uid && r.st === 'go') confetti(80);
   }
   function vSlide() {
     const m = game.meta || {}; const t = myTeam();

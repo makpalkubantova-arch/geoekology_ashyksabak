@@ -286,6 +286,49 @@
 .ghsteps ol { gap: 6px; }
 .ghsteps li { opacity: .38; transition: opacity .4s ease, background .4s ease; border-radius: 12px; padding: 6px 8px; cursor: pointer; font-size: clamp(14px, 1.15vw, 17px) !important; }
 .ghsteps li.on { opacity: 1; } .ghsteps li.cur { background: #FFF1D6; }
+.rlwrap { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 14px; align-items: start; }
+@media (max-width: 980px) { .rlwrap { grid-template-columns: minmax(0, 1fr); } }
+.rlside { display: flex; flex-direction: column; gap: 10px; }
+.rlteam { padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; font-weight: 800; transition: transform .3s ease, box-shadow .3s ease; }
+.rlteam b { font-family: var(--display); font-size: 28px; color: var(--c2); }
+.rlteam.on { transform: scale(1.05); box-shadow: 0 0 0 4px var(--c1), 0 18px 30px -16px var(--c2) !important; }
+.rlmain { padding: 14px; min-height: 52vh; position: relative; }
+.rlrules { padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; } .rlrules p { font-weight: 700; font-size: 14px; }
+.drop { min-height: 78px !important; }
+.rlq { margin: 8px 0 !important; }
+.rlcardrow { margin-bottom: 10px !important; }
+.rlpick { display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; padding: 10px 0; }
+.rlteamname { font-size: clamp(30px, 3.4vw, 50px); color: var(--c2); }
+.roulette { min-width: 340px; padding: 20px 30px; border-radius: 24px; font-family: var(--display); font-weight: 900; font-size: clamp(34px, 4vw, 60px); color: #fff; background: linear-gradient(180deg, var(--c1), var(--c2)); box-shadow: 0 1px 0 rgba(255,255,255,.5) inset, 0 20px 40px -18px var(--c2); }
+.roulette.win { animation: pop .6s cubic-bezier(.2,.9,.3,1.4) both; }
+.rlnames { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; max-width: 900px; }
+.rlhead { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 16px; border-radius: 16px; color: #fff; background: linear-gradient(180deg, var(--c1), var(--c2)); font-weight: 900; font-size: clamp(18px, 1.8vw, 26px); }
+.rltime { font-family: var(--display); min-width: 64px; text-align: center; background: rgba(255,255,255,.25); border-radius: 12px; padding: 2px 10px; }
+.rltime.low { background: #fff; color: var(--bad); animation: pulse .8s ease infinite; }
+.rlq { font-weight: 800; font-size: clamp(17px, 1.6vw, 24px); margin: 12px 0; }
+.rlcardrow { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-bottom: 14px; min-height: 90px; }
+.dragcard { display: flex; align-items: center; gap: 12px; max-width: 620px; padding: 10px 16px 10px 10px; border-radius: 18px; background: #fff; border: 3px solid var(--amber2); box-shadow: 0 14px 28px -14px rgba(0,0,0,.45); font-weight: 800; font-size: clamp(16px, 1.5vw, 22px); cursor: grab; touch-action: none; user-select: none; animation: pop .5s cubic-bezier(.2,.9,.3,1.3) both; }
+.dragcard img { width: 90px; height: 70px; object-fit: cover; border-radius: 12px; pointer-events: none; }
+.dragcard.num { font-family: var(--display); font-weight: 900; font-size: clamp(28px, 3vw, 44px); padding: 12px 20px; flex-direction: column; gap: 0; }
+.dragcard.num small { font-size: 13px; color: var(--muted); }
+.dragcard.dragging { position: fixed; z-index: 50; cursor: grabbing; transform: rotate(-2deg) scale(1.04); animation: none; }
+.drops7 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.drops4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 980px) { .drops7, .drops4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.drop { min-height: 96px; border: 3px dashed #BFD3CB; border-radius: 18px; padding: 10px 12px; font-weight: 800; font-size: clamp(14px, 1.2vw, 18px); background: rgba(255,255,255,.75); display: flex; flex-direction: column; gap: 6px; transition: all .2s ease; position: relative; }
+.drop b { font-family: var(--display); color: var(--amber); }
+.drop i { font-style: normal; font-family: var(--display); font-weight: 900; font-size: 32px; color: var(--amber); }
+.drop em { font-style: normal; font-size: 13px; color: #13603A; }
+.drop.dim { opacity: .45; } .drop.target { border-color: var(--amber); background: #FFF6E6; }
+.drop.hover { border-style: solid; border-color: var(--amber); transform: scale(1.04); background: #FFF1D6; }
+.drop.good { border-style: solid; border-color: var(--good); background: var(--good-bg); }
+.drop.bad, .drop.shake { border-style: solid; border-color: var(--bad); background: var(--bad-bg); animation: shake .45s ease; }
+@keyframes shake { 20%, 60% { transform: translateX(-8px); } 40%, 80% { transform: translateX(8px); } }
+.rlres { margin-top: 14px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 12px 16px; border-radius: 16px; font-weight: 800; animation: rise .4s ease both; }
+.rlres b { font-family: var(--display); font-size: clamp(22px, 2.2vw, 32px); }
+.rlres.ok { background: var(--good-bg); color: #13603A; } .rlres.no { background: var(--bad-bg); color: #8A2414; }
+.rlres .gloss { margin-left: auto; }
+.rldone { text-align: center; display: flex; flex-direction: column; gap: 12px; align-items: center; padding: 40px 0; }
 .counters { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
 .counter { padding: 14px 18px; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 14px; align-items: center; }
 .counter b { grid-row: span 2; font-family: var(--display); font-weight: 900; font-size: clamp(36px, 4vw, 64px); font-variant-numeric: tabular-nums; min-width: 3ch; }
@@ -387,11 +430,12 @@
     { id: 'join', kind: 'join', min: 3, short: 'Топтар', title: 'Топқа бөлу', note: '' },
     { id: 'video', kind: 'slide', min: 2, short: 'Бейне', title: '2050 жылдан SOS', note: 'Экрандағы бейнені мұқият қара: Жерге не болды?' },
     { id: 'goal', kind: 'slide', min: 2, short: 'Мақсат', title: 'Мақсат және бағалау', note: 'Әркім жеке ұпай жинайды. Топ ұпайы — мүшелерінің орташа ұпайы.' },
-    { id: 'learn1', kind: 'slide', min: 5, short: '7 топ', title: 'Адамның табиғатқа ықпалы: 7 топ', note: 'Адамның шаруашылық әрекеті табиғатқа қалай әсер етеді? Оқулықта (20-сурет) бұл ықпал 7 топқа жіктелген.' },
+    { id: 'learn1', kind: 'slide', min: 4, short: '7 топ', title: 'Адамның табиғатқа ықпалы: 7 топ', note: 'Адамның шаруашылық әрекеті табиғатқа қалай әсер етеді? Оқулықта (20-сурет) бұл ықпал 7 топқа жіктелген.' },
     { id: 'learn2', kind: 'slide', min: 3, short: 'Жылыжай', title: 'Жылыжай эффектісі қалай пайда болады', note: 'Экрандағы сызбаны қадам бойынша бақыла: 343, 103, 168 және 240 Вт/м² мәндерін есте сақта.' },
     { id: 'learn3', kind: 'slide', min: 3, short: 'Қазақстан', title: 'Қазақстандағы мысалдар', note: 'Әр мысал 7 топтың қайсысына жатады? Талда.' },
-    { id: 'r1', kind: 'round', min: 9, short: '1-раунд', title: '1-раунд: Ұғымдар мен деректер', from: 0, to: 5 },
-    { id: 'r2', kind: 'round', min: 9, short: '2-раунд', title: '2-раунд: Себеп-салдар және өмірмен байланыс', from: 6, to: Q.length - 1 },
+    { id: 'relay', kind: 'relay', min: 5, short: 'Тақтада', title: 'Тақтадағы эстафета', note: 'Әр топтан кезекпен бір оқушы тақтаға шығады. Экранға қара!' },
+    { id: 'r1', kind: 'round', min: 7, short: '1-раунд', title: '1-раунд: Ұғымдар мен деректер', from: 0, to: 5 },
+    { id: 'r2', kind: 'round', min: 7, short: '2-раунд', title: '2-раунд: Себеп-салдар және өмірмен байланыс', from: 6, to: Q.length - 1 },
     { id: 'results', kind: 'results', min: 3, short: 'Нәтиже', title: 'Қорытынды және бағалау', note: 'Өз нәтижеңді телефоннан қара.' },
     { id: 'feedback', kind: 'feedback', min: 3, short: 'Пікір', title: 'Кері байланыс', note: '' },
     { id: 'home', kind: 'slide', min: 2, short: 'Үйге', title: 'Үй тапсырмасы', note: 'Жылыжай эффектісінің климаттың өзгеруіне әсері туралы шағын эссе жаз (оқулық, 56-б.). Бір жаңа дерек қос: WMO бойынша 2024 жыл — бақылау тарихындағы ең ыстық жыл (~+1,55°C).' }
@@ -409,6 +453,7 @@
     else if (s.kind === 'join') upd.phase = 'lobby';
     else if (s.kind === 'results') upd.phase = 'end';
     else if (s.kind === 'feedback') upd.phase = 'feedback';
+    else if (s.kind === 'relay') upd.phase = 'relay';
     else if (s.kind === 'round') {
       const starts = m.starts || {}; let k = s.from;
       while (k <= s.to && typeof starts[k] === 'number') k++;
@@ -458,7 +503,7 @@
     const old = document.querySelector('.stepper'); if (old) old.remove();
     const oq = document.querySelector('.qrbtn'); if (oq) oq.remove();
     const ph = (game.meta || {}).phase;
-    if (ph !== 'lobby' && curStage() !== 0) { document.body.insertAdjacentHTML('beforeend', '<button class="gloss qrbtn" id="qrb">QR · ' + code + '</button>'); $('qrb').onclick = showQR; }
+    if (ph !== 'lobby' && ph !== 'relay' && curStage() !== 0) { document.body.insertAdjacentHTML('beforeend', '<button class="gloss qrbtn" id="qrb">QR · ' + code + '</button>'); $('qrb').onclick = showQR; }
     document.body.insertAdjacentHTML('beforeend', stepper());
     document.querySelectorAll('[data-st]').forEach((b) => b.onclick = () => goStage(+b.dataset.st));
     $('sp').onclick = () => goStage(curStage() - 1);
@@ -588,7 +633,7 @@
     } else if (s.id === 'learn3') {
       h = '<div class="shead glass vbg">' + bgv('bg_desert') + '<p class="eyebrow">Өмірмен байланыс · 2025 жылғы деректер</p><h1>Қазақстандағы мысалдар 20-суреттегі қай ықпалға жатады?</h1><p class="lead">Әр мысалды талдап, ықпал тобын анықтаңдар. Содан кейін «Жауабы» батырмасы арқылы тексеріңдер.</p></div>' +
         '<div class="kz">' + KZ.map((c, k) => '<div class="kzc glass">' + vid(c.v, '', 'controls muted loop autoplay') + '<div class="b"><h3>' + esc(c.h) + '</h3><p>' + esc(c.p) + '</p><p class="src">' + esc(c.s) + '</p><div id="ka' + k + '"><button class="plain" data-ka="' + k + '">Жауабы</button></div></div></div>').join('') + '</div>' +
-        '<div class="ctrl"><button class="gloss" id="nx">1-раундты бастау →</button></div>';
+        '<div class="ctrl"><button class="gloss" id="nx">Тақтадағы эстафета →</button></div>';
     } else if (s.id === 'home') {
       h = '<div class="split">' + vid('v_valley', 'vidbig', 'controls muted loop autoplay') +
         '<div class="boxp glass"><span class="pg">Оқулық · 56-б.</span><p class="eyebrow">Үй тапсырмасы</p><h2>Шағын эссе</h2><p>Жылыжай эффектісінің климаттың өзгеруіне әсері туралы шағын эссе жазыңдар.</p><p>Табиғатқа әсер ететін антропогендік факторларды азайту үшін қандай ұсыныс беруге болады? Эссенің соңында екі ұсыныс жазыңдар.</p><p>Эссеге бір жаңа дерек қосыңдар: WMO мәліметінше, 2024 жыл бақылау тарихындағы ең ыстық жыл болды (өнеркәсіпке дейінгі деңгейден ~1,55°C жоғары).</p>' +
@@ -610,6 +655,102 @@
       requestAnimationFrame(step); });
   }
 
+  /* ---------- ТАҚТАДАҒЫ ЭСТАФЕТА: әр топтан кезекпен бір оқушы шығады ---------- */
+  const GROUPS7 = ['Ормандардың жойылуы', 'Топырақтың эрозиямен бұзылуы', 'Антропогендік шөлейттену', 'Табиғи ортаның ластануы', 'Жылыжай эффектісі', 'Табиғи айналымдардың бұзылуы', 'Өзін-өзі қалпына келтіру қабілетінің төмендеуі'];
+  const GH4 = [['Келетін радиация', 343], ['Шағылған радиация', 103], ['Жер бетін жылытатын күн энергиясы', 168], ['Ғарышқа кететін инфрақызыл радиация', 240]];
+  const RELAY = [
+    { k: 'sort', txt: 'Ертіс бойындағы ленталы қарағайлы ормандардың кесілуі мен өртенуі', a: 0, img: 'forest' },
+    { k: 'gh', txt: 'Келетін радиацияның мәнін орнына апар', a: 0 },
+    { k: 'sort', txt: 'Тың жерлер жыртылғаннан кейінгі шаңды дауылдар: топырақтың жел әсерінен бұзылуы', a: 1, img: 'erosion' },
+    { k: 'sort', txt: 'Арал теңізінің құрғаған табанында құнарлы жердің шөлге айналуы', a: 2, img: 'desert' },
+    { k: 'gh', txt: 'Шағылған радиацияның мәнін орнына апар', a: 1 },
+    { k: 'sort', txt: 'Теміртаудағы металлургия комбинатының түтіні мен шығарындылары', a: 3, img: 'pollution' },
+    { k: 'sort', txt: 'Көмір жағатын жылу электр станцияларының атмосфераға CO₂ шығаруы', a: 4, img: 'greenhouse' },
+    { k: 'gh', txt: 'Жер бетін жылытатын күн энергиясының мәнін орнына апар', a: 2 },
+    { k: 'sort', txt: 'Іле суы суаруға алынып, Балқаш көлі деңгейінің өзгеруі', a: 5, img: 'water' },
+    { k: 'sort', txt: 'Шамадан тыс пайдаланылған жайылымдардың қайта қалпына келмеуі', a: 6, img: 'sprout' },
+    { k: 'gh', txt: 'Ғарышқа кететін инфрақызыл радиацияның мәнін орнына апар', a: 3 },
+    { k: 'sort', txt: 'Өндірістік ағынды сулардың өзенге тазартылмай төгілуі', a: 3, img: 'water' }
+  ];
+  const RPTS = 200; let rs = null, rtick = null, rlock = false;
+  function relayPush() { be.update(G + '/meta', { relay: { i: rs.i, t: rs.t, u: rs.u || '', st: rs.st, k: RELAY[rs.i] ? RELAY[rs.i].k : '' } }); }
+  function teamIds(t) { const players = game.players || {}, teams = game.teams || {}; return Object.keys(players).filter((u) => teams[u] === t); }
+  function mountRelay() {
+    const m = game.meta || {};
+    rs = { i: (m.relay && typeof m.relay.i === 'number') ? m.relay.i : 0, t: (m.relay && typeof m.relay.t === 'number') ? m.relay.t : 0, u: '', st: 'pick', used: new Set(Object.keys(m.boardInd || {})) };
+    app.innerHTML = topbar() + '<div class="slide"><div class="rlwrap"><div class="rlside"><div class="glass rlrules"><p class="eyebrow">Тақтадағы эстафета</p><p>Әр топтан кезекпен бір оқушы шығады. Карточканы 7 топтың біріне, санды сызбадағы орнына сүйреп апарады.</p><p><b>Дұрыс: топқа +' + RPTS + '</b></p></div>' + [0, 1, 2].map((i) => '<div class="rlteam glass" id="rlt' + i + '" style="--c1:' + T[i].c1 + ';--c2:' + T[i].c2 + '"><span>' + tname(i) + '</span><b id="rlp' + i + '">0</b></div>').join('') + '<p class="muted" id="rlprog" style="font-weight:800;text-align:center"></p></div>' +
+      '<div class="rlmain glass" id="rlmain"></div></div></div>';
+    relayScores(); relayTurn();
+  }
+  function relayScores() { const bp = (game.meta || {}).boardPts || {}; [0, 1, 2].forEach((i) => { const e = $('rlp' + i); if (e) e.textContent = bp[i] || 0; const c = $('rlt' + i); if (c) c.classList.toggle('on', rs && rs.t === i && rs.i < RELAY.length); }); const p = $('rlprog'); if (p && rs) p.textContent = Math.min(rs.i + 1, RELAY.length) + ' / ' + RELAY.length + ' тапсырма'; }
+  function relayTurn() {
+    clearInterval(rtick); rlock = false; const box = $('rlmain'); if (!box) return;
+    relayScores();
+    if (rs.i >= RELAY.length) {
+      const bp = (game.meta || {}).boardPts || {}; const order = [0, 1, 2].sort((a, b) => (bp[b] || 0) - (bp[a] || 0));
+      box.innerHTML = '<div class="rldone"><p class="eyebrow">Эстафета аяқталды</p><h2>Тақтада ең көп ұпай жинаған: ' + tname(order[0]) + '</h2><p class="muted" style="font-weight:700">Бұл ұпайлар топтың жалпы ұпайына қосылды.</p><button class="gloss" id="rln">1-раундқа өту →</button></div>';
+      confetti(150); rs.st = 'done'; relayPush(); $('rln').onclick = () => goStage(curStage() + 1); return;
+    }
+    const ids = teamIds(rs.t), players = game.players || {};
+    rs.u = ''; rs.st = 'pick'; relayPush();
+    box.innerHTML = '<div class="rlpick" style="--c1:' + T[rs.t].c1 + ';--c2:' + T[rs.t].c2 + '"><p class="eyebrow">Кезек</p><h2 class="rlteamname">' + tname(rs.t) + '</h2>' +
+      '<div class="roulette" id="rou">' + (ids.length ? '?' : 'Топта оқушы жоқ') + '</div>' +
+      '<div class="rlnames">' + ids.map((u) => '<button class="teamchip" data-pu="' + esc(u) + '" style="background:linear-gradient(180deg,' + T[rs.t].c1 + ',' + T[rs.t].c2 + ')' + (rs.used.has(u) ? ';opacity:.45' : '') + '">' + esc(players[u].name) + '</button>').join('') + '</div>' +
+      '<div class="row" style="justify-content:center"><button class="gloss" id="rspin">Оқушыны кездейсоқ таңдау</button><button class="plain" id="rany">Тапсырманы бірден ашу</button></div><p class="muted" style="font-weight:700">Атты басып, оқушыны өзіңіз де таңдай аласыз.</p></div>';
+    box.querySelectorAll('[data-pu]').forEach((b) => b.onclick = () => relayGo(b.dataset.pu));
+    $('rany').onclick = () => relayGo('');
+    $('rspin').onclick = () => {
+      if (!ids.length) return relayGo('');
+      const pool = ids.filter((u) => !rs.used.has(u)); const from = pool.length ? pool : ids; const pick = from[Math.floor(Math.random() * from.length)];
+      const r = $('rou'); let n = 0, delay = 60; $('rspin').disabled = true;
+      const spin = () => { r.textContent = players[ids[n++ % ids.length]].name; delay *= 1.12; if (delay < 380) setTimeout(spin, delay); else { r.textContent = players[pick].name; r.classList.add('win'); confetti(60); setTimeout(() => relayGo(pick), 1300); } };
+      spin();
+    };
+  }
+  function relayGo(u) {
+    rs.u = u; rs.used.add(u); rs.st = 'go'; relayPush();
+    const it = RELAY[rs.i], box = $('rlmain'), players = game.players || {};
+    const who = u && players[u] ? players[u].name : tname(rs.t);
+    const head = '<div class="rlhead" style="--c1:' + T[rs.t].c1 + ';--c2:' + T[rs.t].c2 + '"><span class="who">' + esc(who) + ' · ' + tname(rs.t) + '</span><span class="rltime" id="rlt">30</span></div>';
+    if (it.k === 'sort') {
+      box.innerHTML = head + '<p class="rlq">Бұл мысал 7 топтың қайсысына жатады? Карточканы сүйреп апар.</p><div class="rlcardrow"><div class="dragcard" id="dc"><img src="' + ECO.IMG(it.img) + '" alt=""><span>' + esc(it.txt) + '</span></div></div>' +
+        '<div class="drops7">' + GROUPS7.map((g, k) => '<div class="drop" data-drop="' + k + '"><b>' + (k + 1) + '</b>' + esc(g) + '</div>').join('') + '</div>';
+    } else {
+      box.innerHTML = head + '<p class="rlq">' + esc(it.txt) + ' (жылыжай эффектісі сызбасы, 21-сурет).</p><div class="rlcardrow">' + GH4.map((g, k) => '<div class="dragcard num" data-val="' + k + '">' + g[1] + '<small>Вт/м²</small></div>').join('') + '</div>' +
+        '<div class="drops4">' + GH4.map((g, k) => '<div class="drop' + (k === it.a ? ' target' : ' dim') + '" data-drop="' + k + '"><b>' + (k + 1) + '</b>' + esc(g[0]) + (k === it.a ? '<i>?</i>' : '') + '</div>').join('') + '</div>';
+    }
+    box.querySelectorAll('.dragcard').forEach(makeDrag);
+    try { box.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (e) {}
+    const t0 = Date.now(); rtick = setInterval(() => { const left = Math.max(0, 30 - Math.floor((Date.now() - t0) / 1000)); const e = $('rlt'); if (e) { e.textContent = left; e.classList.toggle('low', left <= 5); } if (left <= 0) relayResult(false, null); }, 250);
+  }
+  function makeDrag(el) {
+    el.addEventListener('pointerdown', (e) => {
+      if (rlock) return; e.preventDefault(); el.setPointerCapture(e.pointerId);
+      const r = el.getBoundingClientRect(), dx = e.clientX - r.left, dy = e.clientY - r.top;
+      el.classList.add('dragging'); el.style.width = r.width + 'px'; el.style.left = r.left + 'px'; el.style.top = r.top + 'px';
+      const over = (x, y) => { el.style.visibility = 'hidden'; const t = document.elementFromPoint(x, y); el.style.visibility = ''; return t && t.closest('[data-drop]'); };
+      const mv = (ev) => { el.style.left = (ev.clientX - dx) + 'px'; el.style.top = (ev.clientY - dy) + 'px'; document.querySelectorAll('.drop.hover').forEach((d) => d.classList.remove('hover')); const d = over(ev.clientX, ev.clientY); if (d) d.classList.add('hover'); };
+      const up = (ev) => { el.removeEventListener('pointermove', mv); el.removeEventListener('pointerup', up); el.removeEventListener('pointercancel', up);
+        document.querySelectorAll('.drop.hover').forEach((d) => d.classList.remove('hover'));
+        const d = over(ev.clientX, ev.clientY); el.classList.remove('dragging'); el.style.left = el.style.top = el.style.width = '';
+        if (!d) return; const it = RELAY[rs.i];
+        if (it.k === 'sort') relayResult(+d.dataset.drop === it.a, d);
+        else { if (+d.dataset.drop !== it.a) { d.classList.add('shake'); setTimeout(() => d.classList.remove('shake'), 500); return; } relayResult(+el.dataset.val === it.a, d, el); } };
+      el.addEventListener('pointermove', mv); el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
+    });
+  }
+  function relayResult(ok, drop, chip) {
+    if (rlock) return; rlock = true; clearInterval(rtick);
+    const it = RELAY[rs.i], box = $('rlmain');
+    const right = box.querySelector('[data-drop="' + it.a + '"]');
+    if (ok) { if (drop) { drop.classList.add('good'); drop.insertAdjacentHTML('beforeend', '<em>' + (it.k === 'sort' ? '✓ ' + esc(it.txt.slice(0, 40)) + (it.txt.length > 40 ? '…' : '') : '✓ ' + GH4[it.a][1] + ' Вт/м²') + '</em>'); }
+      const m = game.meta || {}; const upd = {}; upd['boardPts/' + rs.t] = ((m.boardPts || {})[rs.t] || 0) + RPTS; if (rs.u) upd['boardInd/' + rs.u] = ((m.boardInd || {})[rs.u] || 0) + RPTS; be.update(G + '/meta', upd);
+      confetti(90); rs.st = 'ok';
+    } else { if (drop) drop.classList.add('bad'); if (right) right.classList.add('good'); rs.st = 'bad'; }
+    relayPush();
+    box.insertAdjacentHTML('beforeend', '<div class="rlres ' + (ok ? 'ok' : 'no') + '"><b>' + (ok ? 'Дұрыс! +' + RPTS + ' ұпай' : drop ? 'Қате' : 'Уақыт бітті') + '</b><span>' + (ok ? '' : 'Дұрыс жауабы: ' + (it.k === 'sort' ? (it.a + 1) + '. ' + GROUPS7[it.a] : GH4[it.a][0] + ' — ' + GH4[it.a][1] + ' Вт/м²')) + '</span><button class="gloss" id="rlnext">Келесі кезек →</button></div>');
+    $('rlnext').onclick = () => { rs.i++; rs.t = (rs.t + 1) % 3; relayTurn(); };
+  }
   /* ---------- FEEDBACK STAGE: Экоуәде ағашы ---------- */
   const LEAFC = ['#3BB273', '#F2B33D', '#F0765F'];
   const leafPath = 'M0,-17 C12,-12 14,7 0,17 C-14,7 -12,-12 0,-17Z';
@@ -881,12 +1022,14 @@
       else if (m.phase === 'end') mountEnd();
       else if (m.phase === 'slide') mountSlide();
       else if (m.phase === 'feedback') mountFeedback();
+      else if (m.phase === 'relay') mountRelay();
       chrome();
     } else {
       if (m.phase === 'lobby') updateLobby();
       else if (m.phase === 'question') updateQuestion();
       else if (m.phase === 'end') { const f = $('fbk'); if (f) f.innerHTML = feedbackBox(); }
       else if (m.phase === 'feedback') updateFeedback();
+      else if (m.phase === 'relay') relayScores();
     }
   });
 })();
