@@ -1,0 +1,44 @@
+/* Экологиялық жарыс LIVE — глянцевый жарық дизайн */
+:root {
+  --bg1: #F4F8F2; --bg2: #E6F0EC; --ink: #142B26; --muted: #4F6660; --line: rgba(20,43,38,.12);
+  --glass: rgba(255,255,255,.78); --amber: #E07A1F; --amber2: #F7B24A;
+  --good: #1E9A5A; --good-bg: #DDF5E7; --bad: #D2452F; --bad-bg: #FCE4DF;
+  --display: 'Montserrat', 'Arial Black', Arial, sans-serif;
+  --body: 'Nunito', 'Segoe UI', Roboto, Arial, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; color: var(--ink); }
+body { font-family: var(--body); font-size: 16px; background: radial-gradient(1200px 700px at 10% -10%, #FFF4E2 0%, transparent 60%), radial-gradient(1000px 700px at 110% 10%, #DDF1FF 0%, transparent 55%), linear-gradient(180deg, var(--bg1), var(--bg2)); background-attachment: fixed; }
+button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+button:disabled { cursor: default; }
+button:focus-visible, input:focus-visible { outline: 3px solid var(--amber); outline-offset: 2px; }
+p { margin: 0; }
+h1, h2, h3 { font-family: var(--display); font-weight: 800; margin: 0; line-height: 1.08; text-wrap: balance; }
+[hidden] { display: none !important; }
+
+/* глянцевые поверхности */
+.glass { position: relative; background: linear-gradient(180deg, rgba(255,255,255,.95), var(--glass)); border: 1px solid rgba(255,255,255,.9); border-radius: 24px; box-shadow: 0 1px 0 rgba(255,255,255,.9) inset, 0 18px 40px -18px rgba(20,43,38,.35), 0 2px 6px rgba(20,43,38,.06); overflow: hidden; }
+.glass::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 46%; background: linear-gradient(180deg, rgba(255,255,255,.65), rgba(255,255,255,0)); pointer-events: none; border-radius: inherit; z-index: 0; }
+.glass > * { position: relative; z-index: 1; }
+.gloss { position: relative; color: #fff; border: none; border-radius: 16px; font-family: var(--display); font-weight: 800; background: linear-gradient(180deg, var(--amber2), var(--amber)); box-shadow: 0 1px 0 rgba(255,255,255,.6) inset, 0 -3px 0 rgba(0,0,0,.12) inset, 0 10px 22px -8px rgba(224,122,31,.7); padding: 14px 26px; font-size: clamp(16px, 1.6vw, 21px); overflow: hidden; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.gloss::after { content: ""; position: absolute; inset: 0 0 50% 0; background: linear-gradient(180deg, rgba(255,255,255,.45), rgba(255,255,255,.05)); border-radius: 16px 16px 40% 40%; pointer-events: none; }
+.gloss:active { transform: translateY(1px); }
+.gloss:disabled { filter: grayscale(.6); opacity: .55; }
+.plain { background: rgba(255,255,255,.85); border: 1px solid var(--line); border-radius: 14px; padding: 10px 16px; font-weight: 800; box-shadow: 0 6px 14px -10px rgba(20,43,38,.4); }
+.eyebrow { font-size: 13px; font-weight: 800; letter-spacing: 2.4px; text-transform: uppercase; color: var(--amber); }
+.muted { color: var(--muted); }
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px; font-weight: 800; font-size: 14px; background: rgba(255,255,255,.85); border: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+.teamchip { color: #fff; border-radius: 999px; padding: 5px 12px; font-weight: 800; font-size: 15px; box-shadow: 0 1px 0 rgba(255,255,255,.5) inset, 0 6px 12px -8px rgba(0,0,0,.5); animation: pop .45s cubic-bezier(.2,.9,.3,1.3) both; white-space: nowrap; }
+.demo { background: #FFF4D6; border: 1px solid #F2D27A; color: #7A5300; border-radius: 14px; padding: 10px 14px; font-weight: 700; font-size: 14px; }
+.confetti { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 30; }
+.confetti i { position: absolute; top: -20px; width: 11px; height: 17px; border-radius: 3px; animation: fall linear forwards; }
+
+@keyframes pop { 0% { transform: scale(.5); opacity: 0; } 70% { transform: scale(1.08); } 100% { transform: scale(1); opacity: 1; } }
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes shine { 0% { transform: translateX(-120%) skewX(-20deg); } 100% { transform: translateX(220%) skewX(-20deg); } }
+@keyframes pulse { 50% { transform: scale(1.08); } }
+@keyframes fall { to { transform: translateY(110vh) rotate(720deg); } }
+@keyframes grow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }

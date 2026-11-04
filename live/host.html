@@ -1,0 +1,783 @@
+<!doctype html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Экожарыс LIVE · тақта</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800;900&family=Nunito:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>
+/* Layout: teacher board — top bar with code and timer; the stage below changes by phase: lobby, question, reveal, leaderboard, final */
+#app { min-height: 100vh; display: flex; flex-direction: column; gap: 14px; padding: 14px max(16px, env(safe-area-inset-right, 0px)) 20px max(16px, env(safe-area-inset-left, 0px)); max-width: 1500px; margin: 0 auto; }
+.top { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; padding: 10px 16px; border-radius: 20px; }
+.brand { font-family: var(--display); font-weight: 900; font-size: clamp(18px, 1.8vw, 24px); margin-right: auto; display: flex; align-items: center; gap: 10px; }
+.brand b { background: linear-gradient(90deg, #1F7A45, #1661A3, #C0661A); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.live { font-size: 12px; font-weight: 900; letter-spacing: 2px; color: #fff; background: linear-gradient(180deg, #FF6A55, #D2452F); padding: 3px 9px; border-radius: 999px; animation: pulse 1.6s ease infinite; }
+.codebox { font-family: var(--display); font-weight: 900; font-size: clamp(20px, 2vw, 28px); letter-spacing: 6px; }
+
+/* lobby */
+.lobby { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 14px; align-items: start; }
+@media (max-width: 980px) { .lobby { grid-template-columns: minmax(0, 1fr); } }
+.joincard { padding: 22px; display: flex; flex-direction: column; gap: 14px; align-items: center; text-align: center; }
+.joincard .big { font-family: var(--display); font-weight: 900; font-size: clamp(56px, 7vw, 110px); letter-spacing: 10px; line-height: 1; background: linear-gradient(180deg, #F7B24A, #E07A1F); -webkit-background-clip: text; background-clip: text; color: transparent; }
+/* әдемі QR: жарқыраған жиек, бұрыштар, сканер сызығы, ортасында жапырақ */
+.qrfx { --qs: 200px; position: relative; padding: 7px; border-radius: 28px; isolation: isolate; overflow: hidden; box-shadow: 0 22px 44px -22px rgba(20,90,60,.65); }
+.qrfx::before { content: ""; position: absolute; inset: -60%; z-index: -1; background: conic-gradient(from 0deg, #43B36B, #3FA4E8, #F7B24A, #F27C6B, #43B36B); animation: spin 6s linear infinite; }
+.qrin { position: relative; background: #fff; border-radius: 22px; padding: 16px; }
+.qrc img, .qrc canvas { display: block; width: var(--qs) !important; height: var(--qs) !important; image-rendering: pixelated; }
+.qrin .cn { position: absolute; width: 26px; height: 26px; border: 4px solid #1F8A55; }
+.qrin .c1 { top: 6px; left: 6px; border-right: 0; border-bottom: 0; border-radius: 10px 0 0 0; }
+.qrin .c2 { top: 6px; right: 6px; border-left: 0; border-bottom: 0; border-radius: 0 10px 0 0; }
+.qrin .c3 { bottom: 6px; left: 6px; border-right: 0; border-top: 0; border-radius: 0 0 0 10px; }
+.qrin .c4 { bottom: 6px; right: 6px; border-left: 0; border-top: 0; border-radius: 0 0 10px 0; }
+.qrin .scan { position: absolute; left: 12px; right: 12px; top: 16px; height: 3px; border-radius: 3px; background: linear-gradient(90deg, transparent, #43C47A, transparent); box-shadow: 0 0 14px 3px rgba(67,196,122,.55); animation: scan 2.6s ease-in-out infinite alternate; }
+.qrin .logo { position: absolute; left: 50%; top: 50%; width: calc(var(--qs) * .22); height: calc(var(--qs) * .22); transform: translate(-50%, -50%); border-radius: 22%; background: linear-gradient(180deg, #5FCB8B, #1F8A55); display: grid; place-items: center; border: 4px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,.2); }
+.qrin .logo svg { width: 62%; height: 62%; }
+.qrcap { margin-top: 8px; font-weight: 900; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: #fff; text-align: center; text-shadow: 0 1px 2px rgba(0,0,0,.3); }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes scan { from { top: 16px; } to { top: calc(100% - 19px); } }
+#qr .qrfx { --qs: clamp(170px, 16vw, 240px); }
+.url { font-weight: 800; font-size: clamp(14px, 1.2vw, 18px); word-break: break-all; }
+.teams3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 760px) { .teams3 { grid-template-columns: minmax(0, 1fr); } }
+.tcol { border-radius: 22px; overflow: hidden; display: flex; flex-direction: column; min-height: 220px; }
+.tcol .head { position: relative; padding: 14px 16px; color: #fff; display: flex; justify-content: space-between; align-items: center; gap: 8px; overflow: hidden; }
+.tcol .head::after { content: ""; position: absolute; inset: 0 0 50% 0; background: linear-gradient(180deg, rgba(255,255,255,.4), rgba(255,255,255,0)); }
+.tcol .head h3 { font-size: clamp(17px, 1.6vw, 22px); position: relative; z-index: 1; }
+.tcol .head span { font-family: var(--display); font-weight: 900; font-size: clamp(22px, 2.2vw, 30px); position: relative; z-index: 1; }
+.tcol .head img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .28; mix-blend-mode: luminosity; }
+.tcol .body { padding: 12px; display: flex; flex-wrap: wrap; gap: 6px; align-content: flex-start; flex: 1; background: rgba(255,255,255,.72); }
+
+/* question */
+.qhead { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 18px; align-items: center; padding: 18px 22px; }
+.qn { font-family: var(--display); font-weight: 900; color: #fff; border-radius: 18px; padding: 12px 16px; text-align: center; background: linear-gradient(180deg, #2C5A50, #142B26); box-shadow: 0 1px 0 rgba(255,255,255,.3) inset; font-size: clamp(18px, 1.6vw, 24px); line-height: 1; }
+.qn small { display: block; font-size: .55em; opacity: .75; margin-top: 4px; font-weight: 700; }
+.qt h2 { font-size: clamp(24px, 2.8vw, 44px); }
+.qt .hint { font-weight: 700; color: var(--muted); margin-top: 6px; font-size: clamp(14px, 1.2vw, 18px); }
+.ring { position: relative; width: clamp(96px, 9vw, 140px); aspect-ratio: 1; }
+.ring svg { width: 100%; height: 100%; transform: rotate(-90deg); filter: drop-shadow(0 6px 10px rgba(224,122,31,.35)); }
+.ring .n { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--display); font-weight: 900; font-size: clamp(30px, 3vw, 48px); font-variant-numeric: tabular-nums; }
+.ring.low .n { color: var(--bad); animation: pulse .8s ease infinite; }
+.opts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.opt { position: relative; border-radius: 20px; padding: clamp(14px, 1.6vw, 22px) 18px; font-weight: 800; font-size: clamp(18px, 1.8vw, 28px); color: #fff; display: flex; gap: 14px; align-items: center; overflow: hidden; box-shadow: 0 1px 0 rgba(255,255,255,.45) inset, 0 12px 24px -14px rgba(0,0,0,.55); }
+.opt::after { content: ""; position: absolute; inset: 0 0 52% 0; background: linear-gradient(180deg, rgba(255,255,255,.38), rgba(255,255,255,.02)); }
+.opt b { font-family: var(--display); font-size: 1.3em; width: 1.6em; height: 1.6em; border-radius: 12px; display: grid; place-items: center; background: rgba(255,255,255,.25); flex: none; position: relative; z-index: 1; }
+.opt span { position: relative; z-index: 1; }
+.o0 { background: linear-gradient(180deg, #F27C6B, #C8432F); } .o1 { background: linear-gradient(180deg, #5BB1F0, #1E6DB0); } .o2 { background: linear-gradient(180deg, #F6BE4F, #D08A12); } .o3 { background: linear-gradient(180deg, #5FCB8B, #1F8A55); }
+.opt.img { padding: 8px; flex-direction: column; align-items: stretch; }
+.opt.img img { width: 100%; aspect-ratio: 16 / 8; object-fit: cover; border-radius: 14px; position: relative; z-index: 1; }
+.opt.img b { position: absolute; top: 14px; left: 14px; z-index: 2; }
+.optlist { display: grid; gap: 10px; }
+.optlist .opt { font-size: clamp(16px, 1.6vw, 24px); }
+.numbox { padding: 20px; text-align: center; font-family: var(--display); font-weight: 900; font-size: clamp(26px, 3vw, 46px); }
+.answered { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 760px) { .answered { grid-template-columns: minmax(0, 1fr); } }
+.acard { padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
+.acard .h { display: flex; justify-content: space-between; align-items: center; font-weight: 800; }
+.acard .h { gap: 8px; }
+.acard .h b { font-family: var(--display); font-size: clamp(20px, 2vw, 28px); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.reveal .answered { grid-template-columns: minmax(0, 1fr); }
+.correct h2.long { font-size: clamp(17px, 1.6vw, 24px); }
+.track { height: 14px; border-radius: 999px; background: rgba(20,43,38,.08); overflow: hidden; }
+.track i { display: block; height: 100%; border-radius: 999px; transition: width .5s cubic-bezier(.2,.9,.3,1); position: relative; overflow: hidden; }
+.track i::after { content: ""; position: absolute; top: 0; bottom: 0; width: 40%; background: linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent); animation: shine 2.2s ease-in-out infinite; }
+.dots { display: flex; flex-wrap: wrap; gap: 5px; }
+.dots i { font-style: normal; font-size: 12px; font-weight: 800; padding: 3px 8px; border-radius: 999px; background: rgba(20,43,38,.07); color: var(--muted); transition: all .3s ease; }
+.dots i.on { color: #fff; }
+.ctrl { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+
+/* reveal */
+.reveal { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 14px; }
+@media (max-width: 980px) { .reveal { grid-template-columns: minmax(0, 1fr); } }
+.correct { padding: 16px 20px 34px; display: flex; flex-direction: column; gap: 6px; border: 2px solid var(--good) !important; }
+.correct h2 { font-size: clamp(22px, 2.4vw, 36px); color: var(--good); }
+.dist { padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; }
+.drow { display: grid; grid-template-columns: minmax(0, 1fr) 54px; gap: 10px; align-items: center; font-weight: 800; }
+.drow .lbl { font-size: clamp(14px, 1.2vw, 18px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.drow .bar { height: 30px; border-radius: 10px; position: relative; overflow: hidden; transition: width 1s cubic-bezier(.2,.9,.3,1); width: 0; }
+.drow .bar::after { content: ""; position: absolute; inset: 0 0 50% 0; background: linear-gradient(180deg, rgba(255,255,255,.45), rgba(255,255,255,0)); }
+.drow b { font-family: var(--display); font-size: 20px; text-align: right; font-variant-numeric: tabular-nums; }
+.fast { padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; }
+.frow { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: clamp(16px, 1.4vw, 20px); animation: rise .5s ease both; }
+.medal { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; font-family: var(--display); font-weight: 900; color: #fff; flex: none; box-shadow: 0 1px 0 rgba(255,255,255,.6) inset; }
+.m1 { background: linear-gradient(180deg, #FFD86B, #D9A21B); } .m2 { background: linear-gradient(180deg, #E4E9EE, #9AA6B2); } .m3 { background: linear-gradient(180deg, #F1B98A, #B8733D); }
+
+/* leaderboard */
+.lb { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 14px; }
+@media (max-width: 980px) { .lb { grid-template-columns: minmax(0, 1fr); } }
+.lbcard { padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+.tbar { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: 10px; align-items: center; font-weight: 800; animation: rise .5s ease both; }
+.tbar .tr { grid-column: 2 / -1; height: 34px; border-radius: 12px; background: rgba(20,43,38,.07); overflow: hidden; }
+.tbar .tr i { display: block; height: 100%; width: 0; border-radius: 12px; transition: width 1.2s cubic-bezier(.2,.9,.3,1); position: relative; overflow: hidden; }
+.tbar .tr i::after { content: ""; position: absolute; inset: 0 0 50% 0; background: linear-gradient(180deg, rgba(255,255,255,.5), rgba(255,255,255,0)); }
+.tbar .nm { font-size: clamp(16px, 1.5vw, 22px); }
+.tbar .sc { font-family: var(--display); font-size: clamp(18px, 1.7vw, 24px); font-variant-numeric: tabular-nums; }
+.tbl { width: 100%; border-collapse: collapse; font-size: clamp(14px, 1.15vw, 17px); }
+.tbl th, .tbl td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.tbl th { font-size: 12px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--muted); }
+.tbl td.n { text-align: right; font-variant-numeric: tabular-nums; }
+.tbl tr { animation: rise .45s ease both; }
+.tbl .rk { font-family: var(--display); font-weight: 900; }
+.scroll { overflow-x: auto; }
+.lvl { font-weight: 800; padding: 3px 10px; border-radius: 999px; font-size: .9em; }
+.lvl.hi { background: var(--good-bg); color: #13603A; } .lvl.mid { background: #FFF1D6; color: #8A5300; } .lvl.low { background: var(--bad-bg); color: #8A2414; }
+.dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+
+/* podium */
+.podium { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; align-items: end; max-width: 900px; width: 100%; margin: 0 auto; }
+.step { border-radius: 22px 22px 6px 6px; color: #fff; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 16px 8px; text-align: center; position: relative; overflow: hidden; animation: grow .9s cubic-bezier(.2,.9,.3,1.1) both; transform-origin: bottom; box-shadow: 0 1px 0 rgba(255,255,255,.5) inset, 0 20px 30px -20px rgba(0,0,0,.6); }
+.step::after { content: ""; position: absolute; inset: 0 0 60% 0; background: linear-gradient(180deg, rgba(255,255,255,.45), rgba(255,255,255,0)); }
+.step .pl { font-family: var(--display); font-weight: 900; font-size: clamp(40px, 4.5vw, 70px); line-height: 1; position: relative; z-index: 1; }
+.step .wh { font-family: var(--display); font-weight: 800; font-size: clamp(16px, 1.6vw, 24px); position: relative; z-index: 1; }
+.step .pt { font-weight: 800; position: relative; z-index: 1; }
+.fb { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.fb div { padding: 12px; text-align: center; font-weight: 800; border-radius: 16px; }
+.fb b { display: block; font-family: var(--display); font-size: 30px; }
+.cmts { display: flex; flex-direction: column; gap: 6px; max-height: 220px; overflow: auto; }
+.cmts p { background: rgba(255,255,255,.85); border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px; font-weight: 600; }
+
+/* оқулық сілтемесі: кішкене бұрыш белгісі */
+.pg { position: absolute; z-index: 2; right: 12px; bottom: 10px; font-size: 12px; font-weight: 800; letter-spacing: .3px; color: var(--muted); background: rgba(255,255,255,.88); border: 1px solid var(--line); border-radius: 999px; padding: 3px 9px; }
+.shead .pg { top: 10px; bottom: auto; }
+.qhead { position: relative; padding-bottom: 30px; }
+/* QR әрқашан қолжетімді */
+.qrbtn { position: fixed; right: 14px; bottom: 96px; z-index: 21; display: flex; align-items: center; gap: 8px; }
+.qrov { position: fixed; inset: 0; z-index: 40; background: rgba(244,248,242,.92); backdrop-filter: blur(6px); display: grid; place-items: center; padding: 16px; }
+.qrov #qrbig .qrfx { --qs: min(40vh, 320px); }
+.qrov .glass { padding: 26px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; max-width: 520px; }
+.qrov .big { font-family: var(--display); font-weight: 900; font-size: clamp(48px, 7vw, 96px); letter-spacing: 10px; line-height: 1; color: var(--amber); }
+.jsteps { display: grid; gap: 8px; width: 100%; text-align: left; }
+.jsteps p { display: flex; gap: 10px; align-items: center; font-weight: 800; font-size: clamp(15px, 1.3vw, 19px); }
+.jsteps b { flex: none; width: 30px; height: 30px; border-radius: 10px; display: grid; place-items: center; color: #fff; background: linear-gradient(180deg, var(--amber2), var(--amber)); font-family: var(--display); }
+.teamchip[data-u] { cursor: pointer; border: none; font: inherit; font-weight: 800; font-size: 15px; }
+
+/* 45 минуттық сабақ: уақыт жолағы, кезеңдер, слайдтар */
+#app { padding-bottom: 96px; }
+.lbar { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; padding: 8px 14px; border-radius: 18px; font-weight: 800; }
+.lbar .stg { font-family: var(--display); font-weight: 900; font-size: clamp(16px, 1.5vw, 21px); margin-right: auto; }
+.lbar .clock { font-family: var(--display); font-weight: 900; font-variant-numeric: tabular-nums; font-size: clamp(16px, 1.5vw, 21px); }
+.lbar .over { color: var(--bad); }
+.lprog { flex-basis: 100%; height: 8px; border-radius: 999px; background: rgba(20,43,38,.08); overflow: hidden; display: flex; }
+.lprog i { display: block; height: 100%; }
+.stepper { position: fixed; left: 50%; bottom: 10px; transform: translateX(-50%); z-index: 20; display: flex; gap: 4px; padding: 6px; border-radius: 18px; max-width: calc(100vw - 20px); overflow-x: auto; scrollbar-width: none; }
+.stepper button { flex: none; border: none; background: transparent; border-radius: 12px; padding: 6px 9px; display: flex; flex-direction: column; align-items: center; gap: 1px; min-width: 66px; font-weight: 800; font-size: 12px; color: var(--muted); }
+.stepper button b { font-family: var(--display); font-size: 16px; color: var(--ink); }
+.stepper button.done b { color: var(--good); }
+.stepper button.on { background: linear-gradient(180deg, var(--amber2), var(--amber)); color: #fff; box-shadow: 0 8px 16px -8px rgba(224,122,31,.8); }
+.stepper button.on b { color: #fff; }
+.stepper .nav { min-width: 44px; font-size: 22px; color: var(--ink); }
+.slide { display: flex; flex-direction: column; gap: 14px; animation: rise .5s ease both; }
+.shead { padding: 16px 22px; display: flex; flex-direction: column; gap: 6px; }
+.shead h1 { font-size: clamp(28px, 3.4vw, 52px); }
+.shead .lead { font-weight: 700; color: var(--muted); font-size: clamp(16px, 1.4vw, 21px); }
+.hero { position: relative; border-radius: 28px; overflow: hidden; min-height: 62vh; display: flex; align-items: flex-end; box-shadow: 0 24px 50px -24px rgba(20,43,38,.6); }
+.hero > img, .hero > video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; animation: drift 22s ease-in-out infinite alternate; }
+.hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(10,30,25,.86), rgba(10,30,25,.45) 60%, rgba(10,30,25,.05)); }
+.hero .in { position: relative; z-index: 1; padding: clamp(20px, 3vw, 44px); color: #F6F2E8; display: flex; flex-direction: column; gap: 12px; max-width: 760px; }
+.hero h1 { font-size: clamp(34px, 5vw, 76px); }
+.hero .eyebrow { color: #FFC16B; }
+.hero p { font-weight: 700; font-size: clamp(16px, 1.5vw, 22px); }
+.hero .plain { color: var(--ink); }
+.hero > video { animation: none; }
+.hero.welcome { min-height: calc(100vh - 200px); }
+.welcome .in { max-width: 900px; gap: 14px; }
+.wtitle { font-family: var(--display); font-weight: 900; font-size: clamp(40px, 6vw, 92px); line-height: 1.02; margin: 0; }
+.wtitle span { display: inline-block; opacity: 0; transform: translateY(26px) scale(.9); animation: wordin .8s cubic-bezier(.2,.9,.3,1.2) forwards; background: linear-gradient(100deg, #FFF6E2 0%, #FFD27A 35%, #FFFFFF 50%, #FFD27A 65%, #FFF6E2 100%); background-size: 250% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; margin-right: .22em; }
+.wtitle span.go { animation: wordin .8s cubic-bezier(.2,.9,.3,1.2) forwards, shimmer 4s linear 1.6s infinite; }
+@keyframes wordin { to { opacity: 1; transform: none; } }
+@keyframes shimmer { from { background-position: 100% 0; } to { background-position: -150% 0; } }
+.fadein { opacity: 0; animation: wordin .8s ease forwards; }
+.welcome .guests { font-size: clamp(17px, 1.7vw, 24px) !important; font-weight: 800 !important; color: #FFE7BD; }
+.topiccard { display: flex; align-items: center; gap: 14px; padding: 12px 16px; border-radius: 18px; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.28); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); max-width: 720px; }
+.topiccard b { font-family: var(--display); font-weight: 900; font-size: clamp(18px, 2vw, 28px); line-height: 1.15; color: #fff; }
+.topiccard small { display: block; font-weight: 800; font-size: 13px; letter-spacing: 1.5px; text-transform: uppercase; color: #FFC16B; margin-bottom: 2px; }
+.topiccard .ic { flex: none; width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; background: linear-gradient(180deg, #5FCB8B, #1F8A55); box-shadow: 0 1px 0 rgba(255,255,255,.5) inset; }
+.motto { font-family: var(--display); font-weight: 800 !important; font-style: italic; font-size: clamp(18px, 1.8vw, 26px) !important; color: #fff; border-left: 4px solid #FFC16B; padding-left: 14px; }
+.wchips { display: flex; flex-wrap: wrap; gap: 8px; }
+.wchips span { padding: 6px 12px; border-radius: 999px; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.3); font-weight: 800; font-size: clamp(13px, 1.1vw, 16px); color: #F6F2E8; }
+.shead.vbg { position: relative; overflow: hidden; }
+.shead .bgv { position: absolute; z-index: 0; top: 0; right: 0; bottom: 0; width: 52%; height: 100%; object-fit: cover; -webkit-mask-image: linear-gradient(90deg, transparent, #000 45%); mask-image: linear-gradient(90deg, transparent, #000 45%); opacity: .95; }
+.shead.vbg > :not(.bgv) { max-width: 62%; }
+@media (max-width: 760px) { .shead .bgv { width: 100%; opacity: .25; } .shead.vbg > :not(.bgv) { max-width: none; } }
+.gc video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .8s ease; }
+.gc.open video { opacity: 1; }
+.hero .qrmini { position: absolute; z-index: 1; right: 22px; bottom: 22px; background: rgba(255,255,255,.92); border-radius: 22px; padding: 10px 10px 8px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--ink); font-weight: 800; }
+.hero .qrmini .qrfx { --qs: 130px; }
+.hero .qrmini .qrin { padding: 10px; } .hero .qrmini .cn { width: 18px; height: 18px; border-width: 3px; }
+@keyframes drift { from { transform: scale(1.04); } to { transform: scale(1.14) translateX(-2%); } }
+.vidbig { width: 100%; max-height: 64vh; border-radius: 24px; background: #0E1F1B; display: block; box-shadow: 0 24px 50px -24px rgba(20,43,38,.6); }
+.split { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+@media (max-width: 980px) { .split { grid-template-columns: minmax(0, 1fr); } }
+.boxp { padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; }
+.boxp h2 { font-size: clamp(20px, 2vw, 30px); }
+.boxp p, .boxp li { font-weight: 700; font-size: clamp(15px, 1.35vw, 20px); }
+.boxp ul, .boxp ol { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 6px; }
+.cols3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 980px) { .cols3 { grid-template-columns: minmax(0, 1fr); } }
+.lvlrow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.lvlrow div { border-radius: 14px; padding: 10px; text-align: center; font-weight: 800; }
+.lvlrow b { display: block; font-family: var(--display); font-size: clamp(20px, 2vw, 30px); }
+.g7 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 980px) { .g7 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.gc { position: relative; border-radius: 22px; overflow: hidden; min-height: clamp(150px, 22vh, 230px); border: none; padding: 0; text-align: left; color: #fff; background: #1F4A40; box-shadow: 0 16px 30px -18px rgba(0,0,0,.6); }
+.gc img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .6s ease, filter .6s ease; }
+.gc::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(8,24,20,.9), rgba(8,24,20,.15) 70%); }
+.gc .t { position: absolute; z-index: 1; left: 0; right: 0; bottom: 0; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; }
+.gc .t b { font-family: var(--display); font-size: clamp(15px, 1.35vw, 20px); line-height: 1.15; }
+.gc .t span { font-weight: 700; font-size: clamp(13px, 1.1vw, 16px); opacity: 0; max-height: 0; transition: opacity .5s ease, max-height .5s ease; }
+.gc .num { position: absolute; z-index: 1; top: 10px; left: 10px; width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; font-family: var(--display); font-weight: 900; font-size: 20px; background: linear-gradient(180deg, var(--amber2), var(--amber)); }
+.gc.closed img { filter: blur(10px) grayscale(.7); transform: scale(1.15); }
+.gc.closed .t b { opacity: 0; }
+.gc.closed .num { background: rgba(255,255,255,.25); }
+.gc.closed::before { content: "?"; position: absolute; z-index: 1; inset: 0; display: grid; place-items: center; font-family: var(--display); font-weight: 900; font-size: 64px; color: rgba(255,255,255,.85); }
+.gc.open .t span { opacity: .95; max-height: 120px; }
+.gc.open { animation: pop .5s cubic-bezier(.2,.9,.3,1.3) both; }
+.gc.key { background: linear-gradient(160deg, #FFF6E6, #FFE2B8); color: var(--ink); display: flex; flex-direction: column; justify-content: center; gap: 8px; padding: 16px; }
+.gc.key::after { display: none; }
+.gc.key b { font-family: var(--display); font-size: clamp(26px, 3vw, 46px); color: var(--amber); }
+.counters { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
+.counter { padding: 14px 18px; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 14px; align-items: center; }
+.counter b { grid-row: span 2; font-family: var(--display); font-weight: 900; font-size: clamp(36px, 4vw, 64px); font-variant-numeric: tabular-nums; min-width: 3ch; }
+.counter span { font-weight: 800; font-size: clamp(15px, 1.3vw, 19px); }
+.counter small { font-weight: 700; color: var(--muted); font-size: clamp(13px, 1.1vw, 16px); }
+.kz { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 980px) { .kz { grid-template-columns: minmax(0, 1fr); } }
+.kzc { padding: 0; display: flex; flex-direction: column; }
+.kzc video { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; background: #0E1F1B; display: block; }
+.kzc .b { padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
+.kzc h3 { font-size: clamp(18px, 1.7vw, 24px); }
+.kzc p { font-weight: 700; font-size: clamp(14px, 1.2vw, 18px); }
+.kzc .src { font-size: 13px; color: var(--muted); }
+.kzc .ans { border-radius: 12px; padding: 8px 12px; background: var(--good-bg); color: #13603A; font-weight: 800; animation: pop .45s ease both; }
+.treewrap { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 14px; align-items: stretch; }
+@media (max-width: 980px) { .treewrap { grid-template-columns: minmax(0, 1fr); } }
+.treecard { padding: 10px; position: relative; display: flex; align-items: center; justify-content: center; background: radial-gradient(80% 70% at 50% 35%, #F3FBEF, #FFFFFF 70%) !important; }
+.treecard svg { width: 100%; max-height: 62vh; display: block; }
+.treecard .cnt { position: absolute; left: 18px; top: 14px; font-family: var(--display); font-weight: 900; font-size: clamp(16px, 1.5vw, 22px); }
+.treecard .cnt b { font-size: 1.8em; color: var(--good); }
+.leaf { transform-box: fill-box; transform-origin: 50% 100%; animation: leafpop .9s cubic-bezier(.2,.9,.3,1.4) both; cursor: pointer; }
+.leaf.sway { animation: sway 4s ease-in-out infinite alternate; }
+@keyframes leafpop { 0% { transform: scale(0) rotate(-40deg); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+@keyframes sway { from { transform: rotate(-6deg); } to { transform: rotate(6deg); } }
+.quote { padding: 22px; display: flex; flex-direction: column; gap: 12px; justify-content: center; min-height: 200px; }
+.quote .qtext { font-family: var(--display); font-weight: 800; font-size: clamp(22px, 2.3vw, 36px); line-height: 1.2; transition: opacity .5s ease, transform .5s ease; }
+.quote .qtext.out { opacity: 0; transform: translateY(10px); }
+.quote .qleaf { width: 46px; height: 46px; }
+.guestqr { padding: 14px; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 14px; align-items: center; background: linear-gradient(160deg, #FFF8E8, #FFFFFF) !important; }
+.guestqr .qrfx { --qs: 110px; padding: 5px; } .guestqr .qrin { padding: 9px; } .guestqr .cn { width: 16px; height: 16px; border-width: 3px; } .guestqr .scan { display: none; }
+.guestqr p { font-weight: 700; font-size: clamp(13px, 1.1vw, 16px); }
+.guestqr b.n { font-family: var(--display); font-size: 28px; color: #C98A0B; }
+.qlabel { display: inline-flex; align-self: flex-start; gap: 6px; align-items: center; padding: 4px 12px; border-radius: 999px; font-weight: 800; font-size: 13px; background: var(--good-bg); color: #13603A; }
+.qlabel.guest { background: #FFF1D6; color: #8A5300; }
+.quote .qtext.g { font-size: clamp(19px, 1.8vw, 28px); }
+.quote .qtext small { display: block; margin-top: 8px; font-family: var(--body); font-weight: 800; font-size: .6em; color: var(--muted); }
+.apple { transform-box: fill-box; transform-origin: 50% 0%; animation: leafpop .9s cubic-bezier(.2,.9,.3,1.4) both; cursor: pointer; }
+.side3 { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.mini3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.mini3 div { border-radius: 16px; padding: 10px; text-align: center; font-weight: 800; }
+.mini3 b { display: block; font-family: var(--display); font-size: clamp(26px, 3vw, 44px); }
+.bigfb .fb b { font-size: clamp(40px, 5vw, 72px); }
+.bigfb .fb div { font-size: clamp(16px, 1.5vw, 22px); padding: 18px; }
+.bigfb .cmts { max-height: 40vh; }
+.bigfb .cmts p { font-size: clamp(15px, 1.3vw, 19px); animation: rise .4s ease both; }
+</style>
+</head>
+<body>
+<div id="app"><p class="muted" style="padding:20px">Жүктелуде…</p></div>
+<div class="confetti" id="confetti" aria-hidden="true"></div>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js"></script>
+<script src="config.js"></script>
+<script src="core.js"></script>
+<script>
+(async function () {
+  const Q = ECO.QUESTIONS, T = ECO.TEAMS, L = ECO.LETTERS, esc = ECO.esc;
+  const app = document.getElementById('app');
+  const $ = (id) => document.getElementById(id);
+  /* ойын коды */
+  const params = new URLSearchParams(location.search);
+  let code = params.get('code');
+  try { if (!code) code = localStorage.getItem('ecolive_host_code'); } catch (e) {}
+  const newCode = () => String(Math.floor(1000 + Math.random() * 9000));
+  if (!code) code = newCode();
+  try { localStorage.setItem('ecolive_host_code', code); } catch (e) {}
+  let be;
+  try { be = await ECO.connect({ role: 'host', code }); } catch (e) {
+    if (e && e.code === 'busy') { try { localStorage.removeItem('ecolive_host_code'); } catch (x) {} location.replace('host.html'); return; }
+    app.innerHTML = '<div class="glass" style="padding:20px"><h2>Қосылу мүмкін болмады</h2><p class="muted">Интернетті тексеріп, бетті жаңартыңыз.</p><p class="muted">' + esc(e.message) + '</p></div>'; return; }
+  const G = 'games/' + code;
+
+  let capsule = null; try { capsule = JSON.parse(localStorage.getItem('eco_teams_v1') || 'null'); } catch (e) {}
+  const teamNames = (capsule && capsule.names) || T.map((t) => t.name);
+  const existing = await be.get(G + '/meta');
+  if (!existing) await be.set(G + '/meta', { host: be.uid, phase: 'slide', stage: 0, stageTitle: 'Сәлемдесу', stageNote: 'Телефоныңды дайында. Келесі кезеңде QR-код шығады.', stageStart: be.TS, q: -1, created: be.TS, teamNames });
+  else if (existing.stage === undefined && existing.phase === 'lobby' && existing.host === be.uid) await be.update(G + '/meta', { phase: 'slide', stage: 0, stageTitle: 'Сәлемдесу', stageNote: '', stageStart: be.TS });
+  else if (existing.host !== be.uid && !be.demo) { app.innerHTML = '<div class="glass" style="padding:20px"><h2>Бұл код бос емес</h2><p class="muted">Басқа құрылғыда осы кодпен ойын ашылған.</p><button class="gloss" id="nw">Жаңа ойын ашу</button></div>'; $('nw').onclick = () => { try { localStorage.removeItem('ecolive_host_code'); } catch (e) {} location.href = 'host.html'; }; return; }
+
+  const joinUrl = new URL('join.html?code=' + code, location.href).href;
+  const guestUrl = joinUrl + '&g=1';
+  let game = {}; let mounted = ''; let seen = new Set(); let tick = null;
+
+  function confetti(n) { const box = $('confetti'); const cols = ['#43B36B', '#3FA4E8', '#F2A541', '#FFD86B', '#F27C6B'];
+    for (let i = 0; i < n; i++) { const p = document.createElement('i'); p.style.left = Math.random() * 100 + 'vw'; p.style.background = cols[i % 5]; p.style.animationDuration = (1.8 + Math.random() * 1.8) + 's'; p.style.animationDelay = Math.random() * .5 + 's'; box.appendChild(p); setTimeout(() => p.remove(), 4500); } }
+  const tname = (i) => esc(((game.meta && game.meta.teamNames) || teamNames)[i] || T[i].name);
+  const grad = (i) => 'linear-gradient(180deg,' + T[i].c1 + ',' + T[i].c2 + ')';
+
+  /* ---------- 45 минуттық сабақтың кезеңдері ---------- */
+  const STAGES = [
+    { id: 'title', kind: 'slide', min: 1, short: 'Сәлем', title: 'Сәлемдесу', note: 'Телефоныңды дайында. Келесі кезеңде QR-код шығады.' },
+    { id: 'join', kind: 'join', min: 3, short: 'Топтар', title: 'Топқа бөлу', note: '' },
+    { id: 'video', kind: 'slide', min: 2, short: 'Бейне', title: '2050 жылдан SOS', note: 'Экрандағы бейнені мұқият қара: Жерге не болды?' },
+    { id: 'goal', kind: 'slide', min: 2, short: 'Мақсат', title: 'Мақсат және бағалау', note: 'Әркім жеке ұпай жинайды. Топ ұпайы — мүшелерінің орташа ұпайы.' },
+    { id: 'learn1', kind: 'slide', min: 5, short: '20-сурет', title: '20-сурет: ықпалдың 7 түрі', note: 'Экранға қара: табиғатқа әсердің 7 түрі.' },
+    { id: 'learn2', kind: 'slide', min: 3, short: '21-сурет', title: '21-сурет: жылыжай эффектісі', note: '343, 103, 168 сандарын есте сақта.' },
+    { id: 'learn3', kind: 'slide', min: 3, short: 'Қазақстан', title: 'Қазақстандағы мысалдар', note: 'Әр мысал 20-суреттегі қай түрге жатады? Ойлан.' },
+    { id: 'r1', kind: 'round', min: 9, short: '1-раунд', title: '1-раунд: Білім', from: 0, to: 5 },
+    { id: 'r2', kind: 'round', min: 9, short: '2-раунд', title: '2-раунд: Логика және өмір', from: 6, to: Q.length - 1 },
+    { id: 'results', kind: 'results', min: 3, short: 'Нәтиже', title: 'Қорытынды және бағалау', note: 'Өз нәтижеңді телефоннан қара.' },
+    { id: 'feedback', kind: 'feedback', min: 3, short: 'Пікір', title: 'Кері байланыс', note: '' },
+    { id: 'home', kind: 'slide', min: 2, short: 'Үйге', title: 'Үй тапсырмасы', note: 'Жылыжай эффектісінің климаттың өзгеруіне әсері туралы шағын эссе жаз (оқулық, 56-б.). Бір жаңа дерек қос: WMO бойынша 2024 жыл — бақылау тарихындағы ең ыстық жыл (~+1,55°C).' }
+  ];
+  const TOTAL = STAGES.reduce((s, x) => s + x.min, 0); /* 45 */
+  const curStage = () => { const s = (game.meta || {}).stage; return typeof s === 'number' ? s : -1; };
+  const roundOf = (qi) => STAGES.findIndex((s) => s.kind === 'round' && qi >= s.from && qi <= s.to);
+
+  function goStage(i) {
+    if (i < 0 || i >= STAGES.length) return;
+    const s = STAGES[i], m = game.meta || {};
+    const upd = { stage: i, stageTitle: s.title, stageNote: s.note || '', stageStart: be.TS };
+    if (!m.lessonStart && i > 0) upd.lessonStart = be.TS;
+    if (s.kind === 'slide') upd.phase = 'slide';
+    else if (s.kind === 'join') upd.phase = 'lobby';
+    else if (s.kind === 'results') upd.phase = 'end';
+    else if (s.kind === 'feedback') upd.phase = 'feedback';
+    else if (s.kind === 'round') {
+      const starts = m.starts || {}; let k = s.from;
+      while (k <= s.to && typeof starts[k] === 'number') k++;
+      if (k > s.to) { upd.phase = 'board'; upd.q = s.to; }
+      else { upd.phase = 'question'; upd.q = k; upd['starts/' + k] = be.TS; }
+    }
+    be.update(G + '/meta', upd);
+  }
+  /* сұрақтан кейін: раунд ішінде келесі сұрақ, раунд соңында рейтинг, рейтингтен кейін келесі кезең */
+  function afterReveal(fromBoard) {
+    const m = game.meta; const r = roundOf(m.q);
+    if (r < 0) return m.q < Q.length - 1 ? startQ(m.q + 1) : be.update(G + '/meta', { phase: 'end' });
+    if (m.q < STAGES[r].to) return startQ(m.q + 1);
+    if (!fromBoard) return be.update(G + '/meta', { phase: 'board' });
+    goStage(r + 1);
+  }
+  function nextLabel(fromBoard) {
+    const m = game.meta; const r = roundOf(m.q);
+    if (r >= 0 && m.q < STAGES[r].to) return 'Келесі сұрақ →';
+    if (r >= 0 && !fromBoard) return 'Раунд қорытындысы →';
+    return r >= 0 && STAGES[r + 1] ? STAGES[r + 1].title + ' →' : 'Қорытынды →';
+  }
+
+  const mmss = (ms) => { ms = Math.max(0, ms); const s = Math.floor(ms / 1000); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+  function lessonBar() {
+    const i = curStage(); if (i < 0) return '';
+    const s = STAGES[i];
+    const before = STAGES.slice(0, i).reduce((a, x) => a + x.min, 0);
+    return '<div class="lbar glass"><span class="stg">' + (i + 1) + '. ' + esc(s.title) + '</span><span class="pill">Жоспар: ' + s.min + ' мин</span><span class="pill">Кезеңде: <span class="clock" id="stc">0:00</span></span><span class="pill">Сабақ: <span class="clock" id="lsc">0:00</span> / ' + TOTAL + ':00</span>' +
+      '<div class="lprog">' + STAGES.map((x, k) => '<i style="width:' + (x.min / TOTAL * 100) + '%;background:' + (k < i ? '#43B36B' : k === i ? 'linear-gradient(90deg,#F7B24A,#E07A1F)' : 'transparent') + ';' + (k ? 'border-left:2px solid rgba(255,255,255,.9)' : '') + '"></i>').join('') + '</div>' +
+      '<span class="muted" style="font-weight:700;font-size:13px;flex-basis:100%">Жоспар бойынша бұл кезең ' + before + '–' + (before + s.min) + '-минуттарда.</span></div>';
+  }
+  function stepper() {
+    const i = curStage(); if (i < 0) return '';
+    return '<nav class="stepper glass" aria-label="Сабақ кезеңдері"><button class="nav" id="sp" aria-label="Алдыңғы кезең">‹</button>' +
+      STAGES.map((s, k) => '<button data-st="' + k + '" class="' + (k === i ? 'on' : k < i ? 'done' : '') + '"><b>' + (k < i ? '✓' : k + 1) + '</b>' + esc(s.short) + '<span style="font-weight:700;opacity:.8">' + s.min + ' мин</span></button>').join('') +
+      '<button class="nav" id="sn" aria-label="Келесі кезең">›</button></nav>';
+  }
+  function chrome() {
+    if (curStage() < 0) return;
+    const tb = app.querySelector('.top');
+    if (tb && curStage() !== 0 && !app.querySelector('.lbar')) tb.insertAdjacentHTML('afterend', lessonBar());
+    const old = document.querySelector('.stepper'); if (old) old.remove();
+    const oq = document.querySelector('.qrbtn'); if (oq) oq.remove();
+    const ph = (game.meta || {}).phase;
+    if (ph !== 'lobby' && curStage() !== 0) { document.body.insertAdjacentHTML('beforeend', '<button class="gloss qrbtn" id="qrb">QR · ' + code + '</button>'); $('qrb').onclick = showQR; }
+    document.body.insertAdjacentHTML('beforeend', stepper());
+    document.querySelectorAll('[data-st]').forEach((b) => b.onclick = () => goStage(+b.dataset.st));
+    $('sp').onclick = () => goStage(curStage() - 1);
+    $('sn').onclick = () => goStage(curStage() + 1);
+    const on = document.querySelector('.stepper .on'); if (on && on.scrollIntoView) on.scrollIntoView({ block: 'nearest', inline: 'center' });
+    clockTick();
+  }
+  function makeQR(el, size, url) {
+    url = url || joinUrl;
+    if (!el) return;
+    el.innerHTML = '<div class="qrfx"><div class="qrin"><div class="qrc"></div><i class="cn c1"></i><i class="cn c2"></i><i class="cn c3"></i><i class="cn c4"></i><span class="logo"><svg viewBox="-20 -20 40 40" aria-hidden="true"><path d="M0,-17 C12,-12 14,7 0,17 C-14,7 -12,-12 0,-17Z" fill="#fff"/><path d="M0,-12 L0,14" stroke="#1F8A55" stroke-width="2.4"/></svg></span><i class="scan"></i></div></div>';
+    try { new QRCode(el.querySelector('.qrc'), { text: url, width: size, height: size, colorDark: '#0F3D2E', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H }); }
+    catch (e) { el.querySelector('.qrc').innerHTML = '<p class="muted" style="max-width:200px;font-weight:700">QR жүктелмеді. Сілтеме: ' + esc(joinUrl.replace(/^https?:\/\//, '')) + '</p>'; el.querySelector('.logo').remove(); }
+  }
+  function showQR() {
+    const n = Object.keys(game.players || {}).length;
+    document.body.insertAdjacentHTML('beforeend', '<div class="qrov" id="qrov"><div class="glass"><p class="eyebrow">Сабаққа қосылу</p><div id="qrbig"></div><div class="big">' + code + '</div><p class="muted" style="font-weight:800">Қосылғандар: ' + n + ' · Жаңа оқушы автоматты түрде топқа түседі</p><div class="guestqr glass" style="text-align:left"><div id="gqr2"></div><div><p class="eyebrow">Ұстаздарға</p><p>Сабақ туралы пікіріңізді «Екі жұлдыз, бір тілек» әдісімен кез келген уақытта жазыңыз.</p></div></div><button class="plain" id="qrx">Жабу</button></div></div>');
+    makeQR($('qrbig'), 512); makeQR($('gqr2'), 256, guestUrl);
+    const close = () => { const o = $('qrov'); if (o) o.remove(); };
+    $('qrx').onclick = close; $('qrov').onclick = (e) => { if (e.target.id === 'qrov') close(); };
+  }
+  function clockTick() {
+    const m = game.meta || {}; const s = STAGES[curStage()];
+    const st = $('stc'), ls = $('lsc');
+    if (st && typeof m.stageStart === 'number') { const ms = be.now() - m.stageStart; st.textContent = mmss(ms); st.classList.toggle('over', s && ms > s.min * 60000); }
+    if (ls && typeof m.lessonStart === 'number') { const ms = be.now() - m.lessonStart; ls.textContent = mmss(ms); ls.classList.toggle('over', ms > TOTAL * 60000); }
+  }
+  setInterval(clockTick, 500);
+  document.addEventListener('keydown', (e) => {
+    if (e.target && /INPUT|TEXTAREA|VIDEO/.test(e.target.tagName)) return;
+    const ph = (game.meta || {}).phase; if (!['slide', 'lobby', 'end', 'feedback'].includes(ph)) return;
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); goStage(curStage() + 1); }
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); goStage(curStage() - 1); }
+  });
+
+  /* ---------- SLIDES ---------- */
+  const SEVEN = [
+    ['forest', 'Құрлықтағы ормандардың жойылуы', 'Орман — биологиялық ресурс. Ормандар құрлықтың 26,8%-ын алып жатыр.', 'bg_cut'],
+    ['erosion', 'Топырақтың эрозиямен антропогендік бұзылуы', 'Жыл сайын тек эрозия есебінен 6–7 млн га жер айналымнан шығады.'],
+    ['desert', 'Антропогендік шөлейттену', 'Халық санының өсуі мен жердің толық игерілуі шөлейттенуді күшейтеді.', 'bg_desert'],
+    ['pollution', 'Табиғи ортаның антропогендік ластануы', 'Өнеркәсіп, көлік, қалдықтар ауаны, суды, топырақты ластайды.', 'bg_factory'],
+    ['greenhouse', 'Жылыжай эффектісінің пайда болуы', 'Газдар жылуды ұстап қалады: 343 → 103 → 168 Вт/м² (21-сурет).', 'bg_heat'],
+    ['water', 'Табиғи айналымдардың бұзылуы', 'Бүгінгі басты мәселе — судың ластануы.', 'bg_oil'],
+    ['sprout', 'Табиғаттың өзін-өзі қалпына келтіру қабілетінің төмендеуі', 'Табиғат адам бұзған жерді қалпына келтіріп үлгермейді.']
+  ];
+  const KZ = [
+    { v: 'bg_aral', h: 'Арал теңізі', p: 'Өзен суы егін суаруға алынып, теңіз тартылды. 2021–2025 жылдары Арал табанының 920 мың га-дан астамына сексеуіл отырғызылды.', s: 'ҚР Экология министрлігі, 2025', a: '3. Антропогендік шөлейттену · 6. Айналымдардың бұзылуы' },
+    { v: 'bg_factory', h: 'Теміртау', p: 'Металлургия комбинатының түтіні ауаны ластайды. 2025 жылы ірі кәсіпорындардың шығарындысы 2022 жылмен салыстырғанда 7,2%-ға азайды.', s: 'ҚР Экология министрлігі, 2025', a: '4. Табиғи ортаның антропогендік ластануы' },
+    { v: 'v_balk', h: 'Балқаш көлі', p: 'Іле суы су қоймасы мен суаруға алынады. 2025 жылдың қаңтар–маусымында көл деңгейі 32 см көтеріліп, 341,87 м болды.', s: 'bizmedia.kz, 17.07.2025', a: '6. Табиғи айналымдардың бұзылуы' }
+  ];
+  function bgv(name) { return '<video class="bgv" src="media/' + name + '.mp4" autoplay muted loop playsinline aria-hidden="true"></video>'; }
+  function vid(src, cls, attrs) { return '<video class="' + cls + '" src="media/' + src + '.mp4" playsinline preload="metadata" ' + (attrs || 'controls') + '></video>'; }
+  function mountSlide() {
+    const i = curStage(), s = STAGES[i] || STAGES[0];
+    let h = '';
+    if (s.id === 'title') {
+      const words = ['Ашық', 'сабағымызға', 'қош', 'келдіңіздер!'];
+      const MON = ['қаңтар', 'ақпан', 'наурыз', 'сәуір', 'мамыр', 'маусым', 'шілде', 'тамыз', 'қыркүйек', 'қазан', 'қараша', 'желтоқсан']; const dt = new Date(); const today = dt.getDate() + ' ' + MON[dt.getMonth()] + ' ' + dt.getFullYear() + ' ж.';
+      h = '<div class="hero welcome"><video src="media/bg_earth.mp4" poster="' + ECO.IMG('earth') + '" autoplay muted loop playsinline aria-hidden="true"></video><div class="in">' +
+        '<p class="eyebrow fadein">Ашық сабақ · География · 10 «Б» сынып</p>' +
+        '<h1 class="wtitle">' + words.map((w, k) => '<span class="go" style="animation-delay:' + (0.25 + k * 0.28) + 's,' + (1.6 + k * 0.1) + 's">' + w + '</span>').join('') + '</h1>' +
+        '<p class="guests fadein" style="animation-delay:1.5s">Құрметті қонақтар, әріптестер және оқушылар!</p>' +
+        '<div class="topiccard fadein" style="animation-delay:1.9s"><span class="ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></svg></span><span><small>Бүгінгі тақырып · § 15</small><b>Геоэкологиядағы антропогендік факторлар</b></span></div>' +
+        '<p class="motto fadein" style="animation-delay:2.3s">«Бүгінгі шешім — 2050 жылғы Жер.»</p>' +
+        '<div class="wchips fadein" style="animation-delay:2.7s"><span>Мұғалім: А. Еспенбетова</span>' + (today ? '<span>' + esc(today) + '</span>' : '') + '<span>45 минут</span><span>3 топ</span><span>12 сұрақ</span></div>' +
+        '<div class="row fadein" style="animation-delay:3s"><button class="gloss" id="nx">Сабақты бастау →</button><button class="plain" id="fs">Толық экран</button></div></div>' +
+        '<div class="qrmini fadein" style="animation-delay:3.2s"><div id="qr"></div>Телефонды дайында<br>Код: ' + code + '</div></div>';
+      setTimeout(() => confetti(70), 1500);
+    } else if (s.id === 'video') {
+      h = '<div class="split">' + vid('v_intro', 'vidbig', 'controls poster="media/poster.jpg"') +
+        '<div class="boxp glass"><p class="eyebrow">Проблемалық сұрақ</p><h2>2050 жыл. Жерден SOS-хабар келді.</h2><p>Бейнеден кейін ойланыңдар:</p><ol><li>Жерге не болды?</li><li>Оған адамның қандай әрекеттері себеп болды?</li><li>Мұны әлі де өзгертуге бола ма?</li></ol><p class="muted">Жауапты бүгінгі сабақтың соңында тексереміз.</p><div class="row"><button class="gloss" id="nx">Келесі →</button></div></div></div>';
+    } else if (s.id === 'goal') {
+      h = '<div class="shead glass vbg">' + bgv('bg_river') + '<p class="eyebrow">Сабақтың мақсаты</p><h1>Табиғатқа әсер ететін антропогендік факторларды топтастырып, олардың салдарын Қазақстан мысалдарымен түсіндіру</h1></div>' +
+        '<div class="cols3"><div class="boxp glass"><p class="eyebrow">Бағалау критерийлері</p><ul><li>20-суреттегі ықпалдың 7 түрін ажыратады</li><li>Себеп-салдарды түсіндіреді (Арал, жылыжай эффектісі)</li><li>Оқулықтағы білімді Қазақстан мысалымен байланыстырады</li></ul></div>' +
+        '<div class="boxp glass"><p class="eyebrow">Ұпай қалай есептеледі</p><ul><li>Дұрыс жауап — <b>500</b> ұпай</li><li>Жылдамдыққа — <b>+500-ге дейін</b> бонус</li><li>Қате немесе уақыт бітсе — 0</li><li>Топ ұпайы — мүшелерінің <b>орташа</b> ұпайы</li></ul></div>' +
+        '<div class="boxp glass"><p class="eyebrow">Деңгейлер</p><div class="lvlrow"><div style="background:var(--good-bg);color:#13603A"><b>85%+</b>Жоғары</div><div style="background:#FFF1D6;color:#8A5300"><b>50%+</b>Орта</div><div style="background:var(--bad-bg);color:#8A2414"><b>&lt;50%</b>Қолдау қажет</div></div><p class="muted">Деңгей дұрыс жауаптардың үлесі бойынша. Әркім өз нәтижесін телефоннан көреді.</p></div></div>' +
+        '<div class="ctrl"><button class="gloss" id="nx">Жаңа тақырыпқа →</button></div>';
+    } else if (s.id === 'learn1') {
+      h = '<div class="shead glass vbg">' + bgv('bg_earth') + '<span class="pg">Оқулық · 54-б.</span><p class="eyebrow">20-сурет · модель</p><h1>Табиғатқа антропогендік ықпалдың 7 түрі</h1><p class="lead">Карточканы басып ашыңдар. Ашпас бұрын сыныптан сұраңыз: бұл қай түр болуы мүмкін?</p></div>' +
+        '<div class="g7">' + SEVEN.map((c, k) => '<button class="gc closed" data-g="' + k + '"><img src="' + ECO.IMG(c[0]) + '" alt="">' + (c[3] ? '<video src="media/' + c[3] + '.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>' : '') + '<span class="num">' + (k + 1) + '</span><span class="t"><b>' + esc(c[1]) + '</b><span>' + esc(c[2]) + '</span></span></button>').join('') +
+        '<div class="gc key"><b>7</b><p style="font-weight:800">түр — бүгінгі кодтың бірінші саны. Екінші саны 21-суретте жасырын.</p></div></div>' +
+        '<div class="ctrl"><button class="plain" id="all">Бәрін ашу</button><button class="gloss" id="nx">21-сурет →</button></div>';
+    } else if (s.id === 'learn2') {
+      h = '<div class="shead glass vbg">' + bgv('bg_heat') + '<span class="pg">Оқулық · 55-б.</span><p class="eyebrow">21-сурет · жылыжай эффектісі</p><h1>Жер неге қызып барады?</h1><p class="lead">Күн жылуы келеді, бір бөлігі қайтады, қалғанын жылыжай газдары ұстап қалады.</p></div>' +
+        '<div class="split">' + vid('v_greenhouse', 'vidbig', 'controls muted loop') +
+        '<div class="boxp glass"><p class="eyebrow">21-суреттегі сандар</p><div class="counters">' +
+        [[343, 'Келетін күн радиациясы', 'Вт/м² · атмосфераға келеді'], [103, 'Шағылған радиация', 'Вт/м² · ғарышқа қайтады'], [168, 'Жер бетін жылытатын энергия', 'Вт/м² · жылыжай газдары жылуды ұстайды']].map((c) => '<div class="counter glass"><b data-to="' + c[0] + '">0</b><span>' + c[1] + '</span><small>' + c[2] + '</small></div>').join('') +
+        '</div><p class="muted">Код: 7 (түр) + 168 (Вт/м²) = <b>7168</b></p><div class="row"><button class="gloss" id="nx">Қазақстан мысалдары →</button></div></div></div>';
+    } else if (s.id === 'learn3') {
+      h = '<div class="shead glass vbg">' + bgv('bg_desert') + '<p class="eyebrow">Өмірмен байланыс · 2025 жылғы деректер</p><h1>Бұл мысалдар 20-суреттегі қай түрге жатады?</h1><p class="lead">Бейнені қосыңыз, сынып жауап берген соң «Жауабы» батырмасын басыңыз.</p></div>' +
+        '<div class="kz">' + KZ.map((c, k) => '<div class="kzc glass">' + vid(c.v, '', 'controls muted loop autoplay') + '<div class="b"><h3>' + esc(c.h) + '</h3><p>' + esc(c.p) + '</p><p class="src">' + esc(c.s) + '</p><div id="ka' + k + '"><button class="plain" data-ka="' + k + '">Жауабы</button></div></div></div>').join('') + '</div>' +
+        '<div class="ctrl"><button class="gloss" id="nx">1-раундты бастау →</button></div>';
+    } else if (s.id === 'home') {
+      h = '<div class="split">' + vid('v_valley', 'vidbig', 'controls muted loop autoplay') +
+        '<div class="boxp glass"><span class="pg">Оқулық · 56-б.</span><p class="eyebrow">Үй тапсырмасы</p><h2>Шағын эссе</h2><p>«Жылыжай эффектісінің климаттың өзгеруіне әсері» туралы шағын эссе жазыңдар.</p><p>Эссеге бір жаңа дерек қосыңдар: WMO мәліметінше, 2024 жыл бақылау тарихындағы ең ыстық жыл болды (өнеркәсіпке дейінгі деңгейден ~1,55°C жоғары).</p>' +
+        '<p class="eyebrow" style="margin-top:6px">Проблемалық сұраққа оралайық</p><p>2050 жылғы Жерді өзгертуге бола ма? Бүгін білгендеріңмен бір сөйлеммен жауап бер.</p><div class="row"><button class="gloss" id="nx">Сабақ аяқталды</button></div></div></div>';
+    }
+    app.innerHTML = topbar() + '<div class="slide">' + h + '</div>';
+    if ($('qr')) makeQR($('qr'), 256);
+    if ($('fs')) $('fs').onclick = () => { try { const r = document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); if (r && r.catch) r.catch(() => {}); } catch (e) {} };
+    if ($('nx')) $('nx').onclick = () => (i < STAGES.length - 1 ? goStage(i + 1) : confetti(220));
+    const playIn = (b) => { const v = b.querySelector('video'); if (v) { const r = v.play(); if (r && r.catch) r.catch(() => {}); } };
+    app.querySelectorAll('[data-g]').forEach((b) => b.onclick = () => { b.classList.remove('closed'); b.classList.add('open'); playIn(b); if (!app.querySelector('.gc.closed')) confetti(80); });
+    if ($('all')) $('all').onclick = () => { app.querySelectorAll('.gc.closed').forEach((b, k) => setTimeout(() => { b.classList.remove('closed'); b.classList.add('open'); playIn(b); }, k * 180)); setTimeout(() => confetti(80), 1300); };
+    app.querySelectorAll('[data-ka]').forEach((b) => b.onclick = () => { const k = +b.dataset.ka; $('ka' + k).innerHTML = '<p class="ans">' + esc(KZ[k].a) + '</p>'; });
+    app.querySelectorAll('[data-to]').forEach((el, k) => { const to = +el.dataset.to; const t0 = performance.now() + k * 600;
+      const step = (t) => { const p = Math.min(1, Math.max(0, (t - t0) / 1400)); el.textContent = Math.round(to * (1 - Math.pow(1 - p, 3))); if (p < 1) requestAnimationFrame(step); };
+      requestAnimationFrame(step); });
+  }
+
+  /* ---------- FEEDBACK STAGE: Экоуәде ағашы ---------- */
+  const LEAFC = ['#3BB273', '#F2B33D', '#F0765F'];
+  const leafPath = 'M0,-17 C12,-12 14,7 0,17 C-14,7 -12,-12 0,-17Z';
+  const SPOTS = (() => { const a = []; for (let k = 0; k < 70; k++) { const r = Math.sqrt((k + .5) / 70), t = k * 2.39996; a.push([300 + Math.cos(t) * r * 225, 205 + Math.sin(t) * r * 150, (k * 47) % 70 - 35]); } return a; })();
+  let leafSeen = new Set(), appleSeen = new Set(), quoteTimer = null, quoteIx = 0;
+  const APPLES = [[150, 260], [450, 250], [230, 120], [380, 110], [300, 70], [110, 190], [500, 180], [200, 320], [410, 330], [340, 200], [255, 215], [470, 300]];
+  function treeSvg() {
+    return '<svg viewBox="0 0 600 560" role="img" aria-label="Экоуәде ағашы"><defs><radialGradient id="crown" cx="50%" cy="45%" r="55%"><stop offset="0" stop-color="#DDF2D6"/><stop offset="1" stop-color="#C6E7BD" stop-opacity=".25"/></radialGradient><radialGradient id="gold" cx="35%" cy="30%"><stop offset="0" stop-color="#FFF1B8"/><stop offset=".55" stop-color="#F6C343"/><stop offset="1" stop-color="#C98A0B"/></radialGradient><linearGradient id="trunk" x1="0" x2="1"><stop offset="0" stop-color="#8A5A32"/><stop offset="1" stop-color="#6B4325"/></linearGradient></defs>' +
+      '<ellipse cx="300" cy="530" rx="230" ry="22" fill="#CFE6C4"/><ellipse cx="300" cy="205" rx="262" ry="185" fill="url(#crown)"/>' +
+      '<path d="M282 530 C286 450 280 400 270 360 C250 330 210 300 170 280 M292 400 C300 360 330 320 390 285 M300 530 C304 460 306 410 300 340 C298 300 300 260 300 200 M300 330 C340 300 380 250 420 210 M300 300 C260 270 230 230 200 190 M300 250 C300 200 290 150 280 110" stroke="url(#trunk)" stroke-width="14" fill="none" stroke-linecap="round"/>' +
+      '<path d="M268 530 C278 470 282 420 280 380 L320 380 C318 420 322 470 332 530 Z" fill="url(#trunk)"/>' +
+      '<g id="leaves"></g></svg>';
+  }
+  function addLeaves(animate) {
+    const g = $('leaves'); if (!g) return;
+    const fb = game.feedback || {};
+    Object.keys(fb).sort((a, b) => (fb[a].t || 0) - (fb[b].t || 0)).forEach((u) => {
+      if (leafSeen.has(u)) return; const k = leafSeen.size; leafSeen.add(u);
+      const p = SPOTS[(k * 29 + 11) % SPOTS.length], off = Math.floor(k / SPOTS.length) * 9;
+      const el = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      el.setAttribute('transform', 'translate(' + (p[0] + off) + ',' + (p[1] + off) + ') rotate(' + p[2] + ') scale(1.9)');
+      el.innerHTML = '<g class="leaf' + (animate ? '' : ' sway') + '" data-lu="' + esc(u) + '"><path d="' + leafPath + '" fill="' + (LEAFC[fb[u].mood] || LEAFC[0]) + '" stroke="rgba(255,255,255,.8)" stroke-width="1.2"/><path d="M0,-13 L0,14" stroke="rgba(255,255,255,.75)" stroke-width="1.6"/></g>';
+      g.appendChild(el);
+      const lf = el.firstChild; lf.addEventListener('click', () => showQuote(u));
+      if (animate) setTimeout(() => lf.classList.add('sway'), 950);
+    });
+    const gs = game.guests || {};
+    Object.keys(gs).sort((a, b) => (gs[a].t || 0) - (gs[b].t || 0)).forEach((u) => {
+      if (appleSeen.has(u)) return; const k = appleSeen.size; appleSeen.add(u);
+      const p = APPLES[k % APPLES.length];
+      const el = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      el.setAttribute('transform', 'translate(' + p[0] + ',' + p[1] + ') scale(1.6)');
+      el.innerHTML = '<g class="apple" data-ga="' + esc(u) + '"><path d="M0,-16 C2,-22 6,-24 9,-25" stroke="#6B4325" stroke-width="2.4" fill="none"/><path d="M2,-18 C8,-24 14,-22 15,-18 C10,-15 6,-15 2,-18Z" fill="#3BB273"/><circle r="15" fill="url(#gold)" stroke="#fff" stroke-width="1.5"/><ellipse cx="-5" cy="-5" rx="4" ry="6" fill="rgba(255,255,255,.55)"/><path d="M0,-6 l2.4,5 5.4,.6 -4,3.7 1.1,5.3 -4.9,-2.7 -4.9,2.7 1.1,-5.3 -4,-3.7 5.4,-.6z" fill="#fff" opacity=".9"/></g>';
+      g.appendChild(el); el.firstChild.addEventListener('click', () => showQuote('g:' + u));
+    });
+    const c = $('lcnt'); if (c) c.textContent = leafSeen.size;
+    const gc = $('gcnt'); if (gc) gc.textContent = appleSeen.size;
+  }
+  function quotes() {
+    const fb = game.feedback || {}, gs = game.guests || {};
+    return Object.keys(fb).filter((u) => fb[u].text).map((u) => [u, fb[u].t || 0]).concat(Object.keys(gs).map((u) => ['g:' + u, gs[u].t || 0])).sort((a, b) => a[1] - b[1]).map((x) => x[0]);
+  }
+  function showQuote(u) {
+    const q = $('qtext'); if (!q) return;
+    let html = '', label = '', leaf = '';
+    if (u.startsWith('g:')) { const g = (game.guests || {})[u.slice(2)]; if (!g) return;
+      const st = '<span style="color:#F6B92B">★</span> '; html = (g.s1 ? st + esc(g.s1) : '') + (g.s2 ? '<br>' + st + esc(g.s2) : '') + (g.wish ? '<small>Тілек: ' + esc(g.wish) + '</small>' : '');
+      label = '<span class="qlabel guest">Ұстаз пікірі' + (g.name ? ' · ' + esc(g.name) : '') + '</span>';
+      leaf = '<svg viewBox="-20 -28 40 46" class="qleaf"><circle r="15" fill="url(#gold2)"/><defs><radialGradient id="gold2" cx="35%" cy="30%"><stop offset="0" stop-color="#FFF1B8"/><stop offset=".55" stop-color="#F6C343"/><stop offset="1" stop-color="#C98A0B"/></radialGradient></defs></svg>';
+    } else { const f = (game.feedback || {})[u]; if (!f) return; html = '«' + esc(f.text) + '»'; label = '<span class="qlabel">Оқушы ойы</span>';
+      leaf = '<svg viewBox="-20 -20 40 40" class="qleaf"><path d="' + leafPath + '" fill="' + (LEAFC[f.mood] || LEAFC[0]) + '"/></svg>'; }
+    q.classList.add('out');
+    setTimeout(() => { q.innerHTML = html; q.classList.toggle('g', u.startsWith('g:')); const l = $('qleaf'); if (l) l.innerHTML = leaf; const lb = $('qlabel'); if (lb) lb.innerHTML = label; q.classList.remove('out'); }, 450);
+  }
+  function miniCounts() {
+    const c = [0, 0, 0]; Object.values(game.feedback || {}).forEach((x) => { if (x.mood >= 0 && x.mood < 3) c[x.mood]++; });
+    return '<div style="background:var(--good-bg);color:#13603A"><b>' + c[0] + '</b>Түсіндім</div><div style="background:#FFF1D6;color:#8A5300"><b>' + c[1] + '</b>Сұрағым бар</div><div style="background:var(--bad-bg);color:#8A2414"><b>' + c[2] + '</b>Көмек керек</div>';
+  }
+  function updateFeedback() {
+    addLeaves(true);
+    const m3 = $('mini3'); if (m3) m3.innerHTML = miniCounts();
+    const qs = quotes(); const last = qs[qs.length - 1];
+    const lt = last ? (last.startsWith('g:') ? ((game.guests || {})[last.slice(2)] || {}).t : ((game.feedback || {})[last] || {}).t) : 0;
+    if (last && lt && be.now() - lt < 4000) { quoteIx = qs.length - 1; showQuote(last); }
+  }
+  function mountFeedback() {
+    leafSeen = new Set(); appleSeen = new Set(); clearInterval(quoteTimer);
+    const n = Object.keys(game.players || {}).length;
+    app.innerHTML = topbar() + '<div class="slide"><div class="shead glass vbg">' + bgv('bg_river') + '<p class="eyebrow">Кері байланыс · рефлексия</p><h1>Экоуәде ағашы</h1><p class="lead">Оқушылар телефоннан бір сөйлем жазады: әр сөйлем — бір жапырақ. Ұстаздардың пікірі — алтын алма.</p></div>' +
+      '<div class="treewrap"><div class="treecard glass"><p class="cnt"><b id="lcnt">0</b> / ' + n + ' жапырақ</p>' + treeSvg() + '</div>' +
+      '<div class="side3"><div class="quote glass"><p class="eyebrow">Ағаштағы ойлар</p><span id="qlabel"></span><span id="qleaf"></span><p class="qtext" id="qtext">Алғашқы жапырақты күтеміз…</p><p class="muted" style="font-weight:700;font-size:14px">Оқушылар атсыз көрсетіледі. Жапырақты не алманы басып, пікірді ашыңыз.</p></div>' +
+      '<div class="guestqr glass"><div id="gqr"></div><div><p class="eyebrow">Құрметті ұстаздар</p><p>«Екі жұлдыз, бір тілек»: сканерлеп, пікіріңізді жазыңыз. Ол ағашта <b>алтын алма</b> болып шығады.</p><p><b class="n" id="gcnt">0</b> ұстаз пікірі</p></div></div>' +
+      '<div class="glass" style="padding:14px"><p class="eyebrow" style="margin-bottom:8px">Жапырақ түстері</p><div class="mini3" id="mini3">' + miniCounts() + '</div></div>' +
+      '<div class="ctrl" style="justify-content:flex-start"><button class="gloss" id="nx">Үй тапсырмасы →</button></div></div></div></div>';
+    makeQR($('gqr'), 256, guestUrl);
+    addLeaves(false);
+    $('nx').onclick = () => goStage(curStage() + 1);
+    const qs = quotes(); if (qs.length) { quoteIx = qs.length - 1; showQuote(qs[quoteIx]); }
+    quoteTimer = setInterval(() => { if ((game.meta || {}).phase !== 'feedback') return clearInterval(quoteTimer); const q = quotes(); if (q.length < 2) return; quoteIx = (quoteIx + 1) % q.length; showQuote(q[quoteIx]); }, 5000);
+  }
+
+
+  /* жаңа оқушыларды топтарға бөлу */
+  function assignTeams() {
+    const players = game.players || {}, teams = game.teams || {};
+    const counts = [0, 0, 0]; Object.values(teams).forEach((t) => { if (t >= 0 && t < 3) counts[t]++; });
+    const upd = {};
+    Object.keys(players).sort((a, b) => (players[a].joined || 0) - (players[b].joined || 0)).forEach((uid) => {
+      if (teams[uid] !== undefined) return;
+      let t = -1; const nm = String(players[uid].name || '').trim().toLowerCase();
+      if (capsule && capsule.teams) capsule.teams.forEach((tm, i) => { if (tm.some((x) => String(x).trim().toLowerCase() === nm)) t = i; });
+      if (t < 0) { const min = Math.min(...counts); t = counts.indexOf(min); }
+      counts[t]++; upd[uid] = t;
+    });
+    if (Object.keys(upd).length) be.update(G + '/teams', upd);
+  }
+
+  function topbar(noNote) {
+    if (curStage() >= 0 && curStage() !== 1) noNote = true;
+    const m = game.meta || {}; const n = Object.keys(game.players || {}).length;
+    return '<div class="top glass"><div class="brand"><span class="live">LIVE</span><b>Экожарыс</b> <span class="muted" style="font-weight:700;font-size:.7em">§ 15 · 10-сынып</span></div>' +
+      '<span class="pill">Код: <span class="codebox">' + code + '</span></span><span class="pill">Оқушы: ' + n + '</span>' +
+      (['question', 'reveal', 'board'].includes(m.phase) && m.q >= 0 ? '<span class="pill">Сұрақ: ' + (m.q + 1) + ' / ' + Q.length + '</span>' : '') + '</div>' +
+      (noNote ? '' : be.p2p ? '<div class="demo" style="background:#E6F5EC;border-color:#9ED3B2;color:#165C33">Тікелей байланыс: тіркелу керек емес. Сабақ біткенше осы бетті жаппаңыз, оқушылардың телефондары осы бетке қосылған.</div>' : '') +
+      (noNote ? '' : be.demo ? '<div class="demo">Демо режим: Firebase әлі қосылмаған. Оқушы бетін осы компьютердің басқа қойындысында ашып сынап көруге болады. Телефондар үшін config.js-ке Firebase кодын қойыңыз.</div>' : '');
+  }
+
+  /* ---------- LOBBY ---------- */
+  function lobbyCols() {
+    const players = game.players || {}, teams = game.teams || {};
+    return [0, 1, 2].map((i) => { const ids = Object.keys(players).filter((u) => teams[u] === i).sort((a, b) => (players[a].joined || 0) - (players[b].joined || 0));
+      return '<div class="tcol glass"><div class="head" style="background:' + grad(i) + '"><img src="' + ECO.IMG(T[i].key) + '" alt=""><h3>' + tname(i) + '</h3><span>' + ids.length + '</span></div><div class="body">' +
+        ids.map((u) => '<button class="teamchip" data-u="' + esc(u) + '" title="Басқа топқа ауыстыру" style="background:' + grad(i) + (seen.has(u) ? ';animation:none' : '') + '">' + esc(players[u].name) + '</button>').join('') + '</div></div>'; }).join('');
+  }
+  function mountLobby() {
+    app.innerHTML = topbar() + '<div class="lobby"><div class="joincard glass"><p class="eyebrow">Телефоннан кіріңдер</p><div id="qr"></div><div class="big">' + code + '</div><div class="jsteps"><p><b>1</b>Камерамен QR-кодты сканерле</p><p><b>2</b>Атың мен тегіңді жаз, «Кіру» бас</p><p><b>3</b>Тобың телефоныңда шығады</p></div><p class="url muted">' + esc(joinUrl.replace(/^https?:\/\//, '')) + '</p></div>' +
+      '<div style="display:flex;flex-direction:column;gap:14px;min-width:0"><div class="teams3" id="cols">' + lobbyCols() + '</div>' +
+      '<div class="glass" style="padding:16px;display:flex;flex-direction:column;gap:10px"><h2 style="font-size:clamp(20px,2vw,28px)">Ереже</h2><p class="muted" style="font-weight:700;font-size:clamp(15px,1.3vw,18px)">' + Q.length + ' сұрақ. Әр оқушы өз телефонынан жеке жауап береді. Дұрыс жауап — 500 ұпай, жылдам жауапқа +500-ге дейін бонус. Топ ұпайы — мүшелерінің орташа ұпайы, сондықтан топтың саны әртүрлі болса да әділ есептеледі.</p><p class="muted" style="font-weight:800">Топтарды жүйе өзі тең бөледі. Оқушының атын басып, оны басқа топқа ауыстыра аласыз.</p>' +
+      '<div class="row"><button class="gloss" id="go">' + (curStage() >= 0 ? 'Топтар дайын, бейнеге →' : 'Жарысты бастау') + '</button><button class="plain" id="nw">Жаңа код</button><button class="plain" id="fs">Толық экран</button></div></div></div></div>';
+    makeQR($('qr'), 512);
+    bindChips();
+    $('go').onclick = () => { if (curStage() >= 0) return goStage(curStage() + 1); if (!Object.keys(game.players || {}).length) return; startQ(0); };
+    $('nw').onclick = () => { try { localStorage.removeItem('ecolive_host_code'); } catch (e) {} location.href = 'host.html'; };
+    $('fs').onclick = () => { try { const r = document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); if (r && r.catch) r.catch(() => {}); } catch (e) {} };
+  }
+  function bindChips() { app.querySelectorAll('[data-u]').forEach((b) => b.onclick = () => { const u = b.dataset.u; const t = (game.teams || {})[u]; const upd = {}; upd[u] = ((t >= 0 ? t : 0) + 1) % 3; be.update(G + '/teams', upd); }); }
+  function updateLobby() {
+    const c = $('cols'); if (c) { c.innerHTML = lobbyCols(); bindChips(); }
+    Object.keys(game.players || {}).forEach((u) => { if ((game.teams || {})[u] !== undefined) seen.add(u); });
+    const tb = document.querySelector('.top'); if (tb) tb.outerHTML = topbar(true);
+  }
+
+  /* ---------- QUESTION ---------- */
+  function startQ(k) { const upd = { phase: 'question', q: k }; upd['starts/' + k] = be.TS; be.update(G + '/meta', upd); }
+  function qBody(q) {
+    if (q.t === 'mc') return '<div class="opts">' + q.o.map((o, j) => '<div class="opt o' + j + '"><b>' + L[j] + '</b><span>' + esc(o) + '</span></div>').join('') + '</div>';
+    if (q.t === 'img') return '<div class="opts">' + q.o.map((o, j) => '<div class="opt img o' + j + '"><b>' + L[j] + '</b><img src="' + ECO.IMG(o) + '" alt=""></div>').join('') + '</div>';
+    if (q.t === 'tf') return '<div class="opts"><div class="opt o3"><b>✓</b><span>Шын</span></div><div class="opt o0"><b>✗</b><span>Жалған</span></div></div>';
+    if (q.t === 'num') return '<div class="numbox glass">Жауапты телефонға жазыңдар · ' + esc(q.unit) + '</div>';
+    if (q.t === 'order') return '<div class="optlist">' + q.o.map((o, j) => '<div class="opt o' + (j % 4) + '"><b>' + L[j] + '</b><span>' + esc(o) + '</span></div>').join('') + '</div>';
+  }
+  function answeredCards() {
+    const m = game.meta, players = game.players || {}, teams = game.teams || {}, ans = (game.answers || {})[m.q] || {};
+    return [0, 1, 2].map((i) => { const ids = Object.keys(players).filter((u) => teams[u] === i); const done = ids.filter((u) => ans[u]).length;
+      return '<div class="acard glass"><div class="h"><span style="color:' + T[i].ink + '">' + tname(i) + '</span><b>' + done + ' / ' + ids.length + '</b></div><div class="track"><i style="width:' + (ids.length ? done / ids.length * 100 : 0) + '%;background:' + grad(i) + '"></i></div>' +
+        '<div class="dots">' + ids.map((u) => '<i class="' + (ans[u] ? 'on' : '') + '" style="' + (ans[u] ? 'background:' + T[i].c2 : '') + '">' + esc(players[u].name) + '</i>').join('') + '</div></div>'; }).join('');
+  }
+  function mountQuestion() {
+    const m = game.meta, q = Q[m.q]; const len = 2 * Math.PI * 44;
+    app.innerHTML = topbar() + '<div class="qhead glass"><div class="qn">' + (m.q + 1) + '/' + Q.length + '<small>сұрақ</small></div><div class="qt"><h2>' + esc(q.q) + '</h2>' + (q.hint ? '<p class="hint">' + esc(q.hint) + '</p>' : '') + '</div><span class="pg">' + esc(q.src) + '</span>' +
+      '<div class="ring" id="ring"><svg viewBox="0 0 100 100" aria-hidden="true"><defs><linearGradient id="rg" x1="0" x2="1"><stop offset="0" stop-color="#F7B24A"/><stop offset="1" stop-color="#E07A1F"/></linearGradient></defs><circle cx="50" cy="50" r="44" fill="#fff" stroke="rgba(20,43,38,.08)" stroke-width="10"/><circle class="arc" cx="50" cy="50" r="44" fill="none" stroke="url(#rg)" stroke-width="10" stroke-linecap="round" stroke-dasharray="' + len + ' ' + len + '"/></svg><div class="n">' + q.time + '</div></div></div>' +
+      qBody(q) + '<div class="answered" id="ans">' + answeredCards() + '</div><div class="ctrl"><button class="gloss" id="rv">Жауапты ашу</button></div>';
+    $('rv').onclick = reveal;
+    clearInterval(tick);
+    tick = setInterval(() => {
+      const mm = game.meta; if (!mm || mm.phase !== 'question') return clearInterval(tick);
+      const st = mm.starts && mm.starts[mm.q]; if (!st || typeof st !== 'number') return;
+      const left = Math.max(0, Math.ceil((st + q.time * 1000 - be.now()) / 1000));
+      const r = $('ring'); if (r) { r.querySelector('.n').textContent = left; r.querySelector('.arc').setAttribute('stroke-dasharray', (len * left / q.time) + ' ' + len); r.classList.toggle('low', left <= 5); }
+      if (left <= 0) { clearInterval(tick); reveal(); }
+    }, 250);
+  }
+  function updateQuestion() {
+    const a = $('ans'); if (a) a.innerHTML = answeredCards();
+    const players = game.players || {}; const ans = (game.answers || {})[game.meta.q] || {};
+    const n = Object.keys(players).length; if (n && Object.keys(players).every((u) => ans[u])) setTimeout(reveal, 700);
+  }
+  function reveal() { if (game.meta && game.meta.phase === 'question') { clearInterval(tick); be.update(G + '/meta', { phase: 'reveal' }); } }
+
+  /* ---------- REVEAL ---------- */
+  function mountReveal() {
+    const m = game.meta, q = Q[m.q], players = game.players || {}, teams = game.teams || {}, ans = (game.answers || {})[m.q] || {}, st = m.starts[m.q];
+    const ids = Object.keys(ans);
+    let dist = '';
+    if (q.t === 'mc' || q.t === 'img' || q.t === 'tf') {
+      const opts = q.t === 'tf' ? [[true, 'Шын'], [false, 'Жалған']] : q.o.map((o, j) => [j, L[j] + ') ' + (q.t === 'img' ? 'сурет' : o)]);
+      const max = Math.max(1, ids.length);
+      dist = opts.map(([v, lbl], j) => { const c = ids.filter((u) => ans[u].v === v).length; const ok = v === q.a;
+        return '<div class="drow"><div style="min-width:0"><p class="lbl">' + (ok ? '✓ ' : '') + esc(lbl) + '</p><div class="bar" data-w="' + (c / max * 100) + '" style="background:' + (ok ? 'linear-gradient(180deg,#43C47A,#1E9A5A)' : 'linear-gradient(180deg,#C9D3D0,#9AA9A4)') + '"></div></div><b>' + c + '</b></div>'; }).join('');
+    } else {
+      const ok = ids.filter((u) => ECO.isRight(q, ans[u].v)).length;
+      dist = '<div class="drow"><div><p class="lbl">✓ Дұрыс</p><div class="bar" data-w="' + (ids.length ? ok / ids.length * 100 : 0) + '" style="background:linear-gradient(180deg,#43C47A,#1E9A5A)"></div></div><b>' + ok + '</b></div>' +
+        '<div class="drow"><div><p class="lbl">✗ Қате</p><div class="bar" data-w="' + (ids.length ? (ids.length - ok) / ids.length * 100 : 0) + '" style="background:linear-gradient(180deg,#F08B7C,#D2452F)"></div></div><b>' + (ids.length - ok) + '</b></div>';
+    }
+    const fast = ids.filter((u) => ECO.isRight(q, ans[u].v) && players[u]).sort((a, b) => ans[a].t - ans[b].t).slice(0, 3);
+    const teamOk = [0, 1, 2].map((i) => { const tm = Object.keys(players).filter((u) => teams[u] === i); const ok = tm.filter((u) => ans[u] && ECO.isRight(q, ans[u].v)).length; return [ok, tm.length]; });
+    app.innerHTML = topbar() + '<div class="qhead glass"><div class="qn">' + (m.q + 1) + '/' + Q.length + '<small>сұрақ</small></div><div class="qt"><h2>' + esc(q.q) + '</h2></div><div></div></div>' +
+      '<div class="reveal"><div style="display:flex;flex-direction:column;gap:14px;min-width:0"><div class="correct glass"><p class="eyebrow" style="color:var(--good)">Дұрыс жауап</p><h2' + (ECO.answerText(q).length > 60 ? ' class="long"' : '') + '>' + esc(ECO.answerText(q)) + '</h2>' + (q.why ? '<p class="muted" style="font-weight:700">' + esc(q.why) + '</p>' : '') + '<span class="pg">' + esc(q.src) + '</span></div>' +
+      '<div class="dist glass"><p class="eyebrow">Жауаптар · ' + ids.length + ' оқушы</p>' + dist + '</div></div>' +
+      '<div style="display:flex;flex-direction:column;gap:14px;min-width:0"><div class="fast glass"><p class="eyebrow">Ең жылдам дұрыс жауап</p>' + (fast.length ? fast.map((u, k) => '<div class="frow" style="animation-delay:' + (k * .15) + 's"><span class="medal m' + (k + 1) + '">' + (k + 1) + '</span><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis">' + esc(players[u].name) + '</span><span class="dot" style="background:' + T[teams[u]].c2 + '"></span><span class="pill">' + ((ans[u].t - st) / 1000).toFixed(1) + ' с</span></div>').join('') : '<p class="muted" style="font-weight:700">Дұрыс жауап болмады.</p>') + '</div>' +
+      '<div class="answered">' + [0, 1, 2].map((i) => '<div class="acard glass"><div class="h"><span style="color:' + T[i].ink + '">' + tname(i) + '</span><b>' + teamOk[i][0] + ' / ' + teamOk[i][1] + '</b></div><div class="track"><i style="width:' + (teamOk[i][1] ? teamOk[i][0] / teamOk[i][1] * 100 : 0) + '%;background:' + grad(i) + '"></i></div><p class="muted" style="font-weight:700;font-size:13px">дұрыс жауап берді</p></div>').join('') + '</div></div></div>' +
+      '<div class="ctrl"><button class="plain" id="lbb">Рейтинг</button><button class="gloss" id="nx">' + esc(nextLabel(false)) + '</button></div>';
+    requestAnimationFrame(() => setTimeout(() => app.querySelectorAll('.bar').forEach((b) => { b.style.width = b.dataset.w + '%'; }), 80));
+    if (fast.length) confetti(40);
+    $('nx').onclick = () => afterReveal(false);
+    $('lbb').onclick = () => be.update(G + '/meta', { phase: 'board' });
+  }
+
+  /* ---------- LEADERBOARD ---------- */
+  function teamBars(res) {
+    const max = Math.max(1, ...res.teamRows.map((t) => t.avg));
+    return res.teamRows.map((t, k) => '<div class="tbar" style="animation-delay:' + (k * .12) + 's"><span class="medal m' + (k + 1) + '">' + (k + 1) + '</span><span class="nm">' + tname(t.i) + ' <span class="muted" style="font-size:.75em">· ' + t.n + ' оқушы</span></span><span class="sc">' + t.avg + '</span><div class="tr"><i data-w="' + (t.avg / max * 100) + '" style="background:' + grad(t.i) + '"></i></div></div>').join('');
+  }
+  function indivTable(rows, limit) {
+    const teams = game.teams || {};
+    return '<div class="scroll"><table class="tbl"><thead><tr><th>№</th><th>Оқушы</th><th>Топ</th><th>Дұрыс</th><th>Орт. уақыт</th><th>Ұпай</th>' + (limit ? '' : '<th>Деңгей</th>') + '</tr></thead><tbody>' +
+      rows.slice(0, limit || rows.length).map((r, k) => { const lv = ECO.level(r); return '<tr style="animation-delay:' + Math.min(k * .05, 1) + 's"><td class="rk">' + r.rank + '</td><td><b>' + esc(r.name) + '</b></td><td>' + (r.team !== undefined ? '<span class="dot" style="background:' + T[r.team].c2 + '"></span>' + tname(r.team) : '—') + '</td><td class="n">' + r.correct + '/' + r.total + '</td><td class="n">' + (r.correct ? r.time.toFixed(1) + ' с' : '—') + '</td><td class="n"><b>' + r.score + '</b></td>' + (limit ? '' : '<td>' + (lv[1] ? '<span class="lvl ' + lv[1] + '">' + lv[0] + '</span>' : '—') + '</td>') + '</tr>'; }).join('') + '</tbody></table></div>';
+  }
+  function mountBoard() {
+    const m = game.meta, res = ECO.compute(game);
+    app.innerHTML = topbar() + '<div class="lb"><div class="lbcard glass"><p class="eyebrow">' + (roundOf(m.q) >= 0 && m.q === STAGES[roundOf(m.q)].to ? esc(STAGES[roundOf(m.q)].title) + ' аяқталды · ' : '') + 'Топтар · орташа ұпай</p>' + teamBars(res) + '</div><div class="lbcard glass"><p class="eyebrow">Үздік 10 оқушы</p>' + indivTable(res.rows, 10) + '</div></div>' +
+      '<div class="ctrl"><button class="gloss" id="nx">' + esc(nextLabel(true)) + '</button></div>';
+    requestAnimationFrame(() => setTimeout(() => app.querySelectorAll('.tr i').forEach((b) => { b.style.width = b.dataset.w + '%'; }), 80));
+    $('nx').onclick = () => afterReveal(true);
+  }
+
+  /* ---------- END ---------- */
+  function feedbackBox() {
+    const fb = game.feedback || {}; const v = Object.values(fb); const c = [0, 0, 0]; v.forEach((x) => { if (x.mood >= 0 && x.mood < 3) c[x.mood]++; });
+    const texts = v.filter((x) => x.text).map((x) => x.text);
+    return '<div class="lbcard glass"><p class="eyebrow">Оқушылардан кері байланыс · ' + v.length + '</p><div class="fb"><div style="background:var(--good-bg)"><b>' + c[0] + '</b>Түсіндім</div><div style="background:#FFF1D6"><b>' + c[1] + '</b>Сұрағым бар</div><div style="background:var(--bad-bg)"><b>' + c[2] + '</b>Көмек керек</div></div>' +
+      (texts.length ? '<p class="muted" style="font-weight:800">Не қиын болды?</p><div class="cmts">' + texts.map((t) => '<p>' + esc(t) + '</p>').join('') + '</div>' : '') + '</div>';
+  }
+  function levelBox(res) {
+    const c = { hi: 0, mid: 0, low: 0 }; res.rows.forEach((r) => { const l = ECO.level(r)[1]; if (c[l] !== undefined) c[l]++; });
+    return '<div class="lbcard glass"><p class="eyebrow">Бағалау · деңгейлер</p><div class="fb"><div style="background:var(--good-bg)"><b>' + c.hi + '</b>Жоғары</div><div style="background:#FFF1D6"><b>' + c.mid + '</b>Орта</div><div style="background:var(--bad-bg)"><b>' + c.low + '</b>Қолдау қажет</div></div><p class="muted" style="font-weight:700">Әр оқушы өз нәтижесін, қате сұрақтарын және оқулықтың бетін телефоннан көреді.</p></div>';
+  }
+  function mountEnd() {
+    const res = ECO.compute(game); const tr = res.teamRows;
+    const order = [tr[1], tr[0], tr[2]];
+    app.innerHTML = topbar() + '<div class="glass" style="padding:20px;display:flex;flex-direction:column;gap:16px"><p class="eyebrow" style="text-align:center">Жарыс аяқталды</p><h1 style="text-align:center;font-size:clamp(30px,4vw,56px)">Жеңімпаз: ' + tname(tr[0].i) + '!</h1>' +
+      '<div class="podium">' + order.map((t, k) => '<div class="step" style="background:' + grad(t.i) + ';height:' + [190, 260, 140][k] + 'px;animation-delay:' + [.3, .6, 0][k] + 's"><span class="pl">' + t.rank + '</span><span class="wh">' + tname(t.i) + '</span><span class="pt">' + t.avg + ' ұпай</span></div>').join('') + '</div></div>' +
+      '<div class="lb"><div style="display:flex;flex-direction:column;gap:14px;min-width:0"><div class="lbcard glass"><p class="eyebrow">Топтар</p>' + teamBars(res) + '</div>' + (curStage() >= 0 ? levelBox(res) : '<div id="fbk">' + feedbackBox() + '</div>') + '</div>' +
+      '<div class="lbcard glass"><p class="eyebrow">Барлық оқушының жеке нәтижесі</p>' + indivTable(res.rows) + '<div class="row"><button class="gloss" id="csv">Кестені көшіру (Excel)</button><span class="muted" id="cpn" style="font-weight:700"></span></div></div></div>' +
+      '<div class="ctrl">' + (curStage() >= 0 ? '<button class="gloss" id="nx">Кері байланыс →</button>' : '') + '<button class="plain" id="nw">Жаңа сабақ</button></div>';
+    if ($('nx')) $('nx').onclick = () => goStage(curStage() + 1);
+    requestAnimationFrame(() => setTimeout(() => app.querySelectorAll('.tr i').forEach((b) => { b.style.width = b.dataset.w + '%'; }), 80));
+    confetti(180);
+    $('csv').onclick = () => { const tsv = ['№\tОқушы\tТоп\tДұрыс\tБарлығы\tОрт. уақыт (с)\tҰпай\tДеңгей'].concat(res.rows.map((r) => [r.rank, r.name, r.team !== undefined ? ((game.meta.teamNames || teamNames)[r.team]) : '', r.correct, r.total, r.correct ? r.time.toFixed(1) : '', r.score, ECO.level(r)[0]].join('\t'))).join('\n');
+      const fbk = () => { const rg = document.createRange(); rg.selectNodeContents(app.querySelector('.tbl')); const s = getSelection(); s.removeAllRanges(); s.addRange(rg); $('cpn').textContent = 'Кесте белгіленді, Ctrl+C басыңыз.'; };
+      try { navigator.clipboard.writeText(tsv).then(() => { $('cpn').textContent = 'Көшірілді! Excel-ге қойыңыз.'; }, fbk); } catch (e) { fbk(); } };
+    $('nw').onclick = () => { try { localStorage.removeItem('ecolive_host_code'); } catch (e) {} location.href = 'host.html'; };
+  }
+
+  /* ---------- router ---------- */
+  be.on(G, (v) => {
+    game = v || {};
+    const m = game.meta || {};
+    if (m.host === be.uid || be.demo) assignTeams();
+    const key = m.phase + ':' + m.q + ':' + (m.starts && typeof m.starts[m.q] === 'number' ? 1 : 0) + ':' + m.stage;
+    if (key !== mounted) {
+      mounted = key;
+      if (m.phase === 'lobby') mountLobby();
+      else if (m.phase === 'question') mountQuestion();
+      else if (m.phase === 'reveal') mountReveal();
+      else if (m.phase === 'board') mountBoard();
+      else if (m.phase === 'end') mountEnd();
+      else if (m.phase === 'slide') mountSlide();
+      else if (m.phase === 'feedback') mountFeedback();
+      chrome();
+    } else {
+      if (m.phase === 'lobby') updateLobby();
+      else if (m.phase === 'question') updateQuestion();
+      else if (m.phase === 'end') { const f = $('fbk'); if (f) f.innerHTML = feedbackBox(); }
+      else if (m.phase === 'feedback') updateFeedback();
+    }
+  });
+})();
+</script>
+</body>
+</html>

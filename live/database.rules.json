@@ -1,0 +1,15 @@
+{
+  "rules": {
+    "games": {
+      "$code": {
+        ".read": "auth != null",
+        "meta": { ".write": "auth != null && (!data.exists() || data.child('host').val() === auth.uid)" },
+        "teams": { ".write": "auth != null && root.child('games').child($code).child('meta/host').val() === auth.uid" },
+        "players": { "$uid": { ".write": "auth != null && $uid === auth.uid" } },
+        "answers": { "$q": { "$uid": { ".write": "auth != null && $uid === auth.uid && !data.exists()" } } },
+        "feedback": { "$uid": { ".write": "auth != null && $uid === auth.uid" } },
+        "guests": { "$uid": { ".write": "auth != null && $uid === auth.uid" } }
+      }
+    }
+  }
+}
