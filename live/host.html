@@ -193,6 +193,18 @@
 .lprog { flex-basis: 100%; height: 8px; border-radius: 999px; background: rgba(20,43,38,.08); overflow: hidden; display: flex; }
 .lprog i { display: block; height: 100%; }
 .stepper { position: fixed; left: 50%; bottom: 10px; transform: translateX(-50%); z-index: 20; display: flex; gap: 4px; padding: 6px; border-radius: 18px; max-width: calc(100vw - 20px); overflow-x: auto; scrollbar-width: none; }
+.sgrp { display: flex; flex-direction: column; align-items: stretch; gap: 2px; padding: 0 4px; border-left: 1px solid var(--line); }
+.sgrp:first-of-type { border-left: none; }
+.sgl { font-size: 10px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); text-align: center; white-space: nowrap; }
+.sgrp.cur .sgl { color: var(--amber); }
+.sgb { display: flex; gap: 2px; }
+.stepper button { min-width: 58px !important; padding: 4px 6px !important; }
+.phpill { padding: 6px 12px; border-radius: 999px; font-weight: 900; font-size: 13px; letter-spacing: .5px; color: #fff; background: linear-gradient(180deg, #4C7FD1, #2B5BA8); }
+.boxp.tasks4 ol { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 760px) { .boxp.tasks4 ol { grid-template-columns: minmax(0, 1fr); } }
+.boxp.tasks4 li { display: flex; gap: 14px; align-items: center; padding: 14px; border-radius: 18px; background: rgba(255,255,255,.8); border: 1px solid var(--line); font-size: clamp(16px, 1.5vw, 22px) !important; }
+.boxp.tasks4 li b { flex: none; width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; color: #fff; font-family: var(--display); font-size: 22px; background: linear-gradient(180deg, var(--amber2), var(--amber)); }
+.howto { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 4px; font-weight: 700; font-size: clamp(14px, 1.2vw, 17px); }
 .stepper button { flex: none; border: none; background: transparent; border-radius: 12px; padding: 6px 9px; display: flex; flex-direction: column; align-items: center; gap: 1px; min-width: 66px; font-weight: 800; font-size: 12px; color: var(--muted); }
 .stepper button b { font-family: var(--display); font-size: 16px; color: var(--ink); }
 .stepper button.done b { color: var(--good); }
@@ -329,6 +341,21 @@
 .rlres.ok { background: var(--good-bg); color: #13603A; } .rlres.no { background: var(--bad-bg); color: #8A2414; }
 .rlres .gloss { margin-left: auto; }
 .rldone { text-align: center; display: flex; flex-direction: column; gap: 12px; align-items: center; padding: 40px 0; }
+.g1 { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 0; padding: 0 !important; overflow: hidden; animation: rise .5s ease both; }
+@media (max-width: 980px) { .g1 { grid-template-columns: minmax(0, 1fr); } }
+.g1m { position: relative; min-height: 46vh; background: #1F4A40; }
+.g1m video, .g1m img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.g1n { position: absolute; left: 16px; top: 16px; font-family: var(--display); font-weight: 900; font-size: 54px; line-height: 1; color: #fff; padding: 10px 16px; border-radius: 20px; background: linear-gradient(180deg, var(--amber2), var(--amber)); box-shadow: 0 14px 28px -12px rgba(224,122,31,.8); }
+.g1n small { font-size: 20px; opacity: .85; margin-left: 4px; }
+.g1t { padding: 20px 22px; display: flex; flex-direction: column; gap: 12px; justify-content: center; }
+.g1t h2 { font-size: clamp(24px, 2.6vw, 40px); animation: textin .6s ease both; }
+.g1x { font-weight: 700; font-size: clamp(16px, 1.5vw, 22px); }
+.g1q { font-weight: 700; font-size: clamp(15px, 1.35vw, 20px); padding: 10px 12px; border-radius: 12px; background: #EAF4FF; border-left: 4px solid #3FA4E8; }
+.g1strip { display: flex; gap: 8px; justify-content: center; margin-top: 12px; flex-wrap: wrap; }
+.g1strip button { position: relative; width: 84px; height: 56px; border-radius: 12px; overflow: hidden; border: 3px solid transparent; padding: 0; background: #1F4A40; opacity: .55; }
+.g1strip button img { width: 100%; height: 100%; object-fit: cover; }
+.g1strip button b { position: absolute; inset: 0; display: grid; place-items: center; color: #fff; font-family: var(--display); font-size: 22px; text-shadow: 0 1px 4px rgba(0,0,0,.7); }
+.g1strip button.done { opacity: .85; } .g1strip button.on { opacity: 1; border-color: var(--amber); transform: translateY(-3px); }
 .counters { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
 .counter { padding: 14px 18px; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 14px; align-items: center; }
 .counter b { grid-row: span 2; font-family: var(--display); font-weight: 900; font-size: clamp(36px, 4vw, 64px); font-variant-numeric: tabular-nums; min-width: 3ch; }
@@ -425,20 +452,22 @@
   const grad = (i) => 'linear-gradient(180deg,' + T[i].c1 + ',' + T[i].c2 + ')';
 
   /* ---------- 45 минуттық сабақтың кезеңдері ---------- */
+  const PHASES = ['Ұйымдастыру', 'Жаңа сабақ', 'Тапсырмалар', 'Бекіту', 'Кері байланыс'];
   const STAGES = [
-    { id: 'title', kind: 'slide', min: 1, short: 'Сәлем', title: 'Сәлемдесу', note: 'Телефоныңды дайында. Келесі кезеңде QR-код шығады.' },
-    { id: 'join', kind: 'join', min: 3, short: 'Топтар', title: 'Топқа бөлу', note: '' },
-    { id: 'video', kind: 'slide', min: 2, short: 'Бейне', title: '2050 жылдан SOS', note: 'Экрандағы бейнені мұқият қара: Жерге не болды?' },
-    { id: 'goal', kind: 'slide', min: 2, short: 'Мақсат', title: 'Мақсат және бағалау', note: 'Әркім жеке ұпай жинайды. Топ ұпайы — мүшелерінің орташа ұпайы.' },
-    { id: 'learn1', kind: 'slide', min: 4, short: '7 топ', title: 'Адамның табиғатқа ықпалы: 7 топ', note: 'Адамның шаруашылық әрекеті табиғатқа қалай әсер етеді? Оқулықта (20-сурет) бұл ықпал 7 топқа жіктелген.' },
-    { id: 'learn2', kind: 'slide', min: 3, short: 'Жылыжай', title: 'Жылыжай эффектісі қалай пайда болады', note: 'Экрандағы сызбаны қадам бойынша бақыла: 343, 103, 168 және 240 Вт/м² мәндерін есте сақта.' },
-    { id: 'learn3', kind: 'slide', min: 3, short: 'Қазақстан', title: 'Қазақстандағы мысалдар', note: 'Әр мысал 7 топтың қайсысына жатады? Талда.' },
-    { id: 'relay', kind: 'relay', min: 5, short: 'Тақтада', title: 'Тақтадағы эстафета', note: 'Әр топтан кезекпен бір оқушы тақтаға шығады. Экранға қара!' },
-    { id: 'r1', kind: 'round', min: 7, short: '1-раунд', title: '1-раунд: Ұғымдар мен деректер', from: 0, to: 5 },
-    { id: 'r2', kind: 'round', min: 7, short: '2-раунд', title: '2-раунд: Себеп-салдар және өмірмен байланыс', from: 6, to: Q.length - 1 },
-    { id: 'results', kind: 'results', min: 3, short: 'Нәтиже', title: 'Қорытынды және бағалау', note: 'Өз нәтижеңді телефоннан қара.' },
-    { id: 'feedback', kind: 'feedback', min: 3, short: 'Пікір', title: 'Кері байланыс', note: '' },
-    { id: 'home', kind: 'slide', min: 2, short: 'Үйге', title: 'Үй тапсырмасы', note: 'Жылыжай эффектісінің климаттың өзгеруіне әсері туралы шағын эссе жаз (оқулық, 56-б.). Бір жаңа дерек қос: WMO бойынша 2024 жыл — бақылау тарихындағы ең ыстық жыл (~+1,55°C).' }
+    { ph: 0, id: 'title', kind: 'slide', min: 1, short: 'Сәлем', title: 'Сәлемдесу', note: 'Телефоныңды дайында. Келесі кезеңде QR-код шығады.' },
+    { ph: 0, id: 'goal', kind: 'slide', min: 2, short: 'Мақсат', title: 'Мақсат пен міндеттер', note: 'Бүгінгі сабақтың мақсаты: табиғатқа әсер ететін антропогендік факторларды топтастыру.' },
+    { ph: 0, id: 'join', kind: 'join', min: 3, short: 'Ереже', title: 'Топқа бөлу және қолдану ережесі', note: '' },
+    { ph: 0, id: 'assess', kind: 'slide', min: 1, short: 'Бағалау', title: 'Бағалау критерийлері', note: 'Әркім жеке ұпай жинайды. Топ ұпайы — мүшелерінің орташа ұпайы және тақтадағы эстафета ұпайы.' },
+    { ph: 1, id: 'video', kind: 'slide', min: 2, short: 'Бейне', title: 'Проблемалық бейне', note: 'Экрандағы бейнені мұқият қара: Жерге не болды?' },
+    { ph: 1, id: 'learn1', kind: 'slide', min: 4, short: '7 топ', title: 'Адамның табиғатқа ықпалы: 7 топ', note: 'Адамның шаруашылық әрекеті табиғатқа қалай әсер етеді? Оқулықта (20-сурет) бұл ықпал 7 топқа жіктелген.' },
+    { ph: 1, id: 'learn2', kind: 'slide', min: 3, short: 'Жылыжай', title: 'Жылыжай эффектісі қалай пайда болады', note: 'Экрандағы сызбаны қадам бойынша бақыла: 343, 103, 168 және 240 Вт/м² мәндерін есте сақта.' },
+    { ph: 1, id: 'learn3', kind: 'slide', min: 3, short: 'Қазақстан', title: 'Қазақстандағы мысалдар', note: 'Әр мысал 7 топтың қайсысына жатады? Талда.' },
+    { ph: 2, id: 'relay', kind: 'relay', min: 5, short: 'Тақтада', title: 'Тақтадағы эстафета', note: 'Әр топтан кезекпен бір оқушы тақтаға шығады. Экранға қара!' },
+    { ph: 2, id: 'r1', kind: 'round', min: 7, short: '1-раунд', title: '1-раунд: Ұғымдар мен деректер', from: 0, to: 5 },
+    { ph: 3, id: 'r2', kind: 'round', min: 7, short: 'Бекіту', title: 'Бекіту: себеп-салдар және өмірмен байланыс', from: 6, to: Q.length - 1 },
+    { ph: 3, id: 'results', kind: 'results', min: 2, short: 'Нәтиже', title: 'Қорытынды және бағалау', note: 'Өз нәтижеңді телефоннан қара.' },
+    { ph: 4, id: 'feedback', kind: 'feedback', min: 3, short: 'Пікір', title: 'Кері байланыс', note: '' },
+    { ph: 4, id: 'home', kind: 'slide', min: 2, short: 'Үйге', title: 'Үй тапсырмасы', note: 'Жылыжай эффектісінің климаттың өзгеруіне әсері туралы шағын эссе жаз (оқулық, 56-б.). Бір жаңа дерек қос: WMO бойынша 2024 жыл — бақылау тарихындағы ең ыстық жыл (~+1,55°C).' }
   ];
   const TOTAL = STAGES.reduce((s, x) => s + x.min, 0); /* 45 */
   const curStage = () => { const s = (game.meta || {}).stage; return typeof s === 'number' ? s : -1; };
@@ -486,14 +515,14 @@
     const before = STAGES.slice(0, i).reduce((a, x) => a + x.min, 0);
     const L2 = 2 * Math.PI * 20;
     return '<div class="lbar glass"><div class="cdown" id="cdw"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="20" fill="none" stroke="rgba(20,43,38,.1)" stroke-width="5"/><circle id="cdr" cx="24" cy="24" r="20" fill="none" stroke="url(#cdg)" stroke-width="5" stroke-linecap="round" stroke-dasharray="' + L2 + ' ' + L2 + '" transform="rotate(-90 24 24)"/><defs><linearGradient id="cdg"><stop offset="0" stop-color="#5FCB8B"/><stop offset="1" stop-color="#1F8A55"/></linearGradient></defs></svg><div><small>Тапсырма уақыты</small><b id="cdn">00:00</b></div><button class="plain" id="addm" title="Кезеңге 1 минут қосу">+1 мин</button></div>' +
-      '<span class="stg">' + (i + 1) + '. ' + esc(s.title) + '</span><span class="pill">Кезеңде: <span class="clock" id="stc">00:00</span></span><span class="pill">Сабақ: <span class="clock" id="lsc">00:00</span> / ' + TOTAL + ':00</span>' +
+      '<span class="phpill">' + PHASES[s.ph] + ' кезеңі</span><span class="stg">' + (i + 1) + '. ' + esc(s.title) + '</span><span class="pill">Кезеңде: <span class="clock" id="stc">00:00</span></span><span class="pill">Сабақ: <span class="clock" id="lsc">00:00</span> / ' + TOTAL + ':00</span>' +
       '<div class="lprog">' + STAGES.map((x, k) => '<i style="width:' + (x.min / TOTAL * 100) + '%;background:' + (k < i ? '#43B36B' : k === i ? 'linear-gradient(90deg,#F7B24A,#E07A1F)' : 'transparent') + ';' + (k ? 'border-left:2px solid rgba(255,255,255,.9)' : '') + '"></i>').join('') + '</div>' +
       '<span class="muted" style="font-weight:700;font-size:13px;flex-basis:100%">Жоспар бойынша бұл кезең ' + before + '–' + (before + s.min) + '-минуттарда.</span></div>';
   }
   function stepper() {
     const i = curStage(); if (i < 0) return '';
     return '<nav class="stepper glass" aria-label="Сабақ кезеңдері"><button class="nav" id="sp" aria-label="Алдыңғы кезең">‹</button>' +
-      STAGES.map((s, k) => '<button data-st="' + k + '" class="' + (k === i ? 'on' : k < i ? 'done' : '') + '"><b>' + (k < i ? '✓' : k + 1) + '</b>' + esc(s.short) + '<span style="font-weight:700;opacity:.8">' + s.min + ' мин</span></button>').join('') +
+      PHASES.map((p, pi) => '<div class="sgrp' + (STAGES[i] && STAGES[i].ph === pi ? ' cur' : '') + '"><span class="sgl">' + p + '</span><div class="sgb">' + STAGES.map((s, k) => s.ph !== pi ? '' : '<button data-st="' + k + '" class="' + (k === i ? 'on' : k < i ? 'done' : '') + '"><b>' + (k < i ? '✓' : k + 1) + '</b>' + esc(s.short) + '<span style="font-weight:700;opacity:.8">' + s.min + ' мин</span></button>').join('') + '</div></div>').join('') +
       '<button class="nav" id="sn" aria-label="Келесі кезең">›</button></nav>';
   }
   function chrome() {
@@ -562,6 +591,23 @@
     ['water', 'Қоршаған ортада табиғи айналымдардың бұзылуы', 'Су айналымы — үздіксіз тізбек: бір буынындағы өзгеріс бүкіл тізбектегі өзгерістерге себепші болады.', 'bg_oil', 'Су айналымы · гидросфера', 'Қапшағай су қоймасынан су жіберілген соң, 2025 жылдың қаңтар–маусымында Балқаш деңгейі 32 см көтерілді.'],
     ['sprout', 'Табиғи ортаның өзін-өзі қалпына келтіру қабілетінің төмендеуі', 'Антропогендік ықпал ортаның өзгеру шектерінен асқанда, табиғи орта бұрынғы күйіне орала алмайды.', '', 'Бүкіл табиғи орта', 'Қазақстанда жайылымдардың 20–60%-ы тозған; оларды қалпына келтіру үшін ұзақ уақыт қажет (ҚР Экология министрлігі).']
   ];
+  const GQ = ['Ормандардың жойылуы табиғаттың қандай компоненттеріне әсер етеді?', 'Топырақ эрозиясына адамның қандай шаруашылық әрекеттері себеп болады?', 'Шөлейттенуді қандай табиғи және антропогендік факторлар күшейтеді?', 'Ауаның, судың және топырақтың ластану көздерін атаңдар.', 'Жылыжай газдарының мөлшері неліктен артып отыр?', 'Су айналымының бір буынындағы өзгеріс неге бүкіл тізбекке әсер етеді?', 'Табиғи орта неліктен өзін-өзі қалпына келтіре алмай қалады?'];
+  function renderG1(k) {
+    const box = $('g1'); if (!box) return; const c = SEVEN[k];
+    box.innerHTML = '<div class="g1 glass"><div class="g1m">' + (c[3] ? '<video src="media/' + c[3] + '.mp4" poster="' + ECO.IMG(c[0]) + '" autoplay muted loop playsinline aria-hidden="true"></video>' : '<img src="' + ECO.IMG(c[0]) + '" alt="">') + '<span class="g1n">' + (k + 1) + '<small>/ 7</small></span></div>' +
+      '<div class="g1t"><p class="eyebrow">' + (k + 1) + '-топ · ' + esc(c[4]) + '</p><h2>' + esc(c[1]) + '</h2><p class="g1x">' + esc(c[2]) + '</p><p class="nfbox">Жаңа дерек: ' + esc(c[5]) + '</p><p class="g1q"><b>Сыныпқа сұрақ:</b> ' + esc(GQ[k]) + '</p>' +
+      '<div class="row"><button class="plain" id="g1p"' + (k ? '' : ' disabled') + '>← Алдыңғы</button><button class="gloss" id="g1n">' + (k < 6 ? 'Келесі топ →' : 'Барлық 7 топ →') + '</button></div></div></div>' +
+      '<div class="g1strip">' + SEVEN.map((x, q) => '<button data-g1="' + q + '" class="' + (q === k ? 'on' : q < k ? 'done' : '') + '"><img src="' + ECO.IMG(x[0]) + '" alt=""><b>' + (q + 1) + '</b></button>').join('') + '</div>';
+    $('g1p').onclick = () => renderG1(Math.max(0, k - 1));
+    $('g1n').onclick = () => (k < 6 ? renderG1(k + 1) : showOverview());
+    box.querySelectorAll('[data-g1]').forEach((b) => b.onclick = () => renderG1(+b.dataset.g1));
+    $('g1').hidden = false; const o = $('ovw'); if (o) o.hidden = true; const ob = $('ovb'); if (ob) ob.textContent = 'Барлық 7 топты бір экранда көру';
+  }
+  function showOverview() {
+    $('g1').hidden = true; const o = $('ovw'); o.hidden = false;
+    o.querySelectorAll('.gc.closed').forEach((b, k) => setTimeout(() => { b.classList.remove('closed'); b.classList.add('open'); const v = b.querySelector('video'); if (v) { const r = v.play(); if (r && r.catch) r.catch(() => {}); } }, k * 150));
+    $('ovb').textContent = 'Топтарды ретімен қайта көрсету'; confetti(60);
+  }
   const KZ = [
     { v: 'bg_aral', h: 'Арал теңізі', p: 'Өзен суы егін суаруға алынып, теңіз тартылды. 2021–2025 жылдары Арал табанының 920 мың га-дан астамына сексеуіл отырғызылды.', s: 'ҚР Экология министрлігі, 2025', a: '3. Антропогендік шөлейттену · 6. Қоршаған ортада табиғи айналымдардың бұзылуы' },
     { v: 'bg_factory', h: 'Теміртау', p: 'Металлургия комбинатының түтіні ауаны ластайды. 2025 жылы ірі кәсіпорындардың шығарындысы 2022 жылмен салыстырғанда 7,2%-ға азайды.', s: 'ҚР Экология министрлігі, 2025', a: '4. Табиғи ортаның антропогендік ластануы' },
@@ -615,16 +661,21 @@
       h = '<div class="split">' + vid('v_intro', 'vidbig', 'controls poster="media/poster.jpg"') +
         '<div class="boxp glass"><p class="eyebrow">Проблемалық сұрақ</p><h2>Табиғи ортаның өзгеруіне не себеп болды?</h2><p>Бейнені қарап, талдаңдар:</p><ol><li>Бейнеде табиғи ортаның қандай өзгерістері көрсетілді?</li><li>Олардың себебі табиғи ма, антропогендік пе? Дәлелдеңдер.</li><li>Бұл өзгерістерді азайтуға бола ма?</li></ol><p class="muted">Жауапты сабақтың соңында қайта қарастырамыз.</p><div class="row"><button class="gloss" id="nx">Келесі →</button></div></div></div>';
     } else if (s.id === 'goal') {
-      h = '<div class="shead glass vbg">' + bgv('bg_river') + '<p class="eyebrow">Сабақтың мақсаты</p><h1>Табиғатқа әсер ететін антропогендік факторларды топтастыру</h1></div>' +
+      h = '<div class="shead glass vbg">' + bgv('bg_river') + '<p class="eyebrow">Сабақтың мақсаты</p><h1>Табиғатқа әсер ететін антропогендік факторларды топтастыру</h1><p class="lead">Оқулық, § 15 «Геоэкологиядағы антропогендік факторлар»</p></div>' +
+        '<div class="boxp glass tasks4"><p class="eyebrow">Сабақтың міндеттері</p><ol>' +
+        ['«Антропогендік фактор» ұғымының мәнін түсіндіру', 'Табиғатқа антропогендік ықпалдың 7 тобын ажырату (20-сурет)', 'Жылыжай эффектісінің пайда болуын сызба бойынша түсіндіру (21-сурет)', 'Қазақстандағы мысалдарды ықпал топтарымен сәйкестендіріп, қорғау шараларын ұсыну'].map((t, k) => '<li><b>' + (k + 1) + '</b><span>' + t + '</span></li>').join('') + '</ol></div>' +
+        '<div class="ctrl"><button class="gloss" id="nx">Келесі →</button></div>';
+    } else if (s.id === 'assess') {
+      h = '<div class="shead glass vbg">' + bgv('bg_river') + '<p class="eyebrow">Бағалау</p><h1>Сабақта қалай бағаланамыз?</h1><p class="lead">Әр оқушы жеке бағаланады, топтың ұпайы да есептеледі. Нәтиже сабақ соңында тақтада және әркімнің телефонында шығады.</p></div>' +
         '<div class="cols3"><div class="boxp glass"><p class="eyebrow">Бағалау критерийлері</p><ul><li>Антропогендік факторлардың ықпалын 20-сурет бойынша 7 топқа жіктейді</li><li>Жылыжай эффектісінің пайда болуын 21-сурет бойынша түсіндіреді</li><li>Табиғи айналымдардың бұзылуын себеп-салдар тізбегімен дәлелдейді</li><li>Қазақстан мысалдарын ықпал түрлерімен сәйкестендіреді</li></ul></div>' +
-        '<div class="boxp glass"><p class="eyebrow">Ұпай қалай есептеледі</p><ul><li>Дұрыс жауап — <b>500</b> ұпай</li><li>Жылдамдыққа — <b>+500-ге дейін</b> бонус</li><li>Қате немесе уақыт бітсе — 0</li><li>Топ ұпайы — мүшелерінің <b>орташа</b> ұпайы</li></ul></div>' +
+        '<div class="boxp glass"><p class="eyebrow">Ұпай қалай есептеледі</p><ul><li>Дұрыс жауап — <b>500</b> ұпай</li><li>Жылдамдыққа — <b>+500-ге дейін</b> бонус</li><li>Қате немесе уақыт бітсе — 0</li><li>Топ ұпайы — мүшелерінің <b>орташа</b> ұпайы</li><li>Тақтадағы эстафетада дұрыс жауап — топқа <b>+200</b></li></ul></div>' +
         '<div class="boxp glass"><p class="eyebrow">Деңгейлер</p><div class="lvlrow"><div style="background:var(--good-bg);color:#13603A"><b>85%+</b>Жоғары</div><div style="background:#FFF1D6;color:#8A5300"><b>50%+</b>Орта</div><div style="background:var(--bad-bg);color:#8A2414"><b>&lt;50%</b>Қолдау қажет</div></div><p class="muted">Деңгей дұрыс жауаптардың үлесі бойынша. Әркім өз нәтижесін телефоннан көреді.</p></div></div>' +
-        '<div class="ctrl"><button class="gloss" id="nx">Жаңа тақырыпқа →</button></div>';
+        '<div class="ctrl"><button class="gloss" id="nx">Келесі →</button></div>';
     } else if (s.id === 'learn1') {
-      h = '<div class="shead glass vbg">' + bgv('bg_earth') + '<span class="pg">Оқулық · 54-б.</span><p class="eyebrow">Оқулық, 20-сурет</p><h1>Адамның табиғатқа ықпалы: 7 топ</h1><p class="lead"><b>Антропогендік фактор</b> — адамның шаруашылық әрекетінің табиғатқа әсері. Оқулықта бұл әсерлер табиғаттың қай бөлігі өзгеретініне қарай 7 топқа жіктелген. Карточканы ашпас бұрын болжам жасаңдар.</p></div>' +
-        '<div class="g7">' + SEVEN.map((c, k) => '<button class="gc closed" data-g="' + k + '"><img src="' + ECO.IMG(c[0]) + '" alt="">' + (c[3] ? '<video src="media/' + c[3] + '.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>' : '') + '<span class="num">' + (k + 1) + '</span><span class="sph">' + esc(c[4]) + '</span><span class="t"><b>' + esc(c[1]) + '</b><span>' + esc(c[2]) + '<em class="nf">Жаңа дерек: ' + esc(c[5]) + '</em></span></span></button>').join('') +
-        '<div class="gc key"><p class="eyebrow" style="color:var(--amber)">Неге 7 топ?</p><p style="font-weight:800;font-size:clamp(13px,1.1vw,17px)">Әр топ табиғаттың бір бөлігінің өзгерісін көрсетеді: орман, топырақ, жер, ауа мен су, климат, айналымдар және табиғи ортаның өзін-өзі қалпына келтіру қабілеті.</p></div></div>' +
-        '<div class="ctrl"><button class="plain" id="all">Бәрін ашу</button><button class="gloss" id="nx">Жылыжай эффектісі →</button></div>';
+      h = '<div class="shead glass vbg">' + bgv('bg_earth') + '<span class="pg">Оқулық · 54-б.</span><p class="eyebrow">Оқулық, 20-сурет</p><h1>Адамның табиғатқа ықпалы: 7 топ</h1><p class="lead"><b>Антропогендік фактор</b> — адамның шаруашылық әрекетінің табиғатқа әсері. Оқулықта бұл әсерлер табиғаттың қай бөлігі өзгеретініне қарай 7 топқа жіктелген. Топтарды ретімен қарастырамыз: әрқайсысына сурет, оқулықтағы анықтама, жаңа дерек және сыныпқа сұрақ берілген.</p></div>' +
+        '<div id="g1"></div>' +
+        '<div class="ovw" id="ovw" hidden>' + '<div class="g7">' + SEVEN.map((c, k) => '<button class="gc closed" data-g="' + k + '"><img src="' + ECO.IMG(c[0]) + '" alt="">' + (c[3] ? '<video src="media/' + c[3] + '.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>' : '') + '<span class="num">' + (k + 1) + '</span><span class="sph">' + esc(c[4]) + '</span><span class="t"><b>' + esc(c[1]) + '</b><span>' + esc(c[2]) + '<em class="nf">Жаңа дерек: ' + esc(c[5]) + '</em></span></span></button>').join('') + '<div class="gc key"><p class="eyebrow" style="color:var(--amber)">Неге 7 топ?</p><p style="font-weight:800;font-size:clamp(13px,1.1vw,17px)">Әр топ табиғаттың бір бөлігінің өзгерісін көрсетеді: орман, топырақ, жер, ауа мен су, климат, айналымдар және табиғи ортаның өзін-өзі қалпына келтіру қабілеті.</p></div></div>' + '</div>' +
+        '<div class="ctrl"><button class="plain" id="ovb">Барлық 7 топты бір экранда көру</button><button class="gloss" id="nx">Келесі →</button></div>';
     } else if (s.id === 'learn2') {
       h = '<div class="shead glass vbg">' + bgv('bg_heat') + '<span class="pg">Оқулық · 55-б., 21-сурет</span><p class="eyebrow">Сызба бойынша түсіндіру</p><h1>Жылыжай эффектісі қалай пайда болады?</h1><p class="lead"><b>Жылыжай эффектісі</b> — атмосфера күн радиациясын жерге өткізіп, ал жер бетінен шыққан жылуды жылыжай газдары ұстап қалуы. Жылыжайдың шыны шатыры да жылуды осылай сақтайды.</p></div>' +
         '<div class="ghsplit"><div class="glass ghd">' + GHSVG + '</div><div class="boxp glass ghsteps"><p class="eyebrow">Қадам бойынша</p><ol id="ghl">' + GH.map((t, k) => '<li data-gs="' + (k + 1) + '">' + t + '</li>').join('') + '</ol>' +
@@ -642,13 +693,14 @@
     app.innerHTML = topbar() + '<div class="slide">' + h + '</div>';
     if ($('qr')) makeQR($('qr'), 256);
     if ($('fs')) $('fs').onclick = () => { try { const r = document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); if (r && r.catch) r.catch(() => {}); } catch (e) {} };
-    if ($('nx')) $('nx').onclick = () => (i < STAGES.length - 1 ? goStage(i + 1) : confetti(220));
+    if ($('nx')) { if (s.id !== 'title' && STAGES[i + 1]) $('nx').textContent = STAGES[i + 1].title + ' →'; $('nx').onclick = () => (i < STAGES.length - 1 ? goStage(i + 1) : confetti(220)); }
     const playIn = (b) => { const v = b.querySelector('video'); if (v) { const r = v.play(); if (r && r.catch) r.catch(() => {}); } };
     app.querySelectorAll('[data-g]').forEach((b) => b.onclick = () => { b.classList.remove('closed'); b.classList.add('open'); playIn(b); if (!app.querySelector('.gc.closed')) confetti(80); });
     if ($('all')) $('all').onclick = () => { app.querySelectorAll('.gc.closed').forEach((b, k) => setTimeout(() => { b.classList.remove('closed'); b.classList.add('open'); playIn(b); }, k * 180)); setTimeout(() => confetti(80), 1300); };
     if ($('ghl')) { let gs = 0; const show = (n) => { gs = Math.max(0, Math.min(GH.length, n)); app.querySelectorAll('.gs').forEach((g, k) => g.classList.toggle('on', k < gs)); app.querySelectorAll('[data-gs]').forEach((li, k) => { li.classList.toggle('on', k < gs); li.classList.toggle('cur', k === gs - 1); });
         $('ghc').textContent = gs >= GH.length ? 'Қорытынды: жылыжай газдары көбейген сайын ғарышқа кететін жылу азайып, жер беті көбірек жылиды.' : gs + ' / ' + GH.length + ' қадам'; $('ghn').textContent = gs >= GH.length ? 'Басынан' : 'Келесі қадам →'; };
       $('ghn').onclick = () => show(gs >= GH.length ? 0 : gs + 1); $('ghp').onclick = () => show(gs - 1); app.querySelectorAll('[data-gs]').forEach((li) => li.onclick = () => show(+li.dataset.gs)); show(0); }
+    if ($('g1')) { renderG1(0); $('ovb').onclick = () => ($('ovw').hidden ? showOverview() : renderG1(0)); }
     app.querySelectorAll('[data-ka]').forEach((b) => b.onclick = () => { const k = +b.dataset.ka; $('ka' + k).innerHTML = '<p class="ans">' + esc(KZ[k].a) + '</p>'; });
     app.querySelectorAll('[data-to]').forEach((el, k) => { const to = +el.dataset.to; const t0 = performance.now() + k * 600;
       const step = (t) => { const p = Math.min(1, Math.max(0, (t - t0) / 1400)); el.textContent = Math.round(to * (1 - Math.pow(1 - p, 3))); if (p < 1) requestAnimationFrame(step); };
@@ -849,7 +901,7 @@
   }
 
   function topbar(noNote) {
-    if (curStage() >= 0 && curStage() !== 1) noNote = true;
+    if (curStage() >= 0 && STAGES[curStage()].id !== 'join') noNote = true;
     const m = game.meta || {}; const n = Object.keys(game.players || {}).length;
     return '<div class="top glass"><div class="brand"><span class="live">LIVE</span><b>Экожарыс</b> <span class="muted" style="font-weight:700;font-size:.7em">§ 15 · 10-сынып</span></div>' +
       '<span class="pill">Код: <span class="codebox">' + code + '</span></span><span class="pill">Оқушы: ' + n + '</span>' +
@@ -868,8 +920,8 @@
   function mountLobby() {
     app.innerHTML = topbar() + '<div class="lobby"><div class="joincard glass"><p class="eyebrow">Телефоннан кіріңдер</p><div id="qr"></div><div class="big">' + code + '</div><div class="jsteps"><p><b>1</b>Камерамен QR-кодты сканерле</p><p><b>2</b>Атың мен тегіңді жаз, «Кіру» бас</p><p><b>3</b>Тобың телефоныңда шығады</p></div><p class="url muted">' + esc(joinUrl.replace(/^https?:\/\//, '')) + '</p></div>' +
       '<div style="display:flex;flex-direction:column;gap:14px;min-width:0"><div class="teams3" id="cols">' + lobbyCols() + '</div>' +
-      '<div class="glass" style="padding:16px;display:flex;flex-direction:column;gap:10px"><h2 style="font-size:clamp(20px,2vw,28px)">Ереже</h2><p class="muted" style="font-weight:700;font-size:clamp(15px,1.3vw,18px)">' + Q.length + ' сұрақ. Әр оқушы өз телефонынан жеке жауап береді. Дұрыс жауап — 500 ұпай, жылдам жауапқа +500-ге дейін бонус. Топ ұпайы — мүшелерінің орташа ұпайы, сондықтан топтың саны әртүрлі болса да әділ есептеледі.</p><p class="muted" style="font-weight:800">Топтарды жүйе өзі тең бөледі. Оқушының атын басып, оны басқа топқа ауыстыра аласыз.</p>' +
-      '<div class="row"><button class="gloss" id="go">' + (curStage() >= 0 ? 'Топтар дайын, бейнеге →' : 'Жарысты бастау') + '</button><button class="plain" id="nw">Жаңа код</button><button class="plain" id="fs">Толық экран</button></div></div></div></div>';
+      '<div class="glass" style="padding:16px;display:flex;flex-direction:column;gap:10px"><h2 style="font-size:clamp(20px,2vw,28px)">Телефонды қалай қолданамыз?</h2><ol class="howto"><li>Сұрақ тақтада шыққанда, телефонда 3-2-1 санағы жүреді.</li><li>Содан кейін жауапты таңдайсың, санды жазасың немесе ретімен басасың.</li><li>Жауап бір рет қана қабылданады: асықпай, бірақ жылдам ойла.</li><li>Тақтадағы эстафетада телефоныңа «Сен тақтаға шығасың!» деп жазылса, тақтаға шық.</li></ol><p class="muted" style="font-weight:700;font-size:clamp(14px,1.2vw,17px)">' + Q.length + ' сұрақ. Әр оқушы өз телефонынан жеке жауап береді. Дұрыс жауап — 500 ұпай, жылдам жауапқа +500-ге дейін бонус. Топ ұпайы — мүшелерінің орташа ұпайы, сондықтан топтың саны әртүрлі болса да әділ есептеледі.</p><p class="muted" style="font-weight:800">Топтарды жүйе өзі тең бөледі. Оқушының атын басып, оны басқа топқа ауыстыра аласыз.</p>' +
+      '<div class="row"><button class="gloss" id="go">' + (curStage() >= 0 && STAGES[curStage() + 1] ? 'Топтар дайын → ' + STAGES[curStage() + 1].title : 'Жарысты бастау') + '</button><button class="plain" id="nw">Жаңа код</button><button class="plain" id="fs">Толық экран</button></div></div></div></div>';
     makeQR($('qr'), 512);
     bindChips();
     $('go').onclick = () => { if (curStage() >= 0) return goStage(curStage() + 1); if (!Object.keys(game.players || {}).length) return; startQ(0); };
