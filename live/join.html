@@ -139,7 +139,7 @@ textarea { font: inherit; font-size: 16px; padding: 10px 12px; border-radius: 14
     for (let i = 0; i < n; i++) { const p = document.createElement('i'); p.style.left = Math.random() * 100 + 'vw'; p.style.background = cols[i % 4]; p.style.animationDuration = (1.6 + Math.random() * 1.6) + 's'; p.style.animationDelay = Math.random() * .4 + 's'; box.appendChild(p); setTimeout(() => p.remove(), 4000); } }
 
   function vJoin(err) {
-    app.innerHTML = '<div class="card glass" style="margin-top:6vh"><p class="logo">Экожарыс</p><p class="muted" style="font-weight:700">Геоэкологиядағы антропогендік факторлар · § 15</p>' +
+    app.innerHTML = '<div class="card glass" style="margin-top:6vh"><p class="logo">Экожарыс</p><p class="muted" style="font-weight:700">Геоэкологиядағы антропогендік факторлар · § 15</p><p class="muted" style="font-weight:800;font-size:13px;margin-top:-4px">Д. Қонаев атындағы №9 ІТ мектеп-лицей · 10 «Б» · Авторы: А. С. Еспенбетова</p>' +
       (be.demo ? '<div class="demo">Демо режим: тек тақта ашылған компьютерде жұмыс істейді.</div>' : '') +
       '<label for="code">Ойын коды<input id="code" inputmode="numeric" maxlength="4" autocomplete="off" value="' + esc(code) + '"></label>' +
       '<label for="nm">Атың мен тегің<input type="text" id="nm" maxlength="24" autocomplete="off" value="' + esc(myName) + '" placeholder="Мысалы: Айгерім С."></label>' +

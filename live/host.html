@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Экожарыс LIVE · тақта</title>
+<title>Ашық сабақ · Геоэкология · №9 ІТ мектеп-лицей</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800;900&family=Nunito:wght@400;600;700;800&display=swap">
 <link rel="stylesheet" href="style.css">
 <style>
@@ -238,6 +238,14 @@
 .topiccard small { display: block; font-weight: 800; font-size: 13px; letter-spacing: 1.5px; text-transform: uppercase; color: #FFC16B; margin-bottom: 2px; }
 .topiccard .ic { flex: none; width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; background: linear-gradient(180deg, #5FCB8B, #1F8A55); box-shadow: 0 1px 0 rgba(255,255,255,.5) inset; }
 .motto { font-family: var(--display); font-weight: 800 !important; font-style: italic; font-size: clamp(18px, 1.8vw, 26px) !important; color: #fff; border-left: 4px solid #FFC16B; padding-left: 14px; }
+.schoolbar { display: flex; align-items: center; gap: 14px; padding: 10px 16px 10px 10px; border-radius: 20px; background: linear-gradient(180deg, rgba(255,255,255,.2), rgba(255,255,255,.07)); border: 1px solid rgba(255,255,255,.32); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: inset 0 1px 0 rgba(255,255,255,.35), 0 18px 40px -22px rgba(0,0,0,.7); align-self: flex-start; max-width: 860px; }
+.schoolbar .crest { flex: none; width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center; background: radial-gradient(circle at 32% 28%, #FFF6D8 0%, #FFD27A 38%, #C98A12 100%); box-shadow: 0 0 0 3px rgba(255,255,255,.45), 0 10px 22px -8px rgba(201,138,18,.9); font-family: var(--display); font-weight: 900; color: #6B4300; font-size: 15px; line-height: 1; text-align: center; }
+.schoolbar small { display: block; font-weight: 800; font-size: clamp(11px, .95vw, 14px); letter-spacing: 1.2px; text-transform: uppercase; color: #BFE6D2; }
+.schoolbar b { display: block; font-family: var(--display); font-weight: 900; font-size: clamp(16px, 1.6vw, 24px); line-height: 1.15; color: #fff; }
+.authbadge { position: relative; overflow: hidden; align-self: flex-start; display: inline-flex; align-items: center; gap: 10px; padding: 9px 20px 9px 12px; border-radius: 999px; background: linear-gradient(180deg, #FFE8A6 0%, #F2B33D 55%, #D18A10 100%); color: #4A2E00; font-family: var(--display); font-weight: 900; font-size: clamp(14px, 1.3vw, 20px); letter-spacing: .5px; box-shadow: inset 0 2px 0 rgba(255,255,255,.7), 0 14px 30px -12px rgba(242,179,61,.95); }
+.authbadge i { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: #fff; color: #C98A12; font-style: normal; font-size: 17px; }
+.authbadge::after { content: ""; position: absolute; top: 0; bottom: 0; width: 40%; left: -60%; background: linear-gradient(100deg, transparent, rgba(255,255,255,.75), transparent); animation: sweep 3.2s ease-in-out 3.4s infinite; }
+@keyframes sweep { to { left: 130%; } }
 .wchips { display: flex; flex-wrap: wrap; gap: 8px; }
 .wchips span { padding: 6px 12px; border-radius: 999px; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.3); font-weight: 800; font-size: clamp(13px, 1.1vw, 16px); color: #F6F2E8; }
 .shead.vbg { position: relative; overflow: hidden; }
@@ -648,12 +656,12 @@
       const words = ['Ашық', 'сабағымызға', 'қош', 'келдіңіздер!'];
       const MON = ['қаңтар', 'ақпан', 'наурыз', 'сәуір', 'мамыр', 'маусым', 'шілде', 'тамыз', 'қыркүйек', 'қазан', 'қараша', 'желтоқсан']; const dt = new Date(); const today = dt.getDate() + ' ' + MON[dt.getMonth()] + ' ' + dt.getFullYear() + ' ж.';
       h = '<div class="hero welcome"><video src="media/bg_earth.mp4" poster="' + ECO.IMG('earth') + '" autoplay muted loop playsinline aria-hidden="true"></video><div class="in">' +
-        '<p class="eyebrow fadein">Ашық сабақ · География · 10 «Б» сынып</p>' +
+        '<div class="schoolbar fadein"><span class="crest">№9<br>IT</span><span><small>Түркістан облысы · Жетісай ауданы</small><b>Дінмұхамед Қонаев атындағы №9 ІТ мектеп-лицей</b></span></div>' +'<span class="authbadge fadein" style="animation-delay:.2s"><i>★</i>Ашық сабақтың авторлық моделі</span>' +'<p class="eyebrow fadein" style="animation-delay:.3s">География · 10 «Б» сынып · №205 кабинет</p>' +
         '<h1 class="wtitle">' + words.map((w, k) => '<span class="go" style="animation-delay:' + (0.25 + k * 0.28) + 's,' + (1.6 + k * 0.1) + 's">' + w + '</span>').join('') + '</h1>' +
         '<p class="guests fadein" style="animation-delay:1.5s">Құрметті қонақтар, әріптестер және оқушылар!</p>' +
         '<div class="topiccard fadein" style="animation-delay:1.9s"><span class="ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></svg></span><span><small>Бүгінгі тақырып · § 15</small><b>Геоэкологиядағы антропогендік факторлар</b></span></div>' +
         '<p class="motto fadein" style="animation-delay:2.3s">«Бүгінгі шешім — 2050 жылғы Жер.»</p>' +
-        '<div class="wchips fadein" style="animation-delay:2.7s"><span>Мұғалім: А. Еспенбетова</span>' + (today ? '<span>' + esc(today) + '</span>' : '') + '<span>45 минут</span><span>3 топ</span><span>12 сұрақ</span></div>' +
+        '<div class="wchips fadein" style="animation-delay:2.7s"><span>Авторы: Еспенбетова Айжан Сатыбалдиевна</span>' + (today ? '<span>' + esc(today) + '</span>' : '') + '<span>№205 кабинет</span><span>45 минут</span><span>3 топ</span><span>12 сұрақ</span></div>' +
         '<div class="row fadein" style="animation-delay:3s"><button class="gloss" id="nx">Сабақты бастау →</button><button class="plain" id="fs">Толық экран</button></div></div>' +
         '<div class="qrmini fadein" style="animation-delay:3.2s"><div id="qr"></div>Телефонды дайында<br>Код: ' + code + '</div></div>';
       setTimeout(() => confetti(70), 1500);
@@ -903,7 +911,7 @@
   function topbar(noNote) {
     if (curStage() >= 0 && STAGES[curStage()].id !== 'join') noNote = true;
     const m = game.meta || {}; const n = Object.keys(game.players || {}).length;
-    return '<div class="top glass"><div class="brand"><span class="live">LIVE</span><b>Экожарыс</b> <span class="muted" style="font-weight:700;font-size:.7em">§ 15 · 10-сынып</span></div>' +
+    return '<div class="top glass"><div class="brand"><span class="live">LIVE</span><b>Экожарыс</b> <span class="muted" style="font-weight:700;font-size:.7em">§ 15 · 10 «Б» · №9 ІТ мектеп-лицей</span></div>' +
       '<span class="pill">Код: <span class="codebox">' + code + '</span></span><span class="pill">Оқушы: ' + n + '</span>' +
       (['question', 'reveal', 'board'].includes(m.phase) && m.q >= 0 ? '<span class="pill">Сұрақ: ' + (m.q + 1) + ' / ' + Q.length + '</span>' : '') + '</div>' +
       (noNote ? '' : be.p2p ? '<div class="demo" style="background:#E6F5EC;border-color:#9ED3B2;color:#165C33">Тікелей байланыс: тіркелу керек емес. Сабақ біткенше осы бетті жаппаңыз, оқушылардың телефондары осы бетке қосылған.</div>' : '') +
