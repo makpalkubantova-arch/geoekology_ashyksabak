@@ -188,7 +188,7 @@ textarea { font: inherit; font-size: 16px; padding: 10px 12px; border-radius: 14
     const tn = (i) => esc(((m.teamNames || [])[i]) || T[i].name);
     let body;
     if (r.st === 'done') body = '<h2>Эстафета аяқталды</h2><p class="wait">Экранға қара!</p>';
-    else if (r.u && r.u === be.uid) body = '<div class="me-board"><p>Сен тақтаға шығасың!</p><b>' + esc(myName) + '</b></div><p style="font-weight:800;text-align:center">Тақтаға барып, карточканы дұрыс орнына сүйреп апар. 30 секунд бар.</p>';
+    else if (r.u && r.u === be.uid) body = '<div class="me-board"><p>Сен тақтаға шығасың!</p><b>' + esc(myName) + '</b></div><p style="font-weight:800;text-align:center">Тақтаға барып, карточканы кластер-сызбадағы дұрыс орнына сүйреп апар. 30 секунд бар.</p>';
     else if (typeof r.t === 'number' && r.t === t) body = '<h2>Тобыңның кезегі!</h2><p class="wait">' + (r.u && players[r.u] ? esc(players[r.u].name) + ' тақтада. Қолдау көрсет!' : 'Тақтаға кім шығады?') + '</p>';
     else body = '<h2>Қазір: ' + (typeof r.t === 'number' ? tn(r.t) : '') + '</h2><p class="wait">Экранға қарап, жауапты ойлан.</p>';
     if (r.st === 'ok' && typeof r.t === 'number') body += '<p class="plus" style="color:var(--good);text-align:center">' + tn(r.t) + ': +200</p>';
