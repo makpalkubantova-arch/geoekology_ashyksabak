@@ -43,6 +43,12 @@ input[type=text], input[inputmode] { font: inherit; font-size: 22px; font-weight
 .opt.img img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 12px; position: relative; z-index: 1; }
 .opt.img b { position: absolute; top: 10px; left: 10px; z-index: 2; }
 .opt.sel { outline: 4px solid var(--ink); outline-offset: 2px; }
+.flowm { display: flex; flex-direction: column; align-items: stretch; gap: 2px; background: #F4F8F6; border: 2px solid var(--line); border-radius: 18px; padding: 10px; }
+.flowm .fb { display: flex; align-items: center; gap: 8px; background: #fff; border: 2px solid #9ED3B2; border-radius: 12px; padding: 6px 10px; font-weight: 800; font-size: 14px; animation: pop .35s ease both; }
+.flowm .fb.empty { border-style: dashed; border-color: #C9D6D1; color: var(--muted); background: transparent; animation: none; }
+.flowm .fb b { flex: none; width: 24px; height: 24px; border-radius: 8px; display: grid; place-items: center; color: #fff; background: #2E9E62; font-size: 13px; } .flowm .fb.empty b { background: #C9D6D1; }
+.flowm .fb em { font-style: normal; font-size: 22px; }
+.flowm .fa { font-style: normal; text-align: center; font-weight: 900; color: #2E9E62; line-height: 1; }
 .opt .ord { margin-left: auto; width: 34px; height: 34px; border-radius: 50%; background: #fff; color: var(--ink); display: grid; place-items: center; font-family: var(--display); font-weight: 900; position: relative; z-index: 1; flex: none; }
 .display { text-align: center; font-family: var(--display); font-weight: 900; font-size: 40px; background: #fff; border-radius: 16px; border: 2px solid var(--line); padding: 8px; min-height: 66px; font-variant-numeric: tabular-nums; }
 .pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
@@ -186,14 +192,16 @@ textarea { font: inherit; font-size: 16px; padding: 10px 12px; border-radius: 14
   function vRelay() {
     const m = game.meta || {}, r = m.relay || {}, t = myTeam(), players = game.players || {};
     const tn = (i) => esc(((m.teamNames || [])[i]) || T[i].name);
+    const us = [r.u0, r.u1, r.u2], mine = typeof t === 'number' ? us[t] : '';
+    const res = String(r.res || '').split(',');
     let body;
-    if (r.st === 'done') body = '<h2>Эстафета аяқталды</h2><p class="wait">Экранға қара!</p>';
-    else if (r.u && r.u === be.uid) body = '<div class="me-board"><p>Сен тақтаға шығасың!</p><b>' + esc(myName) + '</b></div><p style="font-weight:800;text-align:center">Тақтаға барып, карточканы кластер-сызбадағы дұрыс орнына сүйреп апар. 30 секунд бар.</p>';
-    else if (typeof r.t === 'number' && r.t === t) body = '<h2>Тобыңның кезегі!</h2><p class="wait">' + (r.u && players[r.u] ? esc(players[r.u].name) + ' тақтада. Қолдау көрсет!' : 'Тақтаға кім шығады?') + '</p>';
-    else body = '<h2>Қазір: ' + (typeof r.t === 'number' ? tn(r.t) : '') + '</h2><p class="wait">Экранға қарап, жауапты ойлан.</p>';
-    if (r.st === 'ok' && typeof r.t === 'number') body += '<p class="plus" style="color:var(--good);text-align:center">' + tn(r.t) + ': +200</p>';
+    if (r.st === 'done') body = '<h2>Эстафета аяқталды</h2><p class="wait">Экранға қара: біз құрған кластер!</p>';
+    else if (mine && mine === be.uid) body = '<div class="me-board"><p>Сен тақтаға шығасың!</p><b>' + esc(myName) + '</b></div><p style="font-weight:800;text-align:center">Тақтаға барып, өз тобыңның түсіндегі карточканы кластер-сызбадағы дұрыс орнына сүйреп апар. 40 секунд бар.</p>';
+    else if (mine && players[mine]) body = '<h2>Тобыңнан тақтада: ' + esc(players[mine].name) + '</h2><p class="wait">Қолдау көрсет!</p>';
+    else body = '<h2>' + ((r.r || 0) + 1) + '-кезек</h2><p class="wait">Әр топтан бір оқушы тақтаға шығады. Экранға қара!</p>';
+    if (typeof t === 'number' && res[t] === '1') body += '<p class="plus" style="color:var(--good);text-align:center">' + tn(t) + ': +200</p>';
     app.innerHTML = teambar() + '<div class="card glass" style="text-align:center">' + body + '</div>';
-    if (r.u === be.uid && r.st === 'go') confetti(80);
+    if (mine === be.uid && r.st === 'go') confetti(80);
   }
   function vSlide() {
     const m = game.meta || {}; const t = myTeam();
@@ -253,7 +261,7 @@ textarea { font: inherit; font-size: 16px; padding: 10px 12px; border-radius: 14
     if (q.t === 'img') h = '<div class="opts imgs">' + q.o.map((o, j) => '<button class="opt img o' + j + '" data-v="' + j + '" aria-label="' + L[j] + ' сурет"><b>' + L[j] + '</b><img src="' + ECO.IMG(o) + '" alt=""></button>').join('') + '</div>';
     if (q.t === 'tf') h = '<div class="opts"><button class="opt o3" data-tf="1"><b>✓</b><span>Шын</span></button><button class="opt o0" data-tf="0"><b>✗</b><span>Жалған</span></button></div>';
     if (q.t === 'num') h = '<div class="display" id="disp">' + (draft || '&nbsp;') + ' <small style="font-size:.4em;color:var(--muted)">' + esc(q.unit) + '</small></div><div class="pad">' + ['7', '8', '9', '4', '5', '6', '1', '2', '3', ',', '0', '⌫'].map((k) => '<button data-k="' + k + '"' + (k === '⌫' ? ' aria-label="Өшіру"' : '') + '>' + k + '</button>').join('') + '</div><button class="gloss" id="send"' + (draft ? '' : ' disabled') + '>Жіберу</button>';
-    if (q.t === 'order') h = '<p class="muted" style="font-weight:700">' + esc(q.ins || 'Ретімен басыңдар') + '</p><div class="opts">' + q.o.map((o, j) => { const p = draft.indexOf(j); return '<button class="opt o' + (j % 4) + (p >= 0 ? ' sel' : '') + '" data-o="' + j + '"><span>' + esc(o) + '</span>' + (p >= 0 ? '<span class="ord">' + (p + 1) + '</span>' : '') + '</button>'; }).join('') + '</div><div class="row"><button class="plain" id="clr">Тазалау</button><button class="gloss" id="send" style="flex:1"' + (draft.length === q.o.length ? '' : ' disabled') + '>Жіберу</button></div>';
+    if (q.t === 'order') h = '<p class="muted" style="font-weight:700">' + esc(q.ins || 'Ретімен басыңдар') + '</p><div class="opts">' + q.o.map((o, j) => { const p = draft.indexOf(j); return '<button class="opt o' + (j % 4) + (p >= 0 ? ' sel' : '') + '" data-o="' + j + '">' + (q.ic ? '<b>' + q.ic[j] + '</b>' : '') + '<span>' + esc(o) + '</span>' + (p >= 0 ? '<span class="ord">' + (p + 1) + '</span>' : '') + '</button>'; }).join('') + '</div>' + (q.g ? flowMini(q, draft) : '') + '<div class="row"><button class="plain" id="clr">Тазалау</button><button class="gloss" id="send" style="flex:1"' + (draft.length === q.o.length ? '' : ' disabled') + '>Жіберу</button></div>';
     w.innerHTML = h;
     w.querySelectorAll('[data-v]').forEach((b) => b.onclick = () => submit(+b.dataset.v));
     w.querySelectorAll('[data-tf]').forEach((b) => b.onclick = () => submit(b.dataset.tf === '1'));
@@ -261,6 +269,11 @@ textarea { font: inherit; font-size: 16px; padding: 10px 12px; border-radius: 14
     w.querySelectorAll('[data-o]').forEach((b) => b.onclick = () => { const j = +b.dataset.o; const p = draft.indexOf(j); if (p >= 0) draft.splice(p, 1); else draft.push(j); drawW(); });
     if ($('clr')) $('clr').onclick = () => { draft = []; drawW(); };
     if ($('send')) $('send').onclick = () => submit(q.t === 'num' ? draft : draft.slice());
+  }
+  function flowMini(q, d) {
+    return '<div class="flowm"><p class="eyebrow">Сенің сызбаң</p>' + q.o.map((_, k) => { const j = d[k];
+      return (k ? '<i class="fa">↓</i>' : '') + (j === undefined ? '<div class="fb empty"><b>' + (k + 1) + '</b><span>' + (k === 0 ? 'Себеп' : k === q.o.length - 1 ? 'Салдар' : '…') + '</span></div>'
+        : '<div class="fb"><b>' + (k + 1) + '</b><em>' + ((q.ic || [])[j] || '') + '</em><span>' + esc(q.o[j]) + '</span></div>'); }).join('') + '</div>';
   }
   async function submit(v) {
     const m = game.meta; if (m.phase !== 'question') return;

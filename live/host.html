@@ -360,6 +360,48 @@
 .clit.miss { background: #FFF1D6; color: #8A5300; }
 .clit.new { animation: pop .5s cubic-bezier(.2,.9,.3,1.3) both; }
 .cluster.fin .clnode { min-height: 110px !important; }
+.clh { display: flex; gap: 8px; align-items: center; }
+.clh img { flex: none; width: 54px; height: 54px; border-radius: 12px; object-fit: cover; box-shadow: 0 6px 12px -8px rgba(0,0,0,.6); }
+.clh b { display: block; font-size: 11px; letter-spacing: .5px; text-transform: uppercase; color: var(--amber); }
+.clh span { display: block; line-height: 1.15; }
+.clcenter { display: flex; align-items: center; gap: 12px; text-align: left; padding: 8px 22px 8px 8px; }
+.clcenter img { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; border: 3px solid rgba(255,255,255,.6); }
+.clst { display: flex; flex-direction: column; gap: 2px; background: #F2F7F4; border-radius: 12px; padding: 6px 8px; }
+.clst strong { font-family: var(--display); font-weight: 900; font-size: clamp(18px, 1.7vw, 26px); color: #1F7A45; line-height: 1.05; }
+.clst span { font-size: 12px; font-weight: 700; color: var(--ink); } .clst small { font-size: 10px; color: var(--muted); font-weight: 700; }
+.clbar { display: block; height: 7px; border-radius: 99px; background: #DCE7E2; overflow: hidden; } .clbar i { display: block; height: 100%; background: linear-gradient(90deg, #F2A541, #C0661A); border-radius: 99px; }
+.optlist.cmp { gap: 8px; } .optlist.cmp .opt { padding: 9px 16px; font-size: clamp(15px, 1.35vw, 21px); }
+.flowh .fbox { padding: 6px 8px; flex-direction: row; justify-content: center; }
+.tbtn { padding: 6px 14px !important; font-size: 14px !important; min-height: 0 !important; }
+.tbtn.idle { animation: pulse 1.4s ease infinite; }
+.tbtn.run { background: linear-gradient(180deg, #E9EEF0, #CFD8DC) !important; color: var(--ink) !important; }
+.tstart { position: fixed; z-index: 30; right: 24px; bottom: 110px; font-size: 18px !important; padding: 12px 22px !important; }
+.pick3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; width: 100%; }
+.pcol { display: flex; flex-direction: column; gap: 8px; align-items: center; padding: 10px; border-radius: 18px; background: rgba(255,255,255,.6); border: 2px solid var(--c1); }
+.pcol h3 { margin: 0; font-family: var(--display); color: var(--c2); }
+.roulette.sm { min-width: 0; width: 100%; padding: 12px 10px; font-size: clamp(20px, 2vw, 32px); text-align: center; }
+.rlhead3 { display: flex; gap: 8px; align-items: center; }
+.rlhead3 span:not(.rltime) { flex: 1; text-align: center; padding: 8px 10px; border-radius: 14px; color: #fff; font-weight: 900; font-size: clamp(16px, 1.5vw, 22px); background: linear-gradient(180deg, var(--c1), var(--c2)); }
+.rlhead3 .rltime { background: var(--ink); color: #fff; font-size: 22px; border-radius: 14px; padding: 8px 12px; }
+.rlcardrow.three { flex-wrap: nowrap; align-items: stretch; }
+.tcard { flex: 1; max-width: none; position: relative; border-color: var(--c2) !important; font-size: clamp(13px, 1.15vw, 17px) !important; padding: 8px 10px 8px 8px !important; }
+.tcard img { width: 64px !important; height: 56px !important; }
+.tcard small { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: var(--c2); }
+.tcard.used { opacity: .5; cursor: default; } .tcard .mark { position: absolute; right: 8px; top: 6px; font-style: normal; font-weight: 900; font-size: 22px; }
+.tcard.okc .mark { color: var(--good); } .tcard.noc .mark { color: var(--bad); }
+.rlres.ok3 { background: #F2F7F4; color: var(--ink); }
+.r3 { display: flex; flex-direction: column; padding: 4px 10px; border-left: 4px solid var(--c2); }
+.r3 b { font-family: var(--body) !important; font-size: 18px !important; } .r3.n b { color: var(--bad); } .r3 small { font-size: 12px; }
+.oic { font-style: normal; font-size: 1.3em; position: relative; z-index: 1; }
+.flowh { margin-top: 12px; padding: 12px 14px; }
+.frow2 { display: flex; align-items: stretch; gap: 6px; }
+.frow2 .far { font-style: normal; align-self: center; font-family: var(--display); font-weight: 900; font-size: 30px; color: #2E9E62; }
+.fbox { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; align-items: center; text-align: center; background: #fff; border: 3px solid #9ED3B2; border-radius: 16px; padding: 10px 8px; font-weight: 800; font-size: clamp(13px, 1.15vw, 17px); animation: pop .5s cubic-bezier(.2,.9,.3,1.3) both; }
+.fbox b { width: 28px; height: 28px; border-radius: 9px; display: grid; place-items: center; color: #fff; background: #2E9E62; font-family: var(--display); }
+.fbox em { font-style: normal; font-size: 34px; line-height: 1; }
+.fbox small { font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: var(--amber); }
+.fbox.empty { border-style: dashed; border-color: #C9D6D1; color: var(--muted); background: rgba(255,255,255,.6); animation: none; } .fbox.empty b { background: #C9D6D1; }
+.frow2.big .fbox { font-size: clamp(14px, 1.25vw, 19px); }
 @media (max-width: 980px) { .clrow, .clrow.b { grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; } }
 .rldone { text-align: center; display: flex; flex-direction: column; gap: 12px; align-items: center; padding: 40px 0; }
 .g1 { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 0; padding: 0 !important; overflow: hidden; animation: rise .5s ease both; }
@@ -459,10 +501,14 @@
     try { localStorage.removeItem('ecolive_host_code'); localStorage.removeItem('ecolive_p2p_' + code); } catch (e) {}
     location.replace('host.html'); return;
   }
-  if (!existing) await be.set(G + '/meta', { host: be.uid, phase: 'slide', stage: 0, stageTitle: 'Сәлемдесу', stageNote: 'Телефоныңды дайында. Келесі кезеңде QR-код шығады.', stageStart: be.TS, q: -1, created: be.TS, teamNames });
+  if (!existing) await be.set(G + '/meta', { host: be.uid, phase: 'slide', stage: 0, stageTitle: 'Сәлемдесу', stageNote: 'Телефоныңды дайында. Келесі кезеңде QR-код шығады.', stageStart: be.TS, lsAcc: 0, lsRun: null, stAcc: 0, stRun: null, q: -1, created: be.TS, teamNames });
   else if (existing.stage === undefined && existing.phase === 'lobby' && existing.host === be.uid) await be.update(G + '/meta', { phase: 'slide', stage: 0, stageTitle: 'Сәлемдесу', stageNote: '', stageStart: be.TS });
   else if (existing.host !== be.uid && !be.demo) { app.innerHTML = '<div class="glass" style="padding:20px"><h2>Бұл код бос емес</h2><p class="muted">Басқа құрылғыда осы кодпен ойын ашылған.</p><button class="gloss" id="nw">Жаңа ойын ашу</button></div>'; $('nw').onclick = () => { try { localStorage.removeItem('ecolive_host_code'); } catch (e) {} location.href = 'host.html'; }; return; }
 
+  /* Таймер бетті жаңартқанда өздігінен жүре бермейді: жүріп тұрса, кідіртіледі */
+  { const ex = await be.get(G + '/meta');
+    if (ex && (typeof ex.lsRun === 'number' || typeof ex.stRun === 'number')) { const n = be.now();
+      await be.update(G + '/meta', { lsAcc: (ex.lsAcc || 0) + (typeof ex.lsRun === 'number' ? n - ex.lsRun : 0), lsRun: null, stAcc: (ex.stAcc || 0) + (typeof ex.stRun === 'number' ? n - ex.stRun : 0), stRun: null }); } }
   const joinUrl = new URL('join.html?code=' + code, location.href).href;
   const guestUrl = joinUrl + '&g=1';
   let game = {}; let mounted = ''; let seen = new Set(); let tick = null;
@@ -498,8 +544,7 @@
   function goStage(i) {
     if (i < 0 || i >= STAGES.length) return;
     const s = STAGES[i], m = game.meta || {};
-    const upd = { stage: i, stageTitle: s.title, stageNote: s.note || '', stageStart: be.TS, stageExtra: 0 };
-    if (!m.lessonStart && i > 0) upd.lessonStart = be.TS;
+    const upd = { stage: i, stageTitle: s.title, stageNote: s.note || '', stageStart: be.TS, stageExtra: 0, stAcc: 0, stRun: typeof m.lsRun === 'number' ? be.TS : null };
     if (s.kind === 'slide') upd.phase = 'slide';
     else if (s.kind === 'join') upd.phase = 'lobby';
     else if (s.kind === 'results') upd.phase = 'end';
@@ -529,6 +574,14 @@
   }
 
   const mmss = (ms) => { ms = Math.max(0, ms); const s = Math.floor(ms / 1000); return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); };
+  const lsMs = (m) => (m.lsAcc || 0) + (typeof m.lsRun === 'number' ? be.now() - m.lsRun : 0);
+  const stMs = (m) => (m.stAcc || 0) + (typeof m.stRun === 'number' ? be.now() - m.stRun : 0);
+  const lsRunning = (m) => typeof m.lsRun === 'number';
+  const lsLabel = (m) => lsRunning(m) ? '⏸ Кідірту' : (m.lsAcc ? '▶ Жалғастыру' : '▶ Сабақты бастау');
+  function lsToggle() { const m = game.meta || {};
+    if (lsRunning(m)) be.update(G + '/meta', { lsAcc: lsMs(m), lsRun: null, stAcc: stMs(m), stRun: null });
+    else be.update(G + '/meta', { lsRun: be.TS, stRun: be.TS }); }
+  function lsReset() { be.update(G + '/meta', { lsAcc: 0, lsRun: null, stAcc: 0, stRun: null }); }
   const stageTotal = () => { const s = STAGES[curStage()], m = game.meta || {}; return s ? (s.min + (m.stageExtra || 0)) * 60000 : 0; };
   let overFlag = '';
   function lessonBar() {
@@ -537,7 +590,7 @@
     const before = STAGES.slice(0, i).reduce((a, x) => a + x.min, 0);
     const L2 = 2 * Math.PI * 20;
     return '<div class="lbar glass"><div class="cdown" id="cdw"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="20" fill="none" stroke="rgba(20,43,38,.1)" stroke-width="5"/><circle id="cdr" cx="24" cy="24" r="20" fill="none" stroke="url(#cdg)" stroke-width="5" stroke-linecap="round" stroke-dasharray="' + L2 + ' ' + L2 + '" transform="rotate(-90 24 24)"/><defs><linearGradient id="cdg"><stop offset="0" stop-color="#5FCB8B"/><stop offset="1" stop-color="#1F8A55"/></linearGradient></defs></svg><div><small>Тапсырма уақыты</small><b id="cdn">00:00</b></div><button class="plain" id="addm" title="Кезеңге 1 минут қосу">+1 мин</button></div>' +
-      '<span class="phpill">' + PHASES[s.ph] + ' кезеңі</span><span class="stg">' + (i + 1) + '. ' + esc(s.title) + '</span><span class="pill">Кезеңде: <span class="clock" id="stc">00:00</span></span><span class="pill">Сабақ: <span class="clock" id="lsc">00:00</span> / ' + TOTAL + ':00</span>' +
+      '<span class="phpill">' + PHASES[s.ph] + ' кезеңі</span><span class="stg">' + (i + 1) + '. ' + esc(s.title) + '</span><span class="pill">Кезеңде: <span class="clock" id="stc">00:00</span></span><span class="pill">Сабақ: <span class="clock" id="lsc">00:00</span> / ' + TOTAL + ':00</span><button class="gloss tbtn" id="lsgo">' + lsLabel(game.meta || {}) + '</button><button class="plain tbtn" id="lsrs" title="Таймерді нөлге қайтару">↺ Нөлдеу</button>' +
       '<div class="lprog">' + STAGES.map((x, k) => '<i style="width:' + (x.min / TOTAL * 100) + '%;background:' + (k < i ? '#43B36B' : k === i ? 'linear-gradient(90deg,#F7B24A,#E07A1F)' : 'transparent') + ';' + (k ? 'border-left:2px solid rgba(255,255,255,.9)' : '') + '"></i>').join('') + '</div>' +
       '<span class="muted" style="font-weight:700;font-size:13px;flex-basis:100%">Жоспар бойынша бұл кезең ' + before + '–' + (before + s.min) + '-минуттарда.</span></div>';
   }
@@ -551,6 +604,9 @@
     if (curStage() < 0) return;
     const tb = app.querySelector('.top');
     if (tb && curStage() !== 0 && !app.querySelector('.lbar')) tb.insertAdjacentHTML('afterend', lessonBar());
+    const ob = document.querySelector('.tstart'); if (ob) ob.remove();
+    if (curStage() === 0) { document.body.insertAdjacentHTML('beforeend', '<button class="gloss tbtn tstart" id="lsgo">' + lsLabel(game.meta || {}) + '</button>'); }
+    if ($('lsgo')) $('lsgo').onclick = lsToggle; if ($('lsrs')) $('lsrs').onclick = lsReset;
     const old = document.querySelector('.stepper'); if (old) old.remove();
     const oq = document.querySelector('.qrbtn'); if (oq) oq.remove();
     const ph = (game.meta || {}).phase;
@@ -580,15 +636,18 @@
   function clockTick() {
     const m = game.meta || {}; const s = STAGES[curStage()];
     const st = $('stc'), ls = $('lsc');
-    if (st && typeof m.stageStart === 'number') { const ms = be.now() - m.stageStart; st.textContent = mmss(ms); st.classList.toggle('over', s && ms > s.min * 60000); }
-    if (ls && typeof m.lessonStart === 'number') { const ms = be.now() - m.lessonStart; ls.textContent = mmss(ms); ls.classList.toggle('over', ms > TOTAL * 60000); }
+    const run = lsRunning(m), gb = $('lsgo'), rb = $('lsrs');
+    if (gb) { const lb = lsLabel(m); if (gb.textContent !== lb) gb.textContent = lb; gb.classList.toggle('run', run); gb.classList.toggle('idle', !run); }
+    if (rb) rb.hidden = run || !(m.lsAcc || m.stAcc);
+    if (st) { const ms = stMs(m); st.textContent = mmss(ms); st.classList.toggle('over', s && ms > s.min * 60000); }
+    if (ls) { const ms = lsMs(m); ls.textContent = mmss(ms); ls.classList.toggle('over', ms > TOTAL * 60000); }
     const cn = $('cdn'), cr = $('cdr'), cw = $('cdw');
-    if (cn && typeof m.stageStart === 'number') {
-      const tot = stageTotal(), left = Math.max(0, tot - (be.now() - m.stageStart)); const L2 = 2 * Math.PI * 20;
+    if (cn) {
+      const tot = stageTotal(), left = Math.max(0, tot - stMs(m)); const L2 = 2 * Math.PI * 20;
       cn.textContent = mmss(left + 999); if (cr) cr.setAttribute('stroke-dasharray', (L2 * left / tot) + ' ' + L2);
       cw.classList.toggle('warn', left > 0 && left <= 30000); cw.classList.toggle('done', left <= 0);
       const key = curStage() + ':' + m.stageStart + ':' + (m.stageExtra || 0);
-      if (left <= 0 && overFlag !== key) { overFlag = key; if (m.phase === 'slide' || m.phase === 'lobby' || m.phase === 'feedback' || m.phase === 'end') flashMsg('Уақыт бітті!', 'time'); }
+      if (left <= 0 && run && overFlag !== key) { overFlag = key; if (m.phase === 'slide' || m.phase === 'lobby' || m.phase === 'feedback' || m.phase === 'end') flashMsg('Уақыт бітті!', 'time'); }
     }
   }
   function flashMsg(text, kind) {
@@ -616,7 +675,7 @@
   const GQ = ['Ормандардың жойылуы табиғаттың қандай компоненттеріне әсер етеді?', 'Топырақ эрозиясына адамның қандай шаруашылық әрекеттері себеп болады?', 'Шөлейттенуді қандай табиғи және антропогендік факторлар күшейтеді?', 'Ауаның, судың және топырақтың ластану көздерін атаңдар.', 'Жылыжай газдарының мөлшері неліктен артып отыр?', 'Су айналымының бір буынындағы өзгеріс неге бүкіл тізбекке әсер етеді?', 'Табиғи орта неліктен өзін-өзі қалпына келтіре алмай қалады?'];
   function renderG1(k) {
     const box = $('g1'); if (!box) return; const c = SEVEN[k];
-    box.innerHTML = '<div class="g1 glass"><div class="g1m">' + (c[3] ? '<video src="media/' + c[3] + '.mp4?v=20261105a" poster="' + ECO.IMG(c[0]) + '" autoplay muted loop playsinline aria-hidden="true"></video>' : '<img src="' + ECO.IMG(c[0]) + '" alt="">') + '<span class="g1n">' + (k + 1) + '<small>/ 7</small></span></div>' +
+    box.innerHTML = '<div class="g1 glass"><div class="g1m">' + (c[3] ? '<video src="media/' + c[3] + '.mp4?v=20261105b" poster="' + ECO.IMG(c[0]) + '" autoplay muted loop playsinline aria-hidden="true"></video>' : '<img src="' + ECO.IMG(c[0]) + '" alt="">') + '<span class="g1n">' + (k + 1) + '<small>/ 7</small></span></div>' +
       '<div class="g1t"><p class="eyebrow">' + (k + 1) + '-топ · ' + esc(c[4]) + '</p><h2>' + esc(c[1]) + '</h2><p class="g1x">' + esc(c[2]) + '</p><p class="nfbox">Жаңа дерек: ' + esc(c[5]) + '</p><p class="g1q"><b>Сыныпқа сұрақ:</b> ' + esc(GQ[k]) + '</p>' +
       '<div class="row"><button class="plain" id="g1p"' + (k ? '' : ' disabled') + '>← Алдыңғы</button><button class="gloss" id="g1n">' + (k < 6 ? 'Келесі топ →' : 'Барлық 7 топ →') + '</button></div></div></div>' +
       '<div class="g1strip">' + SEVEN.map((x, q) => '<button data-g1="' + q + '" class="' + (q === k ? 'on' : q < k ? 'done' : '') + '"><img src="' + ECO.IMG(x[0]) + '" alt=""><b>' + (q + 1) + '</b></button>').join('') + '</div>';
@@ -661,15 +720,15 @@
     '<g class="gs gs4"><path class="ar" d="M560,382 C575,330 590,300 600,272" stroke="#E8692A" stroke-width="12" stroke-linecap="round" fill="none" marker-end="url(#ao)"/><path class="ar" d="M640,382 C652,330 662,300 670,272" stroke="#E8692A" stroke-width="12" stroke-linecap="round" fill="none" marker-end="url(#ao)"/><rect x="600" y="315" width="190" height="30" rx="10" fill="#fff" opacity=".95"/><text x="695" y="336" text-anchor="middle" font-size="15" font-weight="800" fill="#8A3A00">Инфрақызыл радиация</text></g>' +
     '<g class="gs gs5"><path class="ar dash" d="M600,214 C592,260 585,310 575,368" stroke="#D2452F" stroke-width="9" stroke-linecap="round" fill="none" marker-end="url(#ao)"/><path class="ar" d="M672,210 L742,70" stroke="#E8692A" stroke-width="12" stroke-linecap="round" fill="none" marker-end="url(#ao)"/><rect x="560" y="106" width="232" height="30" rx="10" fill="#fff" opacity=".95"/><text x="676" y="127" text-anchor="middle" font-size="15" font-weight="800" fill="#8A3A00">Ғарышқа кетеді · 240 Вт/м²</text><rect x="370" y="282" width="210" height="30" rx="10" fill="#fff" opacity=".95"/><text x="475" y="303" text-anchor="middle" font-size="15" font-weight="800" fill="#B0301E">Газдар жылуды ұстап қалады</text></g>' +
     '</svg>';
-  function bgv(name) { return '<video class="bgv" src="media/' + name + '.mp4?v=20261105a" autoplay muted loop playsinline aria-hidden="true"></video>'; }
-  function vid(src, cls, attrs) { return '<video class="' + cls + '" src="media/' + src + '.mp4?v=20261105a" playsinline preload="metadata" ' + (attrs || 'controls') + '></video>'; }
+  function bgv(name) { return '<video class="bgv" src="media/' + name + '.mp4?v=20261105b" autoplay muted loop playsinline aria-hidden="true"></video>'; }
+  function vid(src, cls, attrs) { return '<video class="' + cls + '" src="media/' + src + '.mp4?v=20261105b" playsinline preload="metadata" ' + (attrs || 'controls') + '></video>'; }
   function mountSlide() {
     const i = curStage(), s = STAGES[i] || STAGES[0];
     let h = '';
     if (s.id === 'title') {
       const words = ['Ашық', 'сабағымызға', 'қош', 'келдіңіздер!'];
       const MON = ['қаңтар', 'ақпан', 'наурыз', 'сәуір', 'мамыр', 'маусым', 'шілде', 'тамыз', 'қыркүйек', 'қазан', 'қараша', 'желтоқсан']; const today = '13 қараша 2026 ж.';
-      h = '<div class="hero welcome"><video src="media/bg_earth.mp4?v=20261105a" poster="' + ECO.IMG('earth') + '" autoplay muted loop playsinline aria-hidden="true"></video><div class="in">' +
+      h = '<div class="hero welcome"><video src="media/bg_earth.mp4?v=20261105b" poster="' + ECO.IMG('earth') + '" autoplay muted loop playsinline aria-hidden="true"></video><div class="in">' +
         '<div class="schoolbar fadein"><span class="crest">№9<br>IT</span><span><small>Түркістан облысы · Жетісай ауданы</small><b>Дінмұхамед Қонаев атындағы №9 ІТ мектеп-лицей</b></span></div>' +'<span class="authbadge fadein" style="animation-delay:.2s"><i>★</i>Ашық сабақтың авторлық моделі</span>' +'<p class="eyebrow fadein" style="animation-delay:.3s">География · 10 «Б» сынып · №205 кабинет</p>' +
         '<h1 class="wtitle">' + words.map((w, k) => '<span class="go" style="animation-delay:' + (0.25 + k * 0.28) + 's,' + (1.6 + k * 0.1) + 's">' + w + '</span>').join('') + '</h1>' +
         '<p class="guests fadein" style="animation-delay:1.5s">Құрметті қонақтар, әріптестер және оқушылар!</p>' +
@@ -680,7 +739,7 @@
         '<div class="qrmini fadein" style="animation-delay:3.2s"><div id="qr"></div>Телефонды дайында<br>Код: ' + code + '</div></div>';
       setTimeout(() => confetti(70), 1500);
     } else if (s.id === 'video') {
-      h = '<div class="split">' + vid('v_intro', 'vidbig', 'controls poster="media/poster.jpg?v=20261105a"') +
+      h = '<div class="split">' + vid('v_intro', 'vidbig', 'controls poster="media/poster.jpg?v=20261105b"') +
         '<div class="boxp glass"><p class="eyebrow">Проблемалық сұрақ</p><h2>Табиғи ортаның өзгеруіне не себеп болды?</h2><p>Бейнені қарап, талдаңдар:</p><ol><li>Бейнеде табиғи ортаның қандай өзгерістері көрсетілді?</li><li>Олардың себебі табиғи ма, антропогендік пе? Дәлелдеңдер.</li><li>Бұл өзгерістерді азайтуға бола ма?</li></ol><p class="muted">Жауапты сабақтың соңында қайта қарастырамыз.</p><div class="row"><button class="gloss" id="nx">Келесі →</button></div></div></div>';
     } else if (s.id === 'goal') {
       h = '<div class="shead glass vbg">' + bgv('bg_river') + '<p class="eyebrow">Оқу мақсаты · 10.3.2.4</p><h1>Табиғатқа әсер ететін антропогендік факторларды топтастыру және графикалық түрде ұсыну</h1><p class="lead">Оқулық, § 15 «Геоэкологиядағы антропогендік факторлар»</p></div>' +
@@ -696,7 +755,7 @@
     } else if (s.id === 'learn1') {
       h = '<div class="shead glass vbg">' + bgv('bg_earth') + '<span class="pg">Оқулық · 54-б.</span><p class="eyebrow">Оқулық, 20-сурет</p><h1>Адамның табиғатқа ықпалы: 7 топ</h1><p class="lead"><b>Антропогендік фактор</b> — адамның шаруашылық әрекетінің табиғатқа әсері. Оқулықта бұл әсерлер табиғаттың қай бөлігі өзгеретініне қарай 7 топқа жіктелген. Топтарды ретімен қарастырамыз: әрқайсысына сурет, оқулықтағы анықтама, жаңа дерек және сыныпқа сұрақ берілген.</p></div>' +
         '<div id="g1"></div>' +
-        '<div class="ovw" id="ovw" hidden>' + '<div class="g7">' + SEVEN.map((c, k) => '<button class="gc closed" data-g="' + k + '"><img src="' + ECO.IMG(c[0]) + '" alt="">' + (c[3] ? '<video src="media/' + c[3] + '.mp4?v=20261105a" muted loop playsinline preload="none" aria-hidden="true"></video>' : '') + '<span class="num">' + (k + 1) + '</span><span class="sph">' + esc(c[4]) + '</span><span class="t"><b>' + esc(c[1]) + '</b><span>' + esc(c[2]) + '<em class="nf">Жаңа дерек: ' + esc(c[5]) + '</em></span></span></button>').join('') + '<div class="gc key"><p class="eyebrow" style="color:var(--amber)">Неге 7 топ?</p><p style="font-weight:800;font-size:clamp(13px,1.1vw,17px)">Әр топ табиғаттың бір бөлігінің өзгерісін көрсетеді: орман, топырақ, жер, ауа мен су, климат, айналымдар және табиғи ортаның өзін-өзі қалпына келтіру қабілеті.</p></div></div>' + '</div>' +
+        '<div class="ovw" id="ovw" hidden>' + '<div class="g7">' + SEVEN.map((c, k) => '<button class="gc closed" data-g="' + k + '"><img src="' + ECO.IMG(c[0]) + '" alt="">' + (c[3] ? '<video src="media/' + c[3] + '.mp4?v=20261105b" muted loop playsinline preload="none" aria-hidden="true"></video>' : '') + '<span class="num">' + (k + 1) + '</span><span class="sph">' + esc(c[4]) + '</span><span class="t"><b>' + esc(c[1]) + '</b><span>' + esc(c[2]) + '<em class="nf">Жаңа дерек: ' + esc(c[5]) + '</em></span></span></button>').join('') + '<div class="gc key"><p class="eyebrow" style="color:var(--amber)">Неге 7 топ?</p><p style="font-weight:800;font-size:clamp(13px,1.1vw,17px)">Әр топ табиғаттың бір бөлігінің өзгерісін көрсетеді: орман, топырақ, жер, ауа мен су, климат, айналымдар және табиғи ортаның өзін-өзі қалпына келтіру қабілеті.</p></div></div>' + '</div>' +
         '<div class="ctrl"><button class="plain" id="ovb">Барлық 7 топты бір экранда көру</button><button class="gloss" id="nx">Келесі →</button></div>';
     } else if (s.id === 'learn2') {
       h = '<div class="shead glass vbg">' + bgv('bg_heat') + '<span class="pg">Оқулық · 55-б., 21-сурет</span><p class="eyebrow">Сызба бойынша түсіндіру</p><h1>Жылыжай эффектісі қалай пайда болады?</h1><p class="lead"><b>Жылыжай эффектісі</b> — атмосфера күн радиациясын жерге өткізіп, ал жер бетінен шыққан жылуды жылыжай газдары ұстап қалуы. Жылыжайдың шыны шатыры да жылуды осылай сақтайды.</p></div>' +
@@ -704,7 +763,7 @@
         '<div class="row"><button class="plain" id="ghp">← Алдыңғы</button><button class="gloss" id="ghn">Келесі қадам →</button></div><p class="muted" id="ghc" style="font-weight:800"></p>' +
         '<p class="nfbox">Жаңа дерек: 2024 жылы атмосферадағы CO₂ мөлшері 423,9 ppm-ге жетті (WMO). 2024 жыл — бақылау тарихындағы ең ыстық жыл, өнеркәсіпке дейінгі кезеңнен шамамен 1,55°C жылы (WMO).</p><div class="row"><button class="plain" id="nx">Қазақстан мысалдары →</button></div></div></div>';
     } else if (s.id === 'recap') {
-      h = '<div class="split">' + vid('v_film', 'vidbig', 'controls poster="media/poster_film.jpg?v=20261105a"') +
+      h = '<div class="split">' + vid('v_film', 'vidbig', 'controls poster="media/poster_film.jpg?v=20261105b"') +
         '<div class="boxp glass"><span class="pg">Оқулық · 54–56-б.</span><p class="eyebrow">Бекіту · бейне-шолу</p><h2>Өз жауабыңды тексер</h2><p>Сабақ басындағы бейнені енді жазуларымен қайта көреміз.</p><ol><li>Проблемалық сұраққа берген жауабың дұрыс па еді?</li><li>Әр көрініс 20-суреттегі 7 топтың қайсысына жатады?</li><li>Қай ықпал басқа ықпалды күшейтеді? Мысал келтір.</li></ol><p class="muted">Бейнеден кейін 2-раундқа өтеміз: 6 сұрақ телефоннан.</p><div class="row"><button class="gloss" id="nx">2-раунд →</button></div></div></div>';
     } else if (s.id === 'learn3') {
       h = '<div class="shead glass vbg">' + bgv('bg_desert') + '<p class="eyebrow">Өмірмен байланыс · 2025 жылғы деректер</p><h1>Қазақстандағы мысалдар 20-суреттегі қай ықпалға жатады?</h1><p class="lead">Әр мысалды талдап, ықпал тобын анықтаңдар. Содан кейін «Жауабы» батырмасы арқылы тексеріңдер.</p></div>' +
@@ -732,82 +791,78 @@
       requestAnimationFrame(step); });
   }
 
-  /* ---------- ТАҚТАДАҒЫ ЭСТАФЕТА: әр топтан кезекпен бір оқушы шығады ---------- */
+  /* ---------- ТАҚТАДАҒЫ ЭСТАФЕТА: әр кезекте 3 топтан бір-бір оқушы бірге шығады ---------- */
   const GROUPS7 = ['Ормандардың жойылуы', 'Топырақтың эрозиямен бұзылуы', 'Антропогендік шөлейттену', 'Табиғи ортаның ластануы', 'Жылыжай эффектісі', 'Табиғи айналымдардың бұзылуы', 'Өзін-өзі қалпына келтіру қабілетінің төмендеуі'];
-  const GH4 = [['Келетін радиация', 343], ['Шағылған радиация', 103], ['Жер бетін жылытатын күн энергиясы', 168], ['Ғарышқа кететін инфрақызыл радиация', 240]];
   const RELAY = [
-    { k: 'sort', txt: 'Ертіс бойындағы ленталы қарағайлы ормандардың кесілуі мен өртенуі', s: 'Ертіс ормандарының кесілуі', a: 0, img: 'forest' },
-    { k: 'gh', txt: 'Келетін радиацияның мәнін орнына апар', a: 0 },
-    { k: 'sort', txt: 'Тың жерлер жыртылғаннан кейінгі шаңды дауылдар: топырақтың жел әсерінен бұзылуы', s: 'Тың жерлердегі шаңды дауыл', a: 1, img: 'erosion' },
-    { k: 'sort', txt: 'Арал теңізінің құрғаған табанында құнарлы жердің шөлге айналуы', s: 'Арал табанының шөлге айналуы', a: 2, img: 'desert' },
-    { k: 'gh', txt: 'Шағылған радиацияның мәнін орнына апар', a: 1 },
-    { k: 'sort', txt: 'Теміртаудағы металлургия комбинатының түтіні мен шығарындылары', s: 'Теміртау комбинатының түтіні', a: 3, img: 'pollution' },
-    { k: 'sort', txt: 'Көмір жағатын жылу электр станцияларының атмосфераға CO₂ шығаруы', s: 'Көмір ЖЭС-інің CO₂ шығаруы', a: 4, img: 'greenhouse' },
-    { k: 'gh', txt: 'Жер бетін жылытатын күн энергиясының мәнін орнына апар', a: 2 },
-    { k: 'sort', txt: 'Іле суы суаруға алынып, Балқаш көлі деңгейінің өзгеруі', s: 'Іле суы, Балқаш деңгейі', a: 5, img: 'water' },
-    { k: 'sort', txt: 'Шамадан тыс пайдаланылған жайылымдардың қайта қалпына келмеуі', s: 'Тозған жайылымдар', a: 6, img: 'sprout' },
-    { k: 'gh', txt: 'Ғарышқа кететін инфрақызыл радиацияның мәнін орнына апар', a: 3 },
-    { k: 'sort', txt: 'Өндірістік ағынды сулардың өзенге тазартылмай төгілуі', s: 'Тазартылмаған ағынды су', a: 3, img: 'water' }
+    { txt: 'Ертіс бойындағы ленталы қарағайлы ормандардың кесілуі мен өртенуі', s: 'Ертіс ормандарының кесілуі', a: 0, img: 'forest' },
+    { txt: 'Тың жерлер жыртылғаннан кейінгі шаңды дауылдар: топырақтың жел әсерінен бұзылуы', s: 'Тың жерлердегі шаңды дауыл', a: 1, img: 'erosion' },
+    { txt: 'Арал теңізінің құрғаған табанында құнарлы жердің шөлге айналуы', s: 'Арал табанының шөлге айналуы', a: 2, img: 'desert' },
+    { txt: 'Теміртаудағы металлургия комбинатының түтіні мен шығарындылары', s: 'Теміртау комбинатының түтіні', a: 3, img: 'pollution' },
+    { txt: 'Көмір жағатын жылу электр станцияларының атмосфераға CO₂ шығаруы', s: 'Көмір ЖЭС-інің CO₂ шығаруы', a: 4, img: 'greenhouse' },
+    { txt: 'Іле суы суаруға алынып, Балқаш көлі деңгейінің өзгеруі', s: 'Іле суы, Балқаш деңгейі', a: 5, img: 'water' },
+    { txt: 'Шамадан тыс пайдаланылған жайылымдардың қайта қалпына келмеуі', s: 'Тозған жайылымдар', a: 6, img: 'sprout' },
+    { txt: 'Өндірістік ағынды сулардың өзенге тазартылмай төгілуі', s: 'Тазартылмаған ағынды су', a: 3, img: 'water' },
+    { txt: 'Қалалардағы автокөліктер санының өсуі: атмосфераға CO₂ көбірек шығады', s: 'Автокөліктердің CO₂ шығаруы', a: 4, img: 'greenhouse' }
   ];
-  const RPTS = 200; let rs = null, rtick = null, rlock = false;
-  function relayPush() { be.update(G + '/meta', { relay: { i: rs.i, t: rs.t, u: rs.u || '', st: rs.st, k: RELAY[rs.i] ? RELAY[rs.i].k : '', pl: rs.pl.join(',') } }); }
+  const RROUNDS = RELAY.length / 3, RPTS = 200, RSEC = 40; let rs = null, rtick = null;
+  const ritem = (r, t) => RELAY[r * 3 + t];
+  function relayPush() { be.update(G + '/meta', { relay: { r: rs.r, st: rs.st, u0: rs.u[0] || '', u1: rs.u[1] || '', u2: rs.u[2] || '', res: rs.res.map((x) => x === true ? 1 : x === false ? 0 : -1).join(','), pl: rs.pl.join(',') } }); }
   function teamIds(t) { const players = game.players || {}, teams = game.teams || {}; return Object.keys(players).filter((u) => teams[u] === t); }
   function mountRelay() {
-    const m = game.meta || {};
-    rs = { i: (m.relay && typeof m.relay.i === 'number') ? m.relay.i : 0, t: (m.relay && typeof m.relay.t === 'number') ? m.relay.t : 0, u: '', st: 'pick', used: new Set(Object.keys(m.boardInd || {})), pl: (m.relay && m.relay.pl) ? String(m.relay.pl).split(',').filter(Boolean) : [] };
-    app.innerHTML = topbar() + '<div class="slide"><div class="rlwrap"><div class="rlside"><div class="glass rlrules"><p class="eyebrow">Тақтадағы эстафета</p><p>Әр топтан кезекпен бір оқушы шығады. Мысалды кластер-сызбадағы 7 топтың біріне, санды жылыжай сызбасындағы орнына сүйреп апарады. Сынып бірге антропогендік факторлардың кластерін құрайды.</p><p><b>Дұрыс: топқа +' + RPTS + '</b></p></div>' + [0, 1, 2].map((i) => '<div class="rlteam glass" id="rlt' + i + '" style="--c1:' + T[i].c1 + ';--c2:' + T[i].c2 + '"><span>' + tname(i) + '</span><b id="rlp' + i + '">0</b></div>').join('') + '<p class="muted" id="rlprog" style="font-weight:800;text-align:center"></p></div>' +
+    const m = game.meta || {}, R0 = m.relay || {};
+    rs = { r: typeof R0.r === 'number' ? R0.r : 0, st: 'pick', u: ['', '', ''], res: [null, null, null], used: new Set(Object.keys(m.boardInd || {})), pl: R0.pl ? String(R0.pl).split(',').filter(Boolean) : [] };
+    app.innerHTML = topbar() + '<div class="slide"><div class="rlwrap"><div class="rlside"><div class="glass rlrules"><p class="eyebrow">Тақтадағы эстафета</p><p>Әр кезекте 3 топтан бір-бір оқушы тақтаға бірге шығады. Әркім өз тобының түсіндегі карточканы кластер-сызбадағы 7 топтың біріне сүйреп апарады. Сынып бірге антропогендік факторлардың кластерін құрайды.</p><p><b>Дұрыс: топқа +' + RPTS + '</b> · ' + RSEC + ' секунд</p></div>' + [0, 1, 2].map((i) => '<div class="rlteam glass" id="rlt' + i + '" style="--c1:' + T[i].c1 + ';--c2:' + T[i].c2 + '"><span>' + tname(i) + '</span><b id="rlp' + i + '">0</b></div>').join('') + '<p class="muted" id="rlprog" style="font-weight:800;text-align:center"></p></div>' +
       '<div class="rlmain glass" id="rlmain"></div></div></div>';
     relayScores(); relayTurn();
   }
-  function relayScores() { const bp = (game.meta || {}).boardPts || {}; [0, 1, 2].forEach((i) => { const e = $('rlp' + i); if (e) e.textContent = bp[i] || 0; const c = $('rlt' + i); if (c) c.classList.toggle('on', rs && rs.t === i && rs.i < RELAY.length); }); const p = $('rlprog'); if (p && rs) p.textContent = Math.min(rs.i + 1, RELAY.length) + ' / ' + RELAY.length + ' тапсырма'; }
+  function relayScores() { const bp = (game.meta || {}).boardPts || {}; [0, 1, 2].forEach((i) => { const e = $('rlp' + i); if (e) e.textContent = bp[i] || 0; }); const p = $('rlprog'); if (p && rs) p.textContent = Math.min(rs.r + 1, RROUNDS) + ' / ' + RROUNDS + ' кезек'; }
   function relayTurn() {
-    clearInterval(rtick); rlock = false; const box = $('rlmain'); if (!box) return;
+    clearInterval(rtick); const box = $('rlmain'); if (!box) return;
     relayScores();
-    if (rs.i >= RELAY.length) {
+    if (rs.r >= RROUNDS) {
       const bp = (game.meta || {}).boardPts || {}; const order = [0, 1, 2].sort((a, b) => (bp[b] || 0) - (bp[a] || 0));
       box.innerHTML = '<div class="rldone"><p class="eyebrow">Эстафета аяқталды · Біз құрған кластер</p><h2>Тақтада ең көп ұпай жинаған: ' + tname(order[0]) + '</h2></div>' + clusterHtml(true) + '<div class="rldone" style="padding:14px 0 0"><p class="muted" style="font-weight:700">Антропогендік факторлар 7 топқа топтастырылып, кластер-сызба түрінде ұсынылды. Ұпайлар топтың жалпы ұпайына қосылды.</p><button class="gloss" id="rln">1-раундқа өту →</button></div>';
-      drawCluster();
-      confetti(150); rs.st = 'done'; relayPush(); $('rln').onclick = () => goStage(curStage() + 1); return;
+      drawCluster(); confetti(150); rs.st = 'done'; relayPush(); $('rln').onclick = () => goStage(curStage() + 1); return;
     }
-    const ids = teamIds(rs.t), players = game.players || {};
-    rs.u = ''; rs.st = 'pick'; relayPush();
-    box.innerHTML = '<div class="rlpick" style="--c1:' + T[rs.t].c1 + ';--c2:' + T[rs.t].c2 + '"><p class="eyebrow">Кезек</p><h2 class="rlteamname">' + tname(rs.t) + '</h2>' +
-      '<div class="roulette" id="rou">' + (ids.length ? '?' : 'Топта оқушы жоқ') + '</div>' +
-      '<div class="rlnames">' + ids.map((u) => '<button class="teamchip" data-pu="' + esc(u) + '" style="background:linear-gradient(180deg,' + T[rs.t].c1 + ',' + T[rs.t].c2 + ')' + (rs.used.has(u) ? ';opacity:.45' : '') + '">' + esc(players[u].name) + '</button>').join('') + '</div>' +
-      '<div class="row" style="justify-content:center"><button class="gloss" id="rspin">Оқушыны кездейсоқ таңдау</button><button class="plain" id="rany">Тапсырманы бірден ашу</button></div><p class="muted" style="font-weight:700">Атты басып, оқушыны өзіңіз де таңдай аласыз.</p></div>';
-    box.querySelectorAll('[data-pu]').forEach((b) => b.onclick = () => relayGo(b.dataset.pu));
-    $('rany').onclick = () => relayGo('');
+    const players = game.players || {};
+    rs.u = ['', '', '']; rs.res = [null, null, null]; rs.st = 'pick'; relayPush();
+    box.innerHTML = '<div class="rlpick"><p class="eyebrow">' + (rs.r + 1) + '-кезек · әр топтан бір оқушы</p><div class="pick3">' + [0, 1, 2].map((t) => { const ids = teamIds(t);
+        return '<div class="pcol" style="--c1:' + T[t].c1 + ';--c2:' + T[t].c2 + '"><h3>' + tname(t) + '</h3><div class="roulette sm" id="rou' + t + '">' + (ids.length ? '?' : 'Топта оқушы жоқ') + '</div><div class="rlnames">' + ids.map((u) => '<button class="teamchip" data-pt="' + t + '" data-pu="' + esc(u) + '" style="background:linear-gradient(180deg,' + T[t].c1 + ',' + T[t].c2 + ')' + (rs.used.has(u) ? ';opacity:.45' : '') + '">' + esc(players[u].name) + '</button>').join('') + '</div></div>'; }).join('') + '</div>' +
+      '<div class="row" style="justify-content:center"><button class="gloss" id="rspin">Үш оқушыны кездейсоқ таңдау</button><button class="plain" id="rany">Тапсырманы ашу →</button></div><p class="muted" style="font-weight:700">Атты басып, оқушыны өзіңіз де таңдай аласыз.</p></div>';
+    box.querySelectorAll('[data-pu]').forEach((b) => b.onclick = () => { const t = +b.dataset.pt; rs.u[t] = b.dataset.pu; const r = $('rou' + t); r.textContent = players[rs.u[t]].name; r.classList.add('win'); relayPush(); });
+    $('rany').onclick = () => relayGo();
     $('rspin').onclick = () => {
-      if (!ids.length) return relayGo('');
-      const pool = ids.filter((u) => !rs.used.has(u)); const from = pool.length ? pool : ids; const pick = from[Math.floor(Math.random() * from.length)];
-      const r = $('rou'); let n = 0, delay = 60; $('rspin').disabled = true;
-      const spin = () => { r.textContent = players[ids[n++ % ids.length]].name; delay *= 1.12; if (delay < 380) setTimeout(spin, delay); else { r.textContent = players[pick].name; r.classList.add('win'); confetti(60); setTimeout(() => relayGo(pick), 1300); } };
-      spin();
+      $('rspin').disabled = true; let pending = 0;
+      [0, 1, 2].forEach((t) => { const ids = teamIds(t); if (!ids.length) return; pending++;
+        const pool = ids.filter((u) => !rs.used.has(u)); const from = pool.length ? pool : ids; const pick = from[Math.floor(Math.random() * from.length)];
+        const r = $('rou' + t); let n = t * 2, delay = 60;
+        const spin = () => { r.textContent = players[ids[n++ % ids.length]].name; delay *= 1.12; if (delay < 380) setTimeout(spin, delay); else { r.textContent = players[pick].name; r.classList.add('win'); rs.u[t] = pick; relayPush(); if (--pending === 0) { confetti(60); setTimeout(relayGo, 1300); } } };
+        setTimeout(spin, t * 150); });
+      if (!pending) relayGo();
     };
   }
-  function relayGo(u) {
-    rs.u = u; rs.used.add(u); rs.st = 'go'; relayPush();
-    const it = RELAY[rs.i], box = $('rlmain'), players = game.players || {};
-    const who = u && players[u] ? players[u].name : tname(rs.t);
-    const head = '<div class="rlhead" style="--c1:' + T[rs.t].c1 + ';--c2:' + T[rs.t].c2 + '"><span class="who">' + esc(who) + ' · ' + tname(rs.t) + '</span><span class="rltime" id="rlt">30</span></div>';
-    if (it.k === 'sort') {
-      box.innerHTML = head + '<p class="rlq">Бұл мысал 7 топтың қайсысына жатады? Карточканы кластер-сызбадағы орнына сүйреп апар.</p><div class="rlcardrow"><div class="dragcard" id="dc"><img src="' + ECO.IMG(it.img) + '" alt=""><span>' + esc(it.txt) + '</span></div></div>' + clusterHtml(false);
-      drawCluster();
-    } else {
-      box.innerHTML = head + '<p class="rlq">' + esc(it.txt) + ' (жылыжай эффектісі сызбасы, 21-сурет).</p><div class="rlcardrow">' + GH4.map((g, k) => '<div class="dragcard num" data-val="' + k + '">' + g[1] + '<small>Вт/м²</small></div>').join('') + '</div>' +
-        '<div class="drops4">' + GH4.map((g, k) => '<div class="drop' + (k === it.a ? ' target' : ' dim') + '" data-drop="' + k + '"><b>' + (k + 1) + '</b>' + esc(g[0]) + (k === it.a ? '<i>?</i>' : '') + '</div>').join('') + '</div>';
-    }
+  function relayGo() {
+    rs.st = 'go'; rs.u.forEach((u) => { if (u) rs.used.add(u); }); relayPush();
+    const box = $('rlmain'), players = game.players || {};
+    const head = '<div class="rlhead3">' + [0, 1, 2].map((t) => '<span style="--c1:' + T[t].c1 + ';--c2:' + T[t].c2 + '">' + esc(rs.u[t] && players[rs.u[t]] ? players[rs.u[t]].name : tname(t)) + '</span>').join('') + '<span class="rltime" id="rlt">' + RSEC + '</span></div>';
+    box.innerHTML = head + '<p class="rlq">Әркім өз түсіндегі карточканы кластер-сызбадағы орнына сүйреп апарсын.</p><div class="rlcardrow three">' + [0, 1, 2].map((t) => { const it = ritem(rs.r, t);
+        return '<div class="dragcard tcard" data-t="' + t + '" style="--c1:' + T[t].c1 + ';--c2:' + T[t].c2 + '"><img src="' + ECO.IMG(it.img) + '" alt=""><span><small>' + tname(t) + '</small>' + esc(it.txt) + '</span></div>'; }).join('') + '</div>' + clusterHtml(false);
+    drawCluster();
     box.querySelectorAll('.dragcard').forEach(makeDrag);
     try { box.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (e) {}
-    const t0 = Date.now(); rtick = setInterval(() => { const left = Math.max(0, 30 - Math.floor((Date.now() - t0) / 1000)); const e = $('rlt'); if (e) { e.textContent = left; e.classList.toggle('low', left <= 5); } if (left <= 0) relayResult(false, null); }, 250);
+    const t0 = Date.now(); rtick = setInterval(() => { const left = Math.max(0, RSEC - Math.floor((Date.now() - t0) / 1000)); const e = $('rlt'); if (e) { e.textContent = left; e.classList.toggle('low', left <= 5); } if (left <= 0) { [0, 1, 2].forEach((t) => { if (rs.res[t] === null) cardResult(t, false, null); }); } }, 250);
   }
+  const GSTAT = [['10,9 млн га', 'орман жыл сайын кесіледі', 'FAO, 2025', 0], ['100+ млн га', 'құнарлы жер жыл сайын тозады', 'UNCCD', 0], ['165 / 280 млн га', 'ҚР аумағы — шөл мен шөлейт', 'ҚР ЭМ', 59], ['42%', 'ағынды су тазартылмай төгіледі', 'UN-Water, 2022', 42], ['423,9 ppm', 'атмосферадағы CO₂, 2024', 'WMO', 0], ['+32 см', 'Балқаш деңгейі, 2025 ж. қаңтар–маусым', 'bizmedia.kz, 2025', 0], ['20–60%', 'ҚР жайылымдары тозған', 'ҚР ЭМ', 0]];
   function clusterHtml(fin) {
     const by = GROUPS7.map(() => []);
-    rs.pl.forEach((v) => { const i = parseInt(v, 10), it = RELAY[i]; if (it && it.k === 'sort') by[it.a].push('<span class="clit' + (/x$/.test(v) ? ' miss' : '') + '">' + esc(it.s) + '</span>'); });
-    const node = (k) => '<div class="drop clnode" data-drop="' + k + '"><b>' + (k + 1) + '</b>' + esc(GROUPS7[k]) + '<div class="clitems">' + by[k].join('') + '</div></div>';
+    rs.pl.forEach((v) => { const i = parseInt(v, 10), it = RELAY[i]; if (it) by[it.a].push('<span class="clit' + (/x$/.test(v) ? ' miss' : '') + '">' + esc(it.s) + '</span>'); });
+    const node = (k) => { const st = GSTAT[k];
+      return '<div class="drop clnode" data-drop="' + k + '"><div class="clh"><img src="' + ECO.IMG(SEVEN[k][0]) + '" alt=""><div><b>' + (k + 1) + ' · ' + esc(SEVEN[k][4]) + '</b><span>' + esc(GROUPS7[k]) + '</span></div></div>' +
+        (fin ? '<div class="clst"><strong>' + esc(st[0]) + '</strong><span>' + esc(st[1]) + '</span>' + (st[3] ? '<i class="clbar"><i style="width:' + st[3] + '%"></i></i>' : '') + '<small>' + esc(st[2]) + '</small></div>' : '') +
+        '<div class="clitems">' + by[k].join('') + '</div></div>'; };
     return '<div class="cluster' + (fin ? ' fin' : '') + '" id="clu"><svg class="cllines" id="cll" aria-hidden="true"></svg>' +
       '<div class="clrow">' + [0, 1, 2, 3].map(node).join('') + '</div>' +
-      '<div class="clcenter" id="clc">Табиғатқа әсер ететін антропогендік факторлар<small>20-сурет · § 15</small></div>' +
+      '<div class="clcenter" id="clc"><img src="' + ECO.IMG('earth') + '" alt=""><div>Табиғатқа әсер ететін антропогендік факторлар<small>20-сурет · § 15' + (fin ? ' · инфографика' : '') + '</small></div></div>' +
       '<div class="clrow b">' + [4, 5, 6].map(node).join('') + '</div></div>';
   }
   function drawCluster() {
@@ -823,33 +878,34 @@
   window.addEventListener('resize', () => { if ($('clu')) drawCluster(); });
   function makeDrag(el) {
     el.addEventListener('pointerdown', (e) => {
-      if (rlock) return; e.preventDefault(); el.setPointerCapture(e.pointerId);
-      const r = el.getBoundingClientRect(), dx = e.clientX - r.left, dy = e.clientY - r.top;
+      if (el.classList.contains('used')) return; e.preventDefault(); try { el.setPointerCapture(e.pointerId); } catch (x) {}
+      const r = el.getBoundingClientRect(), dx = e.clientX - r.left, dy = e.clientY - r.top, pid = e.pointerId;
       el.classList.add('dragging'); el.style.width = r.width + 'px'; el.style.left = r.left + 'px'; el.style.top = r.top + 'px';
       const over = (x, y) => { el.style.visibility = 'hidden'; const t = document.elementFromPoint(x, y); el.style.visibility = ''; return t && t.closest('[data-drop]'); };
-      const mv = (ev) => { el.style.left = (ev.clientX - dx) + 'px'; el.style.top = (ev.clientY - dy) + 'px'; document.querySelectorAll('.drop.hover').forEach((d) => d.classList.remove('hover')); const d = over(ev.clientX, ev.clientY); if (d) d.classList.add('hover'); };
-      const up = (ev) => { el.removeEventListener('pointermove', mv); el.removeEventListener('pointerup', up); el.removeEventListener('pointercancel', up);
-        document.querySelectorAll('.drop.hover').forEach((d) => d.classList.remove('hover'));
+      const mv = (ev) => { if (ev.pointerId !== pid) return; el.style.left = (ev.clientX - dx) + 'px'; el.style.top = (ev.clientY - dy) + 'px'; };
+      const up = (ev) => { if (ev.pointerId !== pid) return; el.removeEventListener('pointermove', mv); el.removeEventListener('pointerup', up); el.removeEventListener('pointercancel', up);
         const d = over(ev.clientX, ev.clientY); el.classList.remove('dragging'); el.style.left = el.style.top = el.style.width = '';
-        if (!d) return; const it = RELAY[rs.i];
-        if (it.k === 'sort') relayResult(+d.dataset.drop === it.a, d);
-        else { if (+d.dataset.drop !== it.a) { d.classList.add('shake'); setTimeout(() => d.classList.remove('shake'), 500); return; } relayResult(+el.dataset.val === it.a, d, el); } };
+        if (!d) return; const t = +el.dataset.t; if (rs.res[t] !== null) return;
+        cardResult(t, +d.dataset.drop === ritem(rs.r, t).a, d); };
       el.addEventListener('pointermove', mv); el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
     });
   }
-  function relayResult(ok, drop, chip) {
-    if (rlock) return; rlock = true; clearInterval(rtick);
-    const it = RELAY[rs.i], box = $('rlmain');
+  function cardResult(t, ok, drop) {
+    if (rs.res[t] !== null) return; rs.res[t] = ok;
+    const it = ritem(rs.r, t), idx = rs.r * 3 + t, box = $('rlmain');
+    const card = box.querySelector('.tcard[data-t="' + t + '"]'); if (card) { card.classList.add('used', ok ? 'okc' : 'noc'); card.insertAdjacentHTML('beforeend', '<i class="mark">' + (ok ? '✓' : '✗') + '</i>'); }
+    rs.pl.push(idx + (ok ? '' : 'x'));
     const right = box.querySelector('[data-drop="' + it.a + '"]');
-    if (it.k === 'sort' && rs.pl.indexOf(rs.i + (ok ? '' : 'x')) < 0) rs.pl.push(rs.i + (ok ? '' : 'x'));
-    if (ok) { if (drop) { drop.classList.add('good'); if (it.k === 'sort') { const ul = drop.querySelector('.clitems'); if (ul) ul.insertAdjacentHTML('beforeend', '<span class="clit new">' + esc(it.s) + '</span>'); } else drop.insertAdjacentHTML('beforeend', '<em>✓ ' + GH4[it.a][1] + ' Вт/м²</em>'); }
-      const m = game.meta || {}; const upd = {}; upd['boardPts/' + rs.t] = ((m.boardPts || {})[rs.t] || 0) + RPTS; if (rs.u) upd['boardInd/' + rs.u] = ((m.boardInd || {})[rs.u] || 0) + RPTS; be.update(G + '/meta', upd);
-      confetti(90); rs.st = 'ok';
-    } else { if (drop) drop.classList.add('bad'); if (right) { right.classList.add('good'); if (it.k === 'sort') { const ul = right.querySelector('.clitems'); if (ul) ul.insertAdjacentHTML('beforeend', '<span class="clit miss new">' + esc(it.s) + '</span>'); } } rs.st = 'bad'; }
-    if (it.k === 'sort') drawCluster();
-    relayPush();
-    box.insertAdjacentHTML('beforeend', '<div class="rlres ' + (ok ? 'ok' : 'no') + '"><b>' + (ok ? 'Дұрыс! +' + RPTS + ' ұпай' : drop ? 'Қате' : 'Уақыт бітті') + '</b><span>' + (ok ? '' : 'Дұрыс жауабы: ' + (it.k === 'sort' ? (it.a + 1) + '. ' + GROUPS7[it.a] : GH4[it.a][0] + ' — ' + GH4[it.a][1] + ' Вт/м²')) + '</span><button class="gloss" id="rlnext">Келесі кезек →</button></div>');
-    $('rlnext').onclick = () => { rs.i++; rs.t = (rs.t + 1) % 3; relayTurn(); };
+    if (drop && !ok) { drop.classList.add('shake'); setTimeout(() => drop.classList.remove('shake'), 500); }
+    if (right) { const ul = right.querySelector('.clitems'); if (ul) ul.insertAdjacentHTML('beforeend', '<span class="clit new' + (ok ? '' : ' miss') + '" style="border:2px solid ' + T[t].c2 + '">' + esc(it.s) + '</span>'); right.classList.add('good'); setTimeout(() => right.classList.remove('good'), 900); }
+    if (ok) { const m = game.meta || {}; const upd = {}; upd['boardPts/' + t] = ((m.boardPts || {})[t] || 0) + RPTS; if (rs.u[t]) upd['boardInd/' + rs.u[t]] = ((m.boardInd || {})[rs.u[t]] || 0) + RPTS; be.update(G + '/meta', upd); confetti(40); }
+    drawCluster(); relayPush();
+    if (rs.res.every((x) => x !== null)) {
+      clearInterval(rtick); rs.st = 'res'; relayPush();
+      box.insertAdjacentHTML('beforeend', '<div class="rlres ok3">' + [0, 1, 2].map((k) => { const i2 = ritem(rs.r, k); return '<span class="r3 ' + (rs.res[k] ? 'y' : 'n') + '" style="--c2:' + T[k].c2 + '"><b>' + tname(k) + ': ' + (rs.res[k] ? '+' + RPTS : '0') + '</b>' + (rs.res[k] ? '' : '<small>Дұрысы: ' + (i2.a + 1) + '. ' + esc(GROUPS7[i2.a]) + '</small>') + '</span>'; }).join('') + '<button class="gloss" id="rlnext">' + (rs.r + 1 < RROUNDS ? 'Келесі кезек →' : 'Кластерді көру →') + '</button></div>');
+      $('rlnext').onclick = () => { rs.r++; relayTurn(); };
+      try { $('rlnext').scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (e) {}
+    }
   }
   /* ---------- FEEDBACK STAGE: Экоуәде ағашы ---------- */
   const LEAFC = ['#3BB273', '#F2B33D', '#F0765F'];
@@ -990,7 +1046,8 @@
     if (q.t === 'img') return '<div class="opts">' + q.o.map((o, j) => '<div class="opt img o' + j + '"><b>' + L[j] + '</b><img src="' + ECO.IMG(o) + '" alt=""></div>').join('') + '</div>';
     if (q.t === 'tf') return '<div class="opts"><div class="opt o3"><b>✓</b><span>Шын</span></div><div class="opt o0"><b>✗</b><span>Жалған</span></div></div>';
     if (q.t === 'num') return '<div class="numbox glass">Жауапты телефонға жазыңдар · ' + esc(q.unit) + '</div>';
-    if (q.t === 'order') return '<div class="optlist">' + q.o.map((o, j) => '<div class="opt o' + (j % 4) + '"><b>' + L[j] + '</b><span>' + esc(o) + '</span></div>').join('') + '</div>';
+    if (q.t === 'order') return '<div class="optlist' + (q.g ? ' cmp' : '') + '">' + q.o.map((o, j) => '<div class="opt o' + (j % 4) + '"><b>' + L[j] + '</b>' + (q.ic ? '<em class="oic">' + q.ic[j] + '</em>' : '') + '<span>' + esc(o) + '</span></div>').join('') + '</div>' +
+      (q.g ? '<div class="flowh glass"><p class="eyebrow">' + esc(q.g) + ' · телефонда құрыңдар</p><div class="frow2">' + q.o.map((_, k) => (k ? '<i class="far">→</i>' : '') + '<div class="fbox empty"><b>' + (k + 1) + '</b><span>' + (k === 0 ? 'Себеп' : k === q.o.length - 1 ? 'Салдар' : '?') + '</span></div>').join('') + '</div></div>' : '');
   }
   function answeredCards() {
     const m = game.meta, players = game.players || {}, teams = game.teams || {}, ans = (game.answers || {})[m.q] || {};
@@ -1033,6 +1090,9 @@
   function reveal() { if (game.meta && game.meta.phase === 'question') { clearInterval(tick); be.update(G + '/meta', { phase: 'reveal' }); } }
 
   /* ---------- REVEAL ---------- */
+  function flowBig(q) {
+    return '<div class="frow2 big">' + q.a.map((j, k) => (k ? '<i class="far">→</i>' : '') + '<div class="fbox" style="animation-delay:' + (k * .25) + 's"><b>' + (k + 1) + '</b><em>' + ((q.ic || [])[j] || '') + '</em><span>' + esc(q.o[j]) + '</span><small>' + (k === 0 ? 'себеп' : k === q.a.length - 1 ? 'салдар' : 'салдар → себеп') + '</small></div>').join('') + '</div>';
+  }
   function mountReveal() {
     const m = game.meta, q = Q[m.q], players = game.players || {}, teams = game.teams || {}, ans = (game.answers || {})[m.q] || {}, st = m.starts[m.q];
     const ids = Object.keys(ans);
@@ -1050,7 +1110,7 @@
     const fast = ids.filter((u) => ECO.isRight(q, ans[u].v) && players[u]).sort((a, b) => ans[a].t - ans[b].t).slice(0, 3);
     const teamOk = [0, 1, 2].map((i) => { const tm = Object.keys(players).filter((u) => teams[u] === i); const ok = tm.filter((u) => ans[u] && ECO.isRight(q, ans[u].v)).length; return [ok, tm.length]; });
     app.innerHTML = topbar() + '<div class="qhead glass"><div class="qn">' + (m.q + 1) + '/' + Q.length + '<small>сұрақ</small></div><div class="qt"><h2>' + esc(q.q) + '</h2></div><div></div></div>' +
-      '<div class="reveal"><div style="display:flex;flex-direction:column;gap:14px;min-width:0"><div class="correct glass"><p class="eyebrow" style="color:var(--good)">Дұрыс жауап</p><h2' + (ECO.answerText(q).length > 60 ? ' class="long"' : '') + '>' + esc(ECO.answerText(q)) + '</h2>' + (q.why ? '<p class="muted" style="font-weight:700">' + esc(q.why) + '</p>' : '') + '<span class="pg">' + esc(q.src) + '</span></div>' +
+      '<div class="reveal"><div style="display:flex;flex-direction:column;gap:14px;min-width:0"><div class="correct glass"><p class="eyebrow" style="color:var(--good)">Дұрыс жауап' + (q.g ? ' · ' + esc(q.g) : '') + '</p>' + (q.g ? flowBig(q) : '<h2' + (ECO.answerText(q).length > 60 ? ' class="long"' : '') + '>' + esc(ECO.answerText(q)) + '</h2>') + (q.why ? '<p class="muted" style="font-weight:700">' + esc(q.why) + '</p>' : '') + '<span class="pg">' + esc(q.src) + '</span></div>' +
       '<div class="dist glass"><p class="eyebrow">Жауаптар · ' + ids.length + ' оқушы</p>' + dist + '</div></div>' +
       '<div style="display:flex;flex-direction:column;gap:14px;min-width:0"><div class="fast glass"><p class="eyebrow">Ең жылдам дұрыс жауап</p>' + (fast.length ? fast.map((u, k) => '<div class="frow" style="animation-delay:' + (k * .15) + 's"><span class="medal m' + (k + 1) + '">' + (k + 1) + '</span><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis">' + esc(players[u].name) + '</span><span class="dot" style="background:' + T[teams[u]].c2 + '"></span><span class="pill">' + (Math.max(0, ans[u].t - st - ECO.LEAD) / 1000).toFixed(1) + ' с</span></div>').join('') : '<p class="muted" style="font-weight:700">Дұрыс жауап болмады.</p>') + '</div>' +
       '<div class="answered">' + [0, 1, 2].map((i) => '<div class="acard glass"><div class="h"><span style="color:' + T[i].ink + '">' + tname(i) + '</span><b>' + teamOk[i][0] + ' / ' + teamOk[i][1] + '</b></div><div class="track"><i style="width:' + (teamOk[i][1] ? teamOk[i][0] / teamOk[i][1] * 100 : 0) + '%;background:' + grad(i) + '"></i></div><p class="muted" style="font-weight:700;font-size:13px">дұрыс жауап берді</p></div>').join('') + '</div></div></div>' +
