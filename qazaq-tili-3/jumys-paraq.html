@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Жұмыс парағы · Түбір мен қосымшаның жазылуы · 3-сынып</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Nunito:wght@600;700;800;900&display=swap">
+<style>
+:root { --ink: #17324D; --muted: #5B6B7A; --A: #2E9E62; --B: #E08A1E; --C: #B5345A; --sky: #3F8FD8; --display: Montserrat, Arial, sans-serif; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: Nunito, Arial, sans-serif; color: var(--ink); background: radial-gradient(900px 500px at 10% 0%, #FFF3C9, transparent 60%), radial-gradient(900px 600px at 100% 20%, #DDEEFF, transparent 60%), #F6F9FC; }
+.bar { position: sticky; top: 0; z-index: 10; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: center; padding: 10px; background: rgba(255,255,255,.9); backdrop-filter: blur(8px); border-bottom: 1px solid #E3EAF2; }
+.bar button { font: inherit; font-weight: 900; border: 2px solid #D5E2EF; background: #fff; border-radius: 999px; padding: 8px 16px; cursor: pointer; }
+.bar button.on { color: #fff; border-color: transparent; } .bar button.on[data-lv="A"] { background: var(--A); } .bar button.on[data-lv="B"] { background: var(--B); } .bar button.on[data-lv="C"] { background: var(--C); }
+.bar .sp { flex: 1; } .bar .score { font-family: var(--display); font-weight: 900; }
+.page { width: 210mm; min-height: 297mm; margin: 18px auto; background: #fff; border-radius: 18px; box-shadow: 0 20px 40px -24px rgba(23,50,77,.35); padding: 12mm 12mm 10mm; position: relative; overflow: hidden; }
+.page::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 9mm; background: repeating-linear-gradient(90deg, var(--lc) 0 22mm, #FFD24A 22mm 44mm, var(--sky) 44mm 66mm); opacity: .9; }
+.hd { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; margin-top: 6mm; }
+.hd h1 { font-family: var(--display); font-weight: 900; font-size: 26px; margin: 0; line-height: 1.1; }
+.hd h1 span { color: var(--lc); }
+.hd .sub { font-weight: 800; color: var(--muted); margin: 4px 0 0; }
+.lvbadge { width: 84px; height: 84px; border-radius: 24px; display: grid; place-items: center; color: #fff; font-family: var(--display); font-weight: 900; font-size: 44px; background: linear-gradient(160deg, var(--lc), color-mix(in srgb, var(--lc) 60%, #000)); box-shadow: 0 10px 20px -10px var(--lc); transform: rotate(-6deg); }
+.lvbadge small { display: block; font-size: 11px; margin-top: -10px; }
+.who { display: flex; gap: 12px; margin: 8px 0 6px; font-weight: 800; }
+.who label { flex: 1; display: flex; gap: 6px; align-items: flex-end; } .who input { flex: 1; border: none; border-bottom: 2px dashed #B9C8D8; font: inherit; padding: 2px 4px; background: transparent; }
+.helper { display: flex; gap: 10px; align-items: center; background: linear-gradient(135deg, #F1ECFF, #E8F4FF); border: 2px solid #D5CBFF; border-radius: 16px; padding: 6px 12px; margin: 6px 0 8px; font-weight: 800; font-size: 14px; }
+.helper svg { flex: none; width: 46px; height: 46px; }
+.task { position: relative; border: 2.5px solid #E3EAF2; border-radius: 18px; padding: 10px 12px 10px 58px; margin: 9px 0; background: #fff; break-inside: avoid; }
+.task .ic { position: absolute; left: 10px; top: 10px; width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; font-size: 21px; color: #fff; }
+.task h3 { margin: 0 0 6px; font-family: var(--display); font-weight: 900; font-size: 15px; }
+.task h3 em { font-style: normal; font-size: 11px; padding: 2px 8px; border-radius: 999px; background: #EEF3F8; color: var(--muted); margin-left: 6px; vertical-align: middle; }
+.k1 .ic { background: #7C6CF0; } .k2 .ic { background: #3FA4E8; } .k3 .ic { background: #2E9E62; } .k4 .ic { background: #F2A541; } .k5 .ic { background: #E8692A; } .k6 .ic { background: #B5345A; }
+.opts { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0; } .q { font-weight: 800; margin: 4px 0 2px; }
+.opt { display: inline-flex; align-items: center; gap: 6px; border: 2px solid #D5E2EF; border-radius: 12px; padding: 4px 10px; font-weight: 800; cursor: pointer; background: #fff; }
+.opt input { width: 16px; height: 16px; } .opt.right { background: #E4F6EB; border-color: #8FD3A8; } .opt.wrong { background: #FDE8E4; border-color: #F2A99A; }
+.wbox { display: grid; gap: 6px; } .wrow { display: grid; grid-template-columns: repeat(var(--n, 3), 1fr); gap: 6px; align-items: center; }
+.cell { padding: 6px 10px; border-radius: 10px; background: #F4F8FC; font-weight: 900; text-align: center; font-size: 17px; }
+.cell.h { background: transparent; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
+.inp { width: 100%; font: inherit; font-weight: 900; font-size: 17px; text-align: center; border: 2px dashed #B9C8D8; border-radius: 10px; padding: 5px; background: #FFFDF5; }
+.inp.right { border: 2px solid #3BB273; background: #E9F8EF; } .inp.wrong { border: 2px solid #E8692A; background: #FDEDE8; }
+.fillw { display: flex; flex-wrap: wrap; gap: 10px; } .fillw span { font-weight: 900; font-size: 18px; display: inline-flex; align-items: center; gap: 2px; } .fillw .inp { width: 42px; padding: 3px; }
+.lines { display: grid; gap: 4px; } .lines textarea { width: 100%; font: inherit; font-size: 16px; font-weight: 700; border: none; resize: vertical; padding: 4px 6px; line-height: 30px; background: repeating-linear-gradient(transparent 0 29px, #C9D6E3 29px 30px); min-height: calc(30px * var(--r, 3)); }
+.match { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; } .match .w { font-weight: 900; } .match select { font: inherit; font-weight: 800; padding: 4px; border-radius: 10px; border: 2px solid #D5E2EF; width: 100%; }
+.match select.right { border-color: #3BB273; background: #E9F8EF; } .match select.wrong { border-color: #E8692A; background: #FDEDE8; }
+.chk { margin-top: 6px; display: flex; gap: 8px; align-items: center; } .chk button { font: inherit; font-weight: 900; border: none; border-radius: 999px; padding: 6px 14px; color: #fff; background: var(--sky); cursor: pointer; }
+.chk .fb { font-weight: 800; } .fb.g { color: #1E7A47; } .fb.b { color: #B23A27; }
+.listen { display: flex; gap: 8px; align-items: center; } .listen button { font: inherit; font-weight: 900; border: 2px solid #CFC4FF; background: #F4F0FF; border-radius: 999px; padding: 5px 12px; cursor: pointer; }
+.tiny { font-size: 12px; color: var(--muted); font-weight: 700; }
+.selfa { display: grid; grid-template-columns: 1fr repeat(3, 44px); gap: 4px 6px; align-items: center; font-weight: 800; font-size: 14px; }
+.selfa button { font-size: 22px; background: #fff; border: 2px solid #E3EAF2; border-radius: 12px; cursor: pointer; padding: 2px; } .selfa button.on { border-color: var(--lc); background: #FFF7E0; transform: scale(1.08); }
+.foot { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; font-weight: 800; color: var(--muted); font-size: 12px; }
+.stars { font-size: 22px; letter-spacing: 2px; }
+.decor { position: absolute; right: 44mm; top: 12mm; width: 24mm; opacity: .95; pointer-events: none; }
+.aiout { margin-top: 6px; font-weight: 700; line-height: 1.9; } mark.er { background: #FDE0DA; color: #B23A27; border-radius: 6px; padding: 0 3px; } mark.pa { background: #FFE9B8; color: #8A5300; border-radius: 6px; padding: 0 3px; }
+mark sup { font-size: .65em; font-weight: 900; margin-left: 2px; }
+.confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; } .confetti i { position: absolute; top: -10px; width: 9px; height: 14px; border-radius: 2px; animation: fall linear forwards; } @keyframes fall { to { transform: translateY(105vh) rotate(540deg); } }
+@media print {
+  @page { size: A4; margin: 0; }
+  body { background: #fff; } .bar, .chk, .listen button, .noprint, .confetti, .aiout, .fb { display: none !important; }
+  .page { margin: 0; border-radius: 0; box-shadow: none; page-break-after: always; display: block !important; }
+  .inp, .match select { border-style: solid; background: #fff; color: transparent; } .match select { appearance: none; }
+  .opt input { accent-color: #fff; }
+  ::placeholder { color: transparent !important; } .printonly { display: block !important; font-size: 13px; }
+}
+.printonly { display: none; }
+@media screen and (max-width: 820px) { .page { width: auto; min-height: 0; margin: 10px; padding: 16px 12px; } .decor { display: none; } .match, .wrow { grid-template-columns: 1fr 1fr; } }
+</style>
+</head>
+<body>
+<div class="bar"><b style="font-family:var(--display)">📄 Жұмыс парағы</b>
+  <button data-lv="A">А деңгей</button><button data-lv="B">В деңгей</button><button data-lv="C">С деңгей</button><button data-lv="all">Барлығы (басып шығару)</button>
+  <span class="sp"></span><span class="score" id="score">⭐ 0</span><button id="snd">🔊</button><button id="prn">🖨 Басып шығару</button></div>
+<div id="root"></div>
+<div class="confetti" id="cf"></div>
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  /* дыбыстар */
+  let AC = null, SON = true;
+  function tone(f, d, type, vol, at) { if (!SON) return; try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); const t = AC.currentTime + (at || 0), o = AC.createOscillator(), g = AC.createGain(); o.type = type || 'sine'; o.frequency.setValueAtTime(f, t); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol || 0.2, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + d); o.connect(g); g.connect(AC.destination); o.start(t); o.stop(t + d + 0.05); } catch (e) {} }
+  const S = { ok() { tone(784, 0.18, 'triangle', 0.25); tone(1175, 0.35, 'triangle', 0.22, 0.12); }, no() { tone(220, 0.25, 'square', 0.12); tone(165, 0.35, 'square', 0.1, 0.18); }, pop() { tone(440, 0.08, 'sine', 0.18); tone(880, 0.16, 'sine', 0.16, 0.06); }, win() { [523, 659, 784, 1046].forEach((f, k) => tone(f, 0.28, 'triangle', 0.22, k * 0.13)); tone(1318, 0.6, 'triangle', 0.2, 0.55); } };
+  function confetti(n) { const box = $('cf'); const cols = ['#43B36B', '#3FA4E8', '#F2A541', '#FFD86B', '#B5345A']; for (let i = 0; i < n; i++) { const p = document.createElement('i'); p.style.left = Math.random() * 100 + 'vw'; p.style.background = cols[i % 5]; p.style.animationDuration = (1.4 + Math.random() * 1.6) + 's'; box.appendChild(p); setTimeout(() => p.remove(), 3500); } }
+  const norm = (s) => String(s || '').toLowerCase().trim().replace(/\s+/g, ' ').replace(/[.!?,«»"]/g, '');
+  /* мәтін және ЖИ дауысы */
+  const TEXT = 'Бір минут. Отбасында бәрі де өз уақытында жүріп-тұрғанды жақсы көретін. Тек Талғат қана үнемі кешігіп жүретін. – Талғат, кел, тамағыңды іш, – деп шақыратын шешесі. – Қазір бір минуттан кейін барамын, – деп Талғат кітабын оқи беретін. Бұл оның әдеттегі жауабы еді. Ылғи осылай дейтін. Бір күні мектепте шаңғы жарысы өтті. Талғат шаңғыны жақсы тебетін. Бірақ ол жеңімпаз болған жоқ. Оның жолдасы бір минутқа озып келді. Талғат екінші орын алып, үйге көңілсіз оралды. Талғат бір минуттың адам өміріндегі маңызын енді ғана түсінгендей болды.';
+  function speak(btn) { try { const v = speechSynthesis.getVoices().find((x) => /^kk/i.test(x.lang)); if (!v) { btn.nextElementSibling.textContent = 'Қазақша ЖИ дауысы бұл браузерде жоқ (Microsoft Edge-де бар). Мұғалім оқиды.'; return; } speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(TEXT); u.voice = v; u.lang = v.lang; u.rate = 0.9; speechSynthesis.speak(u); btn.nextElementSibling.textContent = '🔊 ' + v.name; } catch (e) {} }
+  try { speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged = () => {}; } catch (e) {}
+  /* ЖИ редактор */
+  const WRONG = { 'кітапы': 'кітабы', 'кітапын': 'кітабын', 'жауапы': 'жауабы', 'парақы': 'парағы', 'жүрекі': 'жүрегі', 'орыны': 'орны', 'еріні': 'ерні', 'құлақы': 'құлағы', 'халықы': 'халқы', 'мұрыны': 'мұрны', 'допы': 'добы', 'етікі': 'етігі', 'жапырақы': 'жапырағы', 'көрікі': 'көркі', 'шөпі': 'шөбі' };
+  const PARAS = { 'короче': 'қысқасы', 'типа': 'сияқты', 'кстати': 'айтпақшы', 'вообще': 'жалпы', 'давай': 'кәне', 'ок': 'жарайды', 'окей': 'жарайды', 'ok': 'жарайды', 'просто': 'жай ғана', 'вот': 'міне', 'потом': 'кейін', 'конечно': 'әрине', 'щас': 'қазір', 'сейчас': 'қазір', 'привет': 'сәлем', 'пока': 'сау бол', 'спасибо': 'рақмет', 'cool': 'керемет', 'wow': 'тамаша', 'да': 'иә', 'нет': 'жоқ', 'сразу': 'бірден', 'вроде': 'сияқты', 'ну': '(артық сөз)', 'блин': '(артық сөз)' };
+  function ai(txt) { let er = 0, pa = 0, n = 0; const html = String(txt).split(/(\s+|[.,!?;:«»"()–—-])/).map((t) => { const w = t.toLowerCase(); if (!/[a-zа-яёәіңғүұқөһ]/i.test(w)) return esc(t); n++;
+      if (WRONG[w]) { er++; return '<mark class="er">' + esc(t) + '<sup>→ ' + WRONG[w] + '</sup></mark>'; } if (PARAS[w]) { pa++; return '<mark class="pa">' + esc(t) + '<sup>→ ' + PARAS[w] + '</sup></mark>'; } return esc(t); }).join('');
+    const sent = String(txt).split(/[.!?]+/).filter((x) => x.trim()).length; return { html, er, pa, n, sent }; }
+
+  /* ---------- суреттер (SVG) ---------- */
+  const IMG = {
+    clock: '<svg viewBox="0 0 120 120"><circle cx="60" cy="64" r="46" fill="#FFF7DF" stroke="#F2A541" stroke-width="8"/><circle cx="60" cy="64" r="5" fill="#17324D"/><path d="M60 64 L60 34 M60 64 L82 74" stroke="#17324D" stroke-width="6" stroke-linecap="round"/><path d="M28 18 L42 28 M92 18 L78 28" stroke="#E8692A" stroke-width="8" stroke-linecap="round"/><text x="60" y="44" text-anchor="middle" font-size="12" font-weight="900" fill="#B5345A" font-family="Montserrat">1 мин</text></svg>',
+    ski: '<svg viewBox="0 0 140 120"><path d="M10 104 L130 92" stroke="#3F8FD8" stroke-width="6" stroke-linecap="round"/><circle cx="72" cy="24" r="11" fill="#F7C9A0"/><path d="M60 16 Q72 2 86 16" fill="#E8692A"/><path d="M70 36 L64 66 L50 92 M64 66 L86 86 M70 42 L92 54 M70 42 L48 50" stroke="#2E9E62" stroke-width="8" stroke-linecap="round" fill="none"/><path d="M92 54 L104 98 M48 50 L36 100" stroke="#8A6A4A" stroke-width="3"/><text x="18" y="22" font-size="14" font-weight="900" fill="#B5345A" font-family="Montserrat">2-орын</text></svg>',
+    book: '<svg viewBox="0 0 120 100"><path d="M8 20 Q34 8 60 20 L60 92 Q34 80 8 92Z" fill="#E3F0FF" stroke="#3F8FD8" stroke-width="4"/><path d="M112 20 Q86 8 60 20 L60 92 Q86 80 112 92Z" fill="#fff" stroke="#3F8FD8" stroke-width="4"/><path d="M18 36h30M18 48h30M18 60h24M72 36h30M72 48h30M72 60h24" stroke="#9DB7D6" stroke-width="4" stroke-linecap="round"/></svg>',
+    bot: '<svg viewBox="0 0 60 60"><rect x="10" y="16" width="40" height="32" rx="12" fill="#7C6CF0"/><circle cx="23" cy="31" r="6" fill="#fff"/><circle cx="37" cy="31" r="6" fill="#fff"/><circle cx="24" cy="32" r="3" fill="#17324D"/><circle cx="38" cy="32" r="3" fill="#17324D"/><path d="M24 41 Q30 45 36 41" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M30 16 V8" stroke="#7C6CF0" stroke-width="4"/><circle cx="30" cy="6" r="4" fill="#F2A541"/><rect x="4" y="26" width="6" height="12" rx="3" fill="#B9AEF7"/><rect x="50" y="26" width="6" height="12" rx="3" fill="#B9AEF7"/></svg>',
+    cubes: '<svg viewBox="0 0 160 70"><g font-family="Montserrat" font-weight="900" font-size="24" text-anchor="middle" fill="#fff">' + ['к', 'і', 'т', 'а', 'б', 'ы'].map((c, k) => '<g transform="translate(' + (6 + k * 25) + ' ' + (k === 4 ? 10 : 18) + ')"><path d="M0 8 L8 0 H30 L22 8Z" fill="' + (k === 5 ? '#FBD58E' : k === 4 ? '#F7A3B8' : '#7FDCA0') + '"/><path d="M22 8 L30 0 V30 L22 38Z" fill="' + (k === 5 ? '#D9822B' : k === 4 ? '#B5345A' : '#258A50') + '"/><rect y="8" width="22" height="30" rx="3" fill="' + (k === 5 ? '#E89A3A' : k === 4 ? '#E0567C' : '#3BB273') + '"/><text x="11" y="31">' + c + '</text></g>').join('') + '</g></svg>'
+  };
+  const LV = { A: { c: 'var(--A)', name: 'қолдау деңгейі' }, B: { c: 'var(--B)', name: 'орта деңгей' }, C: { c: 'var(--C)', name: 'жоғары деңгей' } };
+  let uid = 0; const id = () => 'x' + (++uid);
+  /* тапсырма құрастырушылар; әрқайсысы {html, check()} қайтарады */
+  const T = [];
+  function task(k, icon, title, skill, body, check) { const tid = id(); T.push({ tid, check }); return '<div class="task k' + k + '" id="' + tid + '"><span class="ic">' + icon + '</span><h3>' + title + '<em>' + skill + '</em></h3>' + body + (check ? '<div class="chk"><button data-chk="' + tid + '">Тексеру ✓</button><span class="fb"></span></div>' : '') + '</div>'; }
+  function radio(q, opts, right) { const n = id(); return '<p class="q">' + q + '</p><div class="opts" data-r="' + right + '" data-n="' + n + '">' + opts.map((o, j) => '<label class="opt"><input type="radio" name="' + n + '" value="' + j + '">' + o + '</label>').join('') + '</div>'; }
+  function chkRadios(el) { let ok = 0, all = 0; el.querySelectorAll('.opts[data-r]').forEach((g) => { all++; const r = +g.dataset.r; const v = g.querySelector('input:checked'); g.querySelectorAll('.opt').forEach((l, j) => { l.classList.remove('right', 'wrong'); if (j === r && v) l.classList.add('right'); }); if (v && +v.value === r) ok++; else if (v) v.parentElement.classList.add('wrong'); }); return [ok, all]; }
+  function chkInputs(el) { let ok = 0, all = 0; el.querySelectorAll('.inp[data-a]').forEach((i) => { all++; const good = i.dataset.a.split('|').map(norm).includes(norm(i.value)); i.classList.toggle('right', good); i.classList.toggle('wrong', !good && !!i.value); if (good) ok++; }); return [ok, all]; }
+  function chkSel(el) { let ok = 0, all = 0; el.querySelectorAll('select[data-a]').forEach((s) => { all++; const good = s.value === s.dataset.a; s.classList.toggle('right', good); s.classList.toggle('wrong', !good && !!s.value); if (good) ok++; }); return [ok, all]; }
+  const inp = (a, ph) => '<input class="inp" data-a="' + a + '" placeholder="' + (ph || '') + '">';
+  const wordTable = (rows) => '<div class="wbox"><div class="wrow"><span class="cell h">Түбір</span><span class="cell h">+ қосымша</span><span class="cell h">= сөз</span></div>' + rows.map((r) => '<div class="wrow"><span class="cell">' + r[0] + '</span><span class="cell">+ ' + r[1] + '</span>' + inp(r[2], '?') + '</div>').join('') + '</div>';
+  const VOC = [['уақыт', 'кез, мезгіл'], ['маңызы', 'мәні, қажеттілігі'], ['жеңімпаз', 'жарыста бірінші болған адам'], ['үнемі', 'әрдайым'], ['көңілсіз', 'көңілі түсіп кеткен']];
+  function matchBox(n) { const v = VOC.slice(0, n), means = v.map((x) => x[1]).slice().sort(); return '<p class="tiny printonly">Мағыналары: ' + means.map(esc).join(' · ') + '</p><div class="match">' + v.map((x) => '<span class="w">' + x[0] + '</span><select data-a="' + esc(x[1]) + '"><option value="">— таңда —</option>' + means.map((m) => '<option>' + esc(m) + '</option>').join('') + '</select>').join('') + '</div>'; }
+  function writeBox(r, ph) { const n = id(); return '<div class="lines" style="--r:' + r + '"><textarea id="' + n + '" data-ai="1" placeholder="' + esc(ph) + '"></textarea></div><div class="aiout"></div>'; }
+  function chkAI(el) { const ta = el.querySelector('textarea[data-ai]'); const out = el.querySelector('.aiout'); if (!ta || !ta.value.trim()) { out.innerHTML = '<span class="tiny">Алдымен жаз.</span>'; return [0, 1]; } const r = ai(ta.value);
+    const tips = []; if (r.er) tips.push(r.er + ' жазу қатесі'); if (r.pa) tips.push(r.pa + ' паразит сөз');
+    out.innerHTML = '<p>' + r.html + '</p><p class="tiny">🤖 ЖИ редактор: ' + r.sent + ' сөйлем, ' + r.n + ' сөз. ' + (tips.length ? 'Түзет: ' + tips.join(', ') + '.' : 'Тамаша, қатесіз және таза жаздың!') + '</p>'; return [tips.length ? 0 : 1, 1]; }
+
+  function sheet(L) {
+    const lc = LV[L].c; let h = '';
+    h += task(1, '🎧', 'Мәтінді тыңда: «Бір минут»', 'Тыңдалым', '<div class="listen"><button data-say>🔊 ЖИ дауысымен тыңдау</button><span class="tiny"></span></div>' +
+      (L === 'A' ? radio('Мәтін кім туралы?', ['Талғат', 'Бекболат', 'Витя'], 0) + radio('Талғат жарыста нешінші орын алды?', ['бірінші', 'екінші', 'үшінші'], 1)
+        : L === 'B' ? radio('Талғат шешесіне не деп жауап беретін?', ['«Қазір келемін»', '«Бір минуттан кейін барамын»', '«Кейін барамын»'], 1) + '<p class="q">Мәтін кім туралы? ' + inp('талғат|талғат туралы', 'жаз') + '</p>'
+          : '<p class="q">Тыңдаған мәтін бойынша бір ашық, бір жабық сұрақ құрастыр:</p><div class="lines" style="--r:2"><textarea></textarea></div>'), L !== 'C' ? (el) => { const a = chkRadios(el), b = chkInputs(el); return [a[0] + b[0], a[1] + b[1]]; } : null);
+    h += task(2, '📖', 'Мәтіннің негізгі ойын анықта', 'Оқылым', L === 'C' ? '<p class="q">Негізгі ойды өз сөзіңмен жаз және мәтінге басқа ат қой:</p><div class="lines" style="--r:2"><textarea></textarea></div>'
+      : radio('Негізгі ой қандай?', ['Бір минуттың да маңызы зор.', 'Талғат кітап оқиды.', 'Мектепте жарыс өтті.'], 0), L !== 'C' ? chkRadios : null);
+    h += task(3, '✍️', 'Түбірге қосымша жалға', 'Жазылым · 3.4.1.2', '<div style="display:grid;grid-template-columns:1fr 150px;gap:10px;align-items:center">' +
+      (L === 'A' ? wordTable([['кітап', 'ы', 'кітабы'], ['парақ', 'ы', 'парағы'], ['жүрек', 'і', 'жүрегі'], ['орын', 'ы', 'орны']]) + IMG.cubes + '</div><p class="tiny">Көмек: п → б, қ → ғ, к → г; кейде ы, і түсіп қалады.</p>'
+        : L === 'B' ? '<div><p class="q">Тиісті әріпті қой (60-жаттығу):</p><div class="fillw">' + [['жүре', 'г', 'і'], ['до', 'б', 'ы'], ['шө', 'б', 'і'], ['құла', 'ғ', 'ы'], ['жапыра', 'ғ', 'ы']].map((x) => '<span>' + x[0] + inp(x[1]) + x[2] + '</span>').join('') + '</div><p class="q">ерін + і = ' + inp('ерні') + ' халық + ы = ' + inp('халқы') + '</p></div>' + IMG.cubes + '</div>'
+          : '<div><p class="q">Мақалдың қатесін түзеп жаз: «Ел көрікі – мал, өзен көрікі – тал.»</p>' + inp('ел көркі – мал өзен көркі – тал|ел көркі - мал өзен көркі - тал|ел көркі мал өзен көркі тал', 'дұрыс жаз') + '<p class="q">мұрын + ы = ' + inp('мұрны') + ' етік + і = ' + inp('етігі') + ' жапырақ + ы = ' + inp('жапырағы') + '</p></div>' + IMG.cubes + '</div>'), chkInputs);
+    h += task(4, '💬', 'Сөзді мағынасымен сәйкестендір', 'Сөздік қор', matchBox(L === 'A' ? 3 : L === 'B' ? 4 : 5), chkSel);
+    h += task(5, '🗣️', 'Таза сөйле: паразит сөздің орнына қазақша сөз жаз', 'Айтылым', L === 'A' ? '<div class="wbox">' + [['короче', 'қысқасы'], ['ок', 'жарайды'], ['давай', 'кәне']].map((p) => '<div class="wrow" style="--n:2"><span class="cell" style="text-decoration:line-through;color:#B23A27">' + p[0] + '</span>' + inp(p[1], 'қазақша') + '</div>').join('') + '</div><p class="tiny">Көмек сөздер: жарайды, қысқасы, кәне. Сөйлемді дауыстап айт!</p>'
+      : '<p class="q">«Короче, мен ок деп айттым, типа уақытым жоқ еді. Кстати, давай ертең барайық.» Таза қазақ тілінде қайта жаз да, дауыстап оқы:</p>' + writeBox(2, 'Қысқасы, ...'), L === 'A' ? chkInputs : chkAI);
+    h += task(6, '🌟', 'Шағын шығарма: «Уақытты бағала»', 'Жазылым · сөздік қор', L === 'A' ? '<p class="q">Сөйлемді аяқта: «Мен уақытты бағалаймын, себебі …»</p>' + writeBox(2, 'Мен уақытты бағалаймын, себебі ...')
+      : L === 'B' ? '<p class="q">Тірек сөздерді қолданып, 3 сөйлем жаз: <b>уақыт, маңызы, кешігу, бір минут</b>.</p>' + writeBox(3, 'Талғат ...')
+        : '<p class="q">4–5 сөйлемді мәтін жаз. Түбірі өзгеретін кемінде 3 сөз (кітабы, жауабы, жүрегі…) және сөздік сөздерін қолдан. Паразит сөз болмасын!</p>' + writeBox(5, 'Уақыт ...'), chkAI);
+    h += '<div class="task k3" style="padding-left:12px"><h3>Өзімді бағалаймын</h3><div class="selfa">' + ['Мәтіннің тақырыбы мен негізгі ойын анықтадым', 'Қосымша жалғанған сөзді дұрыс жаздым', 'Жаңа сөздерді қолдандым', 'Паразит сөз қолданбадым'].map((d) => '<span>' + d + '</span>' + ['😀', '🙂', '🤔'].map((e) => '<button data-sa>' + e + '</button>').join('')).join('') + '</div></div>';
+    return '<section class="page" data-lv="' + L + '" style="--lc:' + lc + '"><div class="hd"><div><h1>Түбір мен қосымшаның <span>жазылуы</span></h1><p class="sub">Қазақ тілі · 3-сынып · 46-сабақ · оқулық, 89-бет · «Уақыт» бөлімі</p></div><div class="lvbadge">' + (L === 'A' ? 'А' : L === 'B' ? 'В' : 'С') + '<small>' + LV[L].name + '</small></div></div>' +
+      '<div class="who"><label>Аты-жөнім: <input></label><label style="flex:.6">Тобым: <input></label></div>' +
+      '<div class="helper">' + IMG.bot + '<span>Сәлем! Мен — Ақылды көмекші. Әр тапсырмадан кейін «Тексеру» бас: мен дыбыспен және түспен көрсетемін. Қағазда орындасаң, мұғалімге көрсет!</span></div>' +
+      '<div class="decor">' + (L === 'A' ? IMG.clock : L === 'B' ? IMG.ski : IMG.book) + '</div>' + h +
+      '<div class="foot"><span>Авторлық бағдарлама: «Тілдік дағдыларын ЖИ көмегімен жетілдіру»</span><span class="stars" data-stars>☆☆☆</span></div></section>';
+  }
+  let score = 0; const done = new Set();
+  function show(lv) { document.querySelectorAll('.bar [data-lv]').forEach((b) => b.classList.toggle('on', b.dataset.lv === lv)); document.querySelectorAll('.page').forEach((p) => { p.style.display = lv === 'all' || p.dataset.lv === lv ? '' : 'none'; }); try { history.replaceState(null, '', '#' + lv); } catch (e) {} }
+  $('root').innerHTML = sheet('A') + sheet('B') + sheet('C');
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    if (b.dataset.lv) { S.pop(); return show(b.dataset.lv); }
+    if (b.hasAttribute('data-say')) return speak(b);
+    if (b.hasAttribute('data-sa')) { b.parentElement.querySelectorAll('button').forEach((x) => { if (x.previousElementSibling === b.previousElementSibling || true) {} }); const row = []; let el = b; while (el && el.tagName === 'BUTTON') el = el.previousElementSibling; let n = el.nextElementSibling; for (let k = 0; k < 3; k++) { n.classList.toggle('on', n === b); n = n.nextElementSibling; } S.pop(); return; }
+    if (b.dataset.chk) { const t = T.find((x) => x.tid === b.dataset.chk); const el = $(t.tid); const [ok, all] = t.check(el); const fb = el.querySelector('.fb'); const full = ok === all && all > 0;
+      fb.textContent = full ? 'Жарайсың! ' + ok + '/' + all + ' ⭐' : ok + '/' + all + ' дұрыс. Қайта қара!'; fb.className = 'fb ' + (full ? 'g' : 'b');
+      if (full) { S.ok(); confetti(30); if (!done.has(t.tid)) { done.add(t.tid); score++; $('score').textContent = '⭐ ' + score; const pg = el.closest('.page'); const n = pg.querySelectorAll('.chk').length, d = Array.from(pg.querySelectorAll('.chk')).filter((c) => done.has(c.closest('.task').id)).length; pg.querySelector('[data-stars]').textContent = '★'.repeat(Math.round(3 * d / n)) + '☆'.repeat(3 - Math.round(3 * d / n)); if (d === n) { S.win(); confetti(140); } } } else S.no(); }
+  });
+  $('snd').onclick = () => { SON = !SON; $('snd').textContent = SON ? '🔊' : '🔇'; S.pop(); };
+  $('prn').onclick = () => { show('all'); setTimeout(() => window.print(), 300); };
+  const h0 = (location.hash || '#A').slice(1); show(['A', 'B', 'C', 'all'].includes(h0) ? h0 : 'A');
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1541 @@
+<!doctype html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Ашық сабақ · Қазақ тілі · 3-сынып · Түбір мен қосымша</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800;900&family=Nunito:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>
+/* Layout: teacher board — top bar with code and timer; the stage below changes by phase: lobby, question, reveal, leaderboard, final */
+#app { min-height: 100vh; display: flex; flex-direction: column; gap: 14px; padding: 14px max(16px, env(safe-area-inset-right, 0px)) 20px max(16px, env(safe-area-inset-left, 0px)); max-width: 1500px; margin: 0 auto; }
+.top { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; padding: 10px 16px; border-radius: 20px; }
+.brand { font-family: var(--display); font-weight: 900; font-size: clamp(18px, 1.8vw, 24px); margin-right: auto; display: flex; align-items: center; gap: 10px; }
+.brand b { background: linear-gradient(90deg, #1F7A45, #1661A3, #C0661A); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.brand .live { font-size: 12px; font-weight: 900; letter-spacing: 2px; color: #fff; background: linear-gradient(180deg, #FF6A55, #D2452F); padding: 3px 9px; border-radius: 999px; animation: pulse 1.6s ease infinite; }
+.codebox { font-family: var(--display); font-weight: 900; font-size: clamp(20px, 2vw, 28px); letter-spacing: 6px; }
+
+/* lobby */
+.lobby { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 14px; align-items: start; }
+@media (max-width: 980px) { .lobby { grid-template-columns: minmax(0, 1fr); } }
+.joincard { padding: 22px; display: flex; flex-direction: column; gap: 14px; align-items: center; text-align: center; }
+.joincard .big { font-family: var(--display); font-weight: 900; font-size: clamp(56px, 7vw, 110px); letter-spacing: 10px; line-height: 1; background: linear-gradient(180deg, #F7B24A, #E07A1F); -webkit-background-clip: text; background-clip: text; color: transparent; }
+/* әдемі QR: жарқыраған жиек, бұрыштар, сканер сызығы, ортасында жапырақ */
+.qrfx { --qs: 200px; position: relative; padding: 7px; border-radius: 28px; isolation: isolate; overflow: hidden; box-shadow: 0 22px 44px -22px rgba(20,90,60,.65); }
+.qrfx::before { content: ""; position: absolute; inset: -60%; z-index: -1; background: conic-gradient(from 0deg, #43B36B, #3FA4E8, #F7B24A, #F27C6B, #43B36B); animation: spin 6s linear infinite; }
+.qrin { position: relative; background: #fff; border-radius: 22px; padding: 16px; }
+.qrc img, .qrc canvas { display: block; width: var(--qs) !important; height: var(--qs) !important; image-rendering: pixelated; }
+.qrin .cn { position: absolute; width: 26px; height: 26px; border: 4px solid #1F8A55; }
+.qrin .c1 { top: 6px; left: 6px; border-right: 0; border-bottom: 0; border-radius: 10px 0 0 0; }
+.qrin .c2 { top: 6px; right: 6px; border-left: 0; border-bottom: 0; border-radius: 0 10px 0 0; }
+.qrin .c3 { bottom: 6px; left: 6px; border-right: 0; border-top: 0; border-radius: 0 0 0 10px; }
+.qrin .c4 { bottom: 6px; right: 6px; border-left: 0; border-top: 0; border-radius: 0 0 10px 0; }
+.qrin .scan { position: absolute; left: 12px; right: 12px; top: 16px; height: 3px; border-radius: 3px; background: linear-gradient(90deg, transparent, #43C47A, transparent); box-shadow: 0 0 14px 3px rgba(67,196,122,.55); animation: scan 2.6s ease-in-out infinite alternate; }
+.qrin .logo { position: absolute; left: 50%; top: 50%; width: calc(var(--qs) * .22); height: calc(var(--qs) * .22); transform: translate(-50%, -50%); border-radius: 22%; background: linear-gradient(180deg, #5FCB8B, #1F8A55); display: grid; place-items: center; border: 4px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,.2); }
+.qrin .logo svg { width: 62%; height: 62%; }
+.qrcap { margin-top: 8px; font-weight: 900; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: #fff; text-align: center; text-shadow: 0 1px 2px rgba(0,0,0,.3); }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes scan { from { top: 16px; } to { top: calc(100% - 19px); } }
+#qr .qrfx { --qs: clamp(170px, 16vw, 240px); }
+.url { font-weight: 800; font-size: clamp(14px, 1.2vw, 18px); word-break: break-all; }
+.teams3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 760px) { .teams3 { grid-template-columns: minmax(0, 1fr); } }
+.tcol { border-radius: 22px; overflow: hidden; display: flex; flex-direction: column; min-height: 220px; }
+.tcol .head { position: relative; padding: 14px 16px; color: #fff; display: flex; justify-content: space-between; align-items: center; gap: 8px; overflow: hidden; }
+.tcol .head::after { content: ""; position: absolute; inset: 0 0 50% 0; background: linear-gradient(180deg, rgba(255,255,255,.4), rgba(255,255,255,0)); }
+.tcol .head h3 { font-size: clamp(17px, 1.6vw, 22px); position: relative; z-index: 1; }
+.tcol .head span { font-family: var(--display); font-weight: 900; font-size: clamp(22px, 2.2vw, 30px); position: relative; z-index: 1; }
+.tcol .head img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .28; mix-blend-mode: luminosity; }
+.tcol .body { padding: 12px; display: flex; flex-wrap: wrap; gap: 6px; align-content: flex-start; flex: 1; background: rgba(255,255,255,.72); }
+
+/* question */
+.qhead { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 18px; align-items: center; padding: 18px 22px; }
+.qn { font-family: var(--display); font-weight: 900; color: #fff; border-radius: 18px; padding: 12px 16px; text-align: center; background: linear-gradient(180deg, #2C5A50, #142B26); box-shadow: 0 1px 0 rgba(255,255,255,.3) inset; font-size: clamp(18px, 1.6vw, 24px); line-height: 1; }
+.qn small { display: block; font-size: .55em; opacity: .75; margin-top: 4px; font-weight: 700; }
+.qt h2 { font-size: clamp(24px, 2.8vw, 44px); }
+.qt .hint { font-weight: 700; color: var(--muted); margin-top: 6px; font-size: clamp(14px, 1.2vw, 18px); }
+.ring { position: relative; width: clamp(96px, 9vw, 140px); aspect-ratio: 1; }
+.ring svg { width: 100%; height: 100%; transform: rotate(-90deg); filter: drop-shadow(0 6px 10px rgba(224,122,31,.35)); }
+.ring .n { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--display); font-weight: 900; font-size: clamp(30px, 3vw, 48px); font-variant-numeric: tabular-nums; }
+.ring.low .n { color: var(--bad); animation: pulse .8s ease infinite; }
+.opts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.opt { position: relative; border-radius: 20px; padding: clamp(14px, 1.6vw, 22px) 18px; font-weight: 800; font-size: clamp(18px, 1.8vw, 28px); color: #fff; display: flex; gap: 14px; align-items: center; overflow: hidden; box-shadow: 0 1px 0 rgba(255,255,255,.45) inset, 0 12px 24px -14px rgba(0,0,0,.55); }
+.opt::after { content: ""; position: absolute; inset: 0 0 52% 0; background: linear-gradient(180deg, rgba(255,255,255,.38), rgba(255,255,255,.02)); }
+.opt b { font-family: var(--display); font-size: 1.3em; width: 1.6em; height: 1.6em; border-radius: 12px; display: grid; place-items: center; background: rgba(255,255,255,.25); flex: none; position: relative; z-index: 1; }
+.opt span { position: relative; z-index: 1; }
+.o0 { background: linear-gradient(180deg, #F27C6B, #C8432F); } .o1 { background: linear-gradient(180deg, #5BB1F0, #1E6DB0); } .o2 { background: linear-gradient(180deg, #F6BE4F, #D08A12); } .o3 { background: linear-gradient(180deg, #5FCB8B, #1F8A55); }
+.opt.img { padding: 8px; flex-direction: column; align-items: stretch; }
+.opt.img img { width: 100%; aspect-ratio: 16 / 8; object-fit: cover; border-radius: 14px; position: relative; z-index: 1; }
+.opt.img b { position: absolute; top: 14px; left: 14px; z-index: 2; }
+.optlist { display: grid; gap: 10px; }
+.optlist .opt { font-size: clamp(16px, 1.6vw, 24px); }
+.numbox { padding: 20px; text-align: center; font-family: var(--display); font-weight: 900; font-size: clamp(26px, 3vw, 46px); }
+.answered { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 760px) { .answered { grid-template-columns: minmax(0, 1fr); } }
+.acard { padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
+.acard .h { display: flex; justify-content: space-between; align-items: center; font-weight: 800; }
+.acard .h { gap: 8px; }
+.acard .h b { font-family: var(--display); font-size: clamp(20px, 2vw, 28px); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.reveal .answered { grid-template-columns: minmax(0, 1fr); }
+.correct h2.long { font-size: clamp(17px, 1.6vw, 24px); }
+.track { height: 14px; border-radius: 999px; background: rgba(20,43,38,.08); overflow: hidden; }
+.track i { display: block; height: 100%; border-radius: 999px; transition: width .5s cubic-bezier(.2,.9,.3,1); position: relative; overflow: hidden; }
+.track i::after { content: ""; position: absolute; top: 0; bottom: 0; width: 40%; background: linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent); animation: shine 2.2s ease-in-out infinite; }
+.dots { display: flex; flex-wrap: wrap; gap: 5px; }
+.dots i { font-style: normal; font-size: 12px; font-weight: 800; padding: 3px 8px; border-radius: 999px; background: rgba(20,43,38,.07); color: var(--muted); transition: all .3s ease; }
+.dots i.on { color: #fff; }
+.ctrl { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+
+/* reveal */
+.reveal { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 14px; }
+@media (max-width: 980px) { .reveal { grid-template-columns: minmax(0, 1fr); } }
+.correct { padding: 16px 20px 34px; display: flex; flex-direction: column; gap: 6px; border: 2px solid var(--good) !important; }
+.correct h2 { font-size: clamp(22px, 2.4vw, 36px); color: var(--good); }
+.dist { padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; }
+.drow { display: grid; grid-template-columns: minmax(0, 1fr) 54px; gap: 10px; align-items: center; font-weight: 800; }
+.drow .lbl { font-size: clamp(14px, 1.2vw, 18px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.drow .bar { height: 30px; border-radius: 10px; position: relative; overflow: hidden; transition: width 1s cubic-bezier(.2,.9,.3,1); width: 0; }
+.drow .bar::after { content: ""; position: absolute; inset: 0 0 50% 0; background: linear-gradient(180deg, rgba(255,255,255,.45), rgba(255,255,255,0)); }
+.drow b { font-family: var(--display); font-size: 20px; text-align: right; font-variant-numeric: tabular-nums; }
+.fast { padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; }
+.frow { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: clamp(16px, 1.4vw, 20px); animation: rise .5s ease both; }
+.medal { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; font-family: var(--display); font-weight: 900; color: #fff; flex: none; box-shadow: 0 1px 0 rgba(255,255,255,.6) inset; }
+.m1 { background: linear-gradient(180deg, #FFD86B, #D9A21B); } .m2 { background: linear-gradient(180deg, #E4E9EE, #9AA6B2); } .m3 { background: linear-gradient(180deg, #F1B98A, #B8733D); }
+
+/* leaderboard */
+.lb { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 14px; }
+@media (max-width: 980px) { .lb { grid-template-columns: minmax(0, 1fr); } }
+.lbcard { padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+.tbar { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: 10px; align-items: center; font-weight: 800; animation: rise .5s ease both; }
+.tbar .tr { grid-column: 2 / -1; height: 34px; border-radius: 12px; background: rgba(20,43,38,.07); overflow: hidden; }
+.tbar .tr i { display: block; height: 100%; width: 0; border-radius: 12px; transition: width 1.2s cubic-bezier(.2,.9,.3,1); position: relative; overflow: hidden; }
+.tbar .tr i::after { content: ""; position: absolute; inset: 0 0 50% 0; background: linear-gradient(180deg, rgba(255,255,255,.5), rgba(255,255,255,0)); }
+.tbar .nm { font-size: clamp(16px, 1.5vw, 22px); }
+.tbar .sc { font-family: var(--display); font-size: clamp(18px, 1.7vw, 24px); font-variant-numeric: tabular-nums; }
+.tbl { width: 100%; border-collapse: collapse; font-size: clamp(14px, 1.15vw, 17px); }
+.tbl th, .tbl td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.tbl th { font-size: 12px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--muted); }
+.tbl td.n { text-align: right; font-variant-numeric: tabular-nums; }
+.tbl tr { animation: rise .45s ease both; }
+.tbl .rk { font-family: var(--display); font-weight: 900; }
+.scroll { overflow-x: auto; }
+.lvl { font-weight: 800; padding: 3px 10px; border-radius: 999px; font-size: .9em; }
+.lvl.hi { background: var(--good-bg); color: #13603A; } .lvl.mid { background: #FFF1D6; color: #8A5300; } .lvl.low { background: var(--bad-bg); color: #8A2414; }
+.dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+
+/* podium */
+.podium { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; align-items: end; max-width: 900px; width: 100%; margin: 0 auto; }
+.step { border-radius: 22px 22px 6px 6px; color: #fff; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 16px 8px; text-align: center; position: relative; overflow: hidden; animation: grow .9s cubic-bezier(.2,.9,.3,1.1) both; transform-origin: bottom; box-shadow: 0 1px 0 rgba(255,255,255,.5) inset, 0 20px 30px -20px rgba(0,0,0,.6); }
+.step::after { content: ""; position: absolute; inset: 0 0 60% 0; background: linear-gradient(180deg, rgba(255,255,255,.45), rgba(255,255,255,0)); }
+.step .pl { font-family: var(--display); font-weight: 900; font-size: clamp(40px, 4.5vw, 70px); line-height: 1; position: relative; z-index: 1; }
+.step .wh { font-family: var(--display); font-weight: 800; font-size: clamp(16px, 1.6vw, 24px); position: relative; z-index: 1; }
+.step .pt { font-weight: 800; position: relative; z-index: 1; }
+.fb { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.fb div { padding: 12px; text-align: center; font-weight: 800; border-radius: 16px; }
+.fb b { display: block; font-family: var(--display); font-size: 30px; }
+.cmts { display: flex; flex-direction: column; gap: 6px; max-height: 220px; overflow: auto; }
+.cmts p { background: rgba(255,255,255,.85); border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px; font-weight: 600; }
+
+/* анимациялар */
+.qbody { position: relative; }
+.qbody .opts, .qbody .optlist, .qbody .numbox { filter: blur(8px); opacity: .35; transition: filter .5s ease, opacity .5s ease; }
+.qbody.live .opts, .qbody.live .optlist, .qbody.live .numbox { filter: none; opacity: 1; }
+.qbody.live .opt { animation: optin .55s cubic-bezier(.2,.9,.3,1.25) both; }
+.qbody.live .opt:nth-child(2) { animation-delay: .08s; } .qbody.live .opt:nth-child(3) { animation-delay: .16s; } .qbody.live .opt:nth-child(4) { animation-delay: .24s; }
+.getready { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; z-index: 3; transition: opacity .4s ease; }
+.getready.gone { opacity: 0; pointer-events: none; }
+.getready p { font-family: var(--display); font-weight: 900; font-size: clamp(22px, 2.4vw, 36px); color: var(--ink); }
+.getready b { display: grid; place-items: center; width: clamp(110px, 11vw, 170px); aspect-ratio: 1; border-radius: 50%; font-family: var(--display); font-weight: 900; font-size: clamp(64px, 7vw, 110px); color: #fff; background: linear-gradient(180deg, var(--amber2), var(--amber)); box-shadow: 0 0 0 12px rgba(247,178,74,.25), 0 24px 40px -18px rgba(224,122,31,.9); animation: pop .6s cubic-bezier(.2,.9,.3,1.4) both; }
+.flash { position: fixed; inset: 0; z-index: 35; display: grid; place-items: center; pointer-events: none; background: radial-gradient(circle, rgba(255,255,255,.6), rgba(255,255,255,0) 70%); }
+.flash b { font-family: var(--display); font-weight: 900; font-size: clamp(40px, 6vw, 96px); padding: 18px 36px; border-radius: 30px; color: #fff; animation: flashin .9s cubic-bezier(.2,.9,.3,1.3) both; box-shadow: 0 30px 60px -20px rgba(0,0,0,.45); }
+.flash.all b { background: linear-gradient(180deg, #5FCB8B, #1F8A55); }
+.flash.time b { background: linear-gradient(180deg, #FF8A75, #D2452F); }
+@keyframes flashin { 0% { transform: scale(.3) rotate(-6deg); opacity: 0; } 60% { transform: scale(1.08) rotate(1deg); opacity: 1; } 100% { transform: scale(1); } }
+@keyframes optin { from { opacity: 0; transform: translateY(22px) scale(.94); } to { opacity: 1; transform: none; } }
+.qhead { animation: rise .5s ease both; }
+.qt h2 { animation: textin .7s cubic-bezier(.2,.9,.3,1) both; }
+@keyframes textin { from { opacity: 0; transform: translateY(12px); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+.slide > *, .lb > *, .reveal > *, .cols3 > *, .kz > *, .g7 > *, .side3 > *, .counters > * { animation: rise .6s cubic-bezier(.2,.9,.3,1) both; }
+.slide > *:nth-child(2), .lb > *:nth-child(2), .reveal > *:nth-child(2), .cols3 > *:nth-child(2), .kz > *:nth-child(2), .g7 > *:nth-child(2), .side3 > *:nth-child(2), .counters > *:nth-child(2) { animation-delay: .12s; }
+.slide > *:nth-child(3), .cols3 > *:nth-child(3), .kz > *:nth-child(3), .g7 > *:nth-child(3), .side3 > *:nth-child(3), .counters > *:nth-child(3) { animation-delay: .24s; }
+.g7 > *:nth-child(4) { animation-delay: .32s; } .g7 > *:nth-child(5) { animation-delay: .4s; } .g7 > *:nth-child(6) { animation-delay: .48s; } .g7 > *:nth-child(7) { animation-delay: .56s; } .g7 > *:nth-child(8) { animation-delay: .64s; }
+.boxp li { animation: rise .5s ease both; } .boxp li:nth-child(2) { animation-delay: .15s; } .boxp li:nth-child(3) { animation-delay: .3s; } .boxp li:nth-child(4) { animation-delay: .45s; }
+.correct { animation: pop .6s cubic-bezier(.2,.9,.3,1.3) both !important; }
+.shead h1 { animation: textin .8s cubic-bezier(.2,.9,.3,1) both; }
+/* оқулық сілтемесі: кішкене бұрыш белгісі */
+.pg { position: absolute; z-index: 2; right: 12px; bottom: 10px; font-size: 12px; font-weight: 800; letter-spacing: .3px; color: var(--muted); background: rgba(255,255,255,.88); border: 1px solid var(--line); border-radius: 999px; padding: 3px 9px; }
+.shead .pg { top: 10px; bottom: auto; }
+.qhead { position: relative; padding-bottom: 30px; }
+/* QR әрқашан қолжетімді */
+.qrbtn { position: fixed; right: 14px; bottom: 96px; z-index: 21; display: flex; align-items: center; gap: 8px; }
+.qrov { position: fixed; inset: 0; z-index: 40; background: rgba(244,248,242,.92); backdrop-filter: blur(6px); display: grid; place-items: center; padding: 16px; }
+.qrov #qrbig .qrfx { --qs: min(40vh, 320px); }
+.qrov .glass { padding: 26px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; max-width: 520px; }
+.qrov .big { font-family: var(--display); font-weight: 900; font-size: clamp(48px, 7vw, 96px); letter-spacing: 10px; line-height: 1; color: var(--amber); }
+.jsteps { display: grid; gap: 8px; width: 100%; text-align: left; }
+.jsteps p { display: flex; gap: 10px; align-items: center; font-weight: 800; font-size: clamp(15px, 1.3vw, 19px); }
+.jsteps b { flex: none; width: 30px; height: 30px; border-radius: 10px; display: grid; place-items: center; color: #fff; background: linear-gradient(180deg, var(--amber2), var(--amber)); font-family: var(--display); }
+.teamchip[data-u] { cursor: pointer; border: none; font: inherit; font-weight: 800; font-size: 15px; }
+
+/* 45 минуттық сабақ: уақыт жолағы, кезеңдер, слайдтар */
+#app { padding-bottom: 96px; }
+body.fitmode #app { padding-bottom: 6px; min-height: 0; max-width: none; box-sizing: border-box; }
+.fsbtn { flex: none; border: none; background: transparent; font-size: 20px; font-weight: 900; cursor: pointer; padding: 4px 8px; border-radius: 10px; color: var(--ink); }
+body.fitmode { overflow-x: hidden; }
+.lbar { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; padding: 8px 14px; border-radius: 18px; font-weight: 800; }
+.cdown { display: flex; align-items: center; gap: 10px; padding: 6px 8px 6px 6px; border-radius: 18px; background: linear-gradient(180deg, #F2FBF5, #E2F4E8); border: 1px solid #BFE3CC; }
+.cdown svg { width: 54px; height: 54px; flex: none; }
+.cdown small { display: block; font-size: 11px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; color: #2E7A4E; }
+.cdown b { font-family: var(--display); font-weight: 900; font-size: clamp(26px, 2.6vw, 38px); font-variant-numeric: tabular-nums; line-height: 1; color: #14532F; }
+.cdown .plain { padding: 6px 10px; font-size: 13px; }
+.cdown.warn { background: linear-gradient(180deg, #FFF6E2, #FFE7B8); border-color: #F2C36B; } .cdown.warn b { color: #8A5300; animation: pulse 1s ease infinite; }
+.cdown.done { background: linear-gradient(180deg, #FFE9E4, #FBD3CA); border-color: #F0A091; } .cdown.done b { color: var(--bad); }
+.lbar .stg { font-family: var(--display); font-weight: 900; font-size: clamp(16px, 1.5vw, 21px); margin-right: auto; }
+.lbar .clock { font-family: var(--display); font-weight: 900; font-variant-numeric: tabular-nums; font-size: clamp(16px, 1.5vw, 21px); }
+.lbar .over { color: var(--bad); }
+.lprog { flex-basis: 100%; height: 8px; border-radius: 999px; background: rgba(20,43,38,.08); overflow: hidden; display: flex; }
+.lprog i { display: block; height: 100%; }
+.stepper { position: fixed; left: 50%; bottom: 10px; transform: translateX(-50%); z-index: 20; display: flex; gap: 4px; padding: 6px; border-radius: 18px; max-width: calc(100vw - 20px); overflow-x: auto; scrollbar-width: none; }
+.sgrp { display: flex; flex-direction: column; align-items: stretch; gap: 2px; padding: 0 4px; border-left: 1px solid var(--line); }
+.sgrp:first-of-type { border-left: none; }
+.sgl { font-size: 10px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); text-align: center; white-space: nowrap; }
+.sgrp.cur .sgl { color: var(--amber); }
+.sgb { display: flex; gap: 2px; }
+.stepper button { min-width: 58px !important; padding: 4px 6px !important; }
+.phpill { padding: 6px 12px; border-radius: 999px; font-weight: 900; font-size: 13px; letter-spacing: .5px; color: #fff; background: linear-gradient(180deg, #4C7FD1, #2B5BA8); }
+.boxp.tasks4 ol { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 760px) { .boxp.tasks4 ol { grid-template-columns: minmax(0, 1fr); } }
+.boxp.tasks4 li { display: flex; gap: 14px; align-items: center; padding: 14px; border-radius: 18px; background: rgba(255,255,255,.8); border: 1px solid var(--line); font-size: clamp(16px, 1.5vw, 22px) !important; }
+.boxp.tasks4 li b { flex: none; width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; color: #fff; font-family: var(--display); font-size: 22px; background: linear-gradient(180deg, var(--amber2), var(--amber)); }
+.howto { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 4px; font-weight: 700; font-size: clamp(14px, 1.2vw, 17px); }
+.stepper button { flex: none; border: none; background: transparent; border-radius: 12px; padding: 6px 9px; display: flex; flex-direction: column; align-items: center; gap: 1px; min-width: 66px; font-weight: 800; font-size: 12px; color: var(--muted); }
+.stepper button b { font-family: var(--display); font-size: 16px; color: var(--ink); }
+.stepper button.done b { color: var(--good); }
+.stepper button.on { background: linear-gradient(180deg, var(--amber2), var(--amber)); color: #fff; box-shadow: 0 8px 16px -8px rgba(224,122,31,.8); }
+.stepper button.on b { color: #fff; }
+.stepper .nav { min-width: 44px; font-size: 22px; color: var(--ink); }
+.slide { display: flex; flex-direction: column; gap: 14px; animation: rise .5s ease both; }
+.shead { padding: 16px 22px; display: flex; flex-direction: column; gap: 6px; }
+.shead h1 { font-size: clamp(28px, 3.4vw, 52px); }
+.shead .lead { font-weight: 700; color: var(--muted); font-size: clamp(16px, 1.4vw, 21px); }
+.hero { position: relative; border-radius: 28px; overflow: hidden; min-height: 62vh; display: flex; align-items: flex-end; box-shadow: 0 24px 50px -24px rgba(20,43,38,.6); }
+.hero > img, .hero > video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; animation: drift 22s ease-in-out infinite alternate; }
+.hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(10,30,25,.86), rgba(10,30,25,.45) 60%, rgba(10,30,25,.05)); }
+.hero .in { position: relative; z-index: 1; padding: clamp(20px, 3vw, 44px); color: #F6F2E8; display: flex; flex-direction: column; gap: 12px; max-width: 760px; }
+.hero h1 { font-size: clamp(34px, 5vw, 76px); }
+.hero .eyebrow { color: #FFC16B; }
+.hero p { font-weight: 700; font-size: clamp(16px, 1.5vw, 22px); }
+.hero .plain { color: var(--ink); }
+.hero > video { animation: none; }
+.hero.welcome { min-height: calc(100vh - 200px); }
+.welcome .in { max-width: 900px; gap: 14px; }
+.wtitle { font-family: var(--display); font-weight: 900; font-size: clamp(40px, 6vw, 92px); line-height: 1.02; margin: 0; }
+.wtitle span { display: inline-block; opacity: 0; transform: translateY(26px) scale(.9); animation: wordin .8s cubic-bezier(.2,.9,.3,1.2) forwards; background: linear-gradient(100deg, #FFF6E2 0%, #FFD27A 35%, #FFFFFF 50%, #FFD27A 65%, #FFF6E2 100%); background-size: 250% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; margin-right: .22em; }
+.wtitle span.go { animation: wordin .8s cubic-bezier(.2,.9,.3,1.2) forwards, shimmer 4s linear 1.6s infinite; }
+@keyframes wordin { to { opacity: 1; transform: none; } }
+@keyframes shimmer { from { background-position: 100% 0; } to { background-position: -150% 0; } }
+.fadein { opacity: 0; animation: wordin .8s ease forwards; }
+.welcome .guests { font-size: clamp(17px, 1.7vw, 24px) !important; font-weight: 800 !important; color: #FFE7BD; }
+.topiccard { display: flex; align-items: center; gap: 14px; padding: 12px 16px; border-radius: 18px; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.28); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); max-width: 720px; }
+.topiccard b { font-family: var(--display); font-weight: 900; font-size: clamp(18px, 2vw, 28px); line-height: 1.15; color: #fff; }
+.topiccard small { display: block; font-weight: 800; font-size: 13px; letter-spacing: 1.5px; text-transform: uppercase; color: #FFC16B; margin-bottom: 2px; }
+.topiccard .ic { flex: none; width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; background: linear-gradient(180deg, #5FCB8B, #1F8A55); box-shadow: 0 1px 0 rgba(255,255,255,.5) inset; }
+.motto { font-family: var(--display); font-weight: 800 !important; font-style: italic; font-size: clamp(18px, 1.8vw, 26px) !important; color: #fff; border-left: 4px solid #FFC16B; padding-left: 14px; }
+.schoolbar { display: flex; align-items: center; gap: 14px; padding: 10px 16px 10px 10px; border-radius: 20px; background: linear-gradient(180deg, rgba(255,255,255,.2), rgba(255,255,255,.07)); border: 1px solid rgba(255,255,255,.32); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: inset 0 1px 0 rgba(255,255,255,.35), 0 18px 40px -22px rgba(0,0,0,.7); align-self: flex-start; max-width: 860px; }
+.schoolbar .crest { flex: none; width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center; background: radial-gradient(circle at 32% 28%, #FFF6D8 0%, #FFD27A 38%, #C98A12 100%); box-shadow: 0 0 0 3px rgba(255,255,255,.45), 0 10px 22px -8px rgba(201,138,18,.9); font-family: var(--display); font-weight: 900; color: #6B4300; font-size: 15px; line-height: 1; text-align: center; }
+.schoolbar small { display: block; font-weight: 800; font-size: clamp(11px, .95vw, 14px); letter-spacing: 1.2px; text-transform: uppercase; color: #BFE6D2; }
+.schoolbar b { display: block; font-family: var(--display); font-weight: 900; font-size: clamp(16px, 1.6vw, 24px); line-height: 1.15; color: #fff; }
+.authbadge { position: relative; overflow: hidden; align-self: flex-start; display: inline-flex; align-items: center; gap: 10px; padding: 9px 20px 9px 12px; border-radius: 999px; background: linear-gradient(180deg, #FFE8A6 0%, #F2B33D 55%, #D18A10 100%); color: #4A2E00; font-family: var(--display); font-weight: 900; font-size: clamp(14px, 1.3vw, 20px); letter-spacing: .5px; box-shadow: inset 0 2px 0 rgba(255,255,255,.7), 0 14px 30px -12px rgba(242,179,61,.95); }
+.authbadge i { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: #fff; color: #C98A12; font-style: normal; font-size: 17px; }
+.authbadge::after { content: ""; position: absolute; top: 0; bottom: 0; width: 40%; left: -60%; background: linear-gradient(100deg, transparent, rgba(255,255,255,.75), transparent); animation: sweep 3.2s ease-in-out 3.4s infinite; }
+@keyframes sweep { to { left: 130%; } }
+.wchips { display: flex; flex-wrap: wrap; gap: 8px; }
+.wchips span { padding: 6px 12px; border-radius: 999px; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.3); font-weight: 800; font-size: clamp(13px, 1.1vw, 16px); color: #F6F2E8; }
+.shead.vbg { position: relative; overflow: hidden; }
+.shead .bgv { position: absolute; z-index: 0; top: 0; right: 0; bottom: 0; width: 52%; height: 100%; object-fit: cover; -webkit-mask-image: linear-gradient(90deg, transparent, #000 45%); mask-image: linear-gradient(90deg, transparent, #000 45%); opacity: .95; }
+.shead.vbg > :not(.bgv) { max-width: 62%; }
+@media (max-width: 760px) { .shead .bgv { width: 100%; opacity: .25; } .shead.vbg > :not(.bgv) { max-width: none; } }
+.gc video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .8s ease; }
+.gc.open video { opacity: 1; }
+.hero .qrmini { position: absolute; z-index: 1; right: 22px; bottom: 22px; background: rgba(255,255,255,.92); border-radius: 22px; padding: 10px 10px 8px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--ink); font-weight: 800; }
+.hero .qrmini .qrfx { --qs: 130px; }
+.hero .qrmini .qrin { padding: 10px; } .hero .qrmini .cn { width: 18px; height: 18px; border-width: 3px; }
+@keyframes drift { from { transform: scale(1.04); } to { transform: scale(1.14) translateX(-2%); } }
+.vidbig { width: 100%; max-height: 64vh; border-radius: 24px; background: #0E1F1B; display: block; box-shadow: 0 24px 50px -24px rgba(20,43,38,.6); }
+.split { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+@media (max-width: 980px) { .split { grid-template-columns: minmax(0, 1fr); } }
+.boxp { padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; }
+.boxp h2 { font-size: clamp(20px, 2vw, 30px); }
+.boxp p, .boxp li { font-weight: 700; font-size: clamp(15px, 1.35vw, 20px); }
+.boxp ul, .boxp ol { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 6px; }
+.cols3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 980px) { .cols3 { grid-template-columns: minmax(0, 1fr); } }
+.lvlrow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.lvlrow div { border-radius: 14px; padding: 10px; text-align: center; font-weight: 800; }
+.lvlrow b { display: block; font-family: var(--display); font-size: clamp(20px, 2vw, 30px); }
+.g7 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 980px) { .g7 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.gc { position: relative; border-radius: 22px; overflow: hidden; min-height: clamp(150px, 22vh, 230px); border: none; padding: 0; text-align: left; color: #fff; background: #1F4A40; box-shadow: 0 16px 30px -18px rgba(0,0,0,.6); }
+.gc img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .6s ease, filter .6s ease; }
+.gc::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(8,24,20,.9), rgba(8,24,20,.15) 70%); }
+.gc .t { position: absolute; z-index: 1; left: 0; right: 0; bottom: 0; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; }
+.gc .t b { font-family: var(--display); font-size: clamp(15px, 1.35vw, 20px); line-height: 1.15; }
+.gc .t span { font-weight: 700; font-size: clamp(13px, 1.1vw, 16px); opacity: 0; max-height: 0; transition: opacity .5s ease, max-height .5s ease; }
+.gc .num { position: absolute; z-index: 1; top: 10px; left: 10px; width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; font-family: var(--display); font-weight: 900; font-size: 20px; background: linear-gradient(180deg, var(--amber2), var(--amber)); }
+.gc.closed img { filter: blur(10px) grayscale(.7); transform: scale(1.15); }
+.gc.closed .t b { opacity: 0; }
+.gc.closed .num { background: rgba(255,255,255,.25); }
+.gc.closed::before { content: "?"; position: absolute; z-index: 1; inset: 0; display: grid; place-items: center; font-family: var(--display); font-weight: 900; font-size: 64px; color: rgba(255,255,255,.85); }
+.gc.open .t span { opacity: .95; max-height: 120px; }
+.gc.open { animation: pop .5s cubic-bezier(.2,.9,.3,1.3) both; }
+.gc.key { background: linear-gradient(160deg, #FFF6E6, #FFE2B8); color: var(--ink); display: flex; flex-direction: column; justify-content: center; gap: 8px; padding: 16px; }
+.gc.key::after { display: none; }
+.gc.key b { font-family: var(--display); font-size: clamp(26px, 3vw, 46px); color: var(--amber); }
+.gc .sph { position: absolute; z-index: 1; top: 14px; right: 12px; left: 60px; text-align: right; font-size: 12px; font-weight: 800; letter-spacing: .4px; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.6); }
+.gc { min-height: clamp(230px, 34vh, 330px); }
+.gc .t span { font-size: clamp(12px, .95vw, 15px) !important; }
+.gc .t b { font-size: clamp(14px, 1.2vw, 18px) !important; }
+.gc .nf { display: block; margin-top: 6px; font-style: normal; font-weight: 800; font-size: .92em; color: #FFE2A6; }
+.nfbox { border-left: 4px solid var(--amber); background: #FFF7E8; border-radius: 10px; padding: 8px 12px; font-weight: 700 !important; font-size: clamp(13px, 1.1vw, 16px) !important; }
+.ghsplit { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+@media (max-width: 980px) { .ghsplit { grid-template-columns: minmax(0, 1fr); } }
+.ghd { padding: 10px; } .ghd svg { width: 100%; display: block; border-radius: 16px; }
+.ghd .gs { opacity: 0; transition: opacity .5s ease; } .ghd .gs.on { opacity: 1; }
+.ghd .gs.on .ar { stroke-dasharray: 700; animation: drawar 1.1s ease both; }
+.ghd .gs.on .ar.dash { stroke-dasharray: 3 14; animation: none; }
+@keyframes drawar { from { stroke-dashoffset: 700; } to { stroke-dashoffset: 0; } }
+.ghd .mol { animation: float 3s ease-in-out infinite alternate; }
+@keyframes float { from { transform: translateY(-4px); } to { transform: translateY(4px); } }
+.ghsteps ol { gap: 6px; }
+.ghsteps li { opacity: .38; transition: opacity .4s ease, background .4s ease; border-radius: 12px; padding: 6px 8px; cursor: pointer; font-size: clamp(14px, 1.15vw, 17px) !important; }
+.ghsteps li.on { opacity: 1; } .ghsteps li.cur { background: #FFF1D6; }
+.rlwrap { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 14px; align-items: start; }
+@media (max-width: 980px) { .rlwrap { grid-template-columns: minmax(0, 1fr); } }
+.rlside { display: flex; flex-direction: column; gap: 10px; }
+.rlteam { padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; font-weight: 800; transition: transform .3s ease, box-shadow .3s ease; }
+.rlteam b { font-family: var(--display); font-size: 28px; color: var(--c2); }
+.rlteam.on { transform: scale(1.05); box-shadow: 0 0 0 4px var(--c1), 0 18px 30px -16px var(--c2) !important; }
+.rlmain { padding: 14px; min-height: 52vh; position: relative; }
+.rlrules { padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; } .rlrules p { font-weight: 700; font-size: 14px; }
+.drop { min-height: 78px !important; }
+.rlq { margin: 8px 0 !important; }
+.rlcardrow { margin-bottom: 10px !important; }
+.rlpick { display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; padding: 10px 0; }
+.rlteamname { font-size: clamp(30px, 3.4vw, 50px); color: var(--c2); }
+.roulette { min-width: 340px; padding: 20px 30px; border-radius: 24px; font-family: var(--display); font-weight: 900; font-size: clamp(34px, 4vw, 60px); color: #fff; background: linear-gradient(180deg, var(--c1), var(--c2)); box-shadow: 0 1px 0 rgba(255,255,255,.5) inset, 0 20px 40px -18px var(--c2); }
+.roulette.win { animation: pop .6s cubic-bezier(.2,.9,.3,1.4) both; }
+.rlnames { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; max-width: 900px; }
+.rlhead { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 16px; border-radius: 16px; color: #fff; background: linear-gradient(180deg, var(--c1), var(--c2)); font-weight: 900; font-size: clamp(18px, 1.8vw, 26px); }
+.rltime { font-family: var(--display); min-width: 64px; text-align: center; background: rgba(255,255,255,.25); border-radius: 12px; padding: 2px 10px; }
+.rltime.low { background: #fff; color: var(--bad); animation: pulse .8s ease infinite; }
+.rlq { font-weight: 800; font-size: clamp(17px, 1.6vw, 24px); margin: 12px 0; }
+.rlcardrow { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-bottom: 14px; min-height: 90px; }
+.dragcard { display: flex; align-items: center; gap: 12px; max-width: 620px; padding: 10px 16px 10px 10px; border-radius: 18px; background: #fff; border: 3px solid var(--amber2); box-shadow: 0 14px 28px -14px rgba(0,0,0,.45); font-weight: 800; font-size: clamp(16px, 1.5vw, 22px); cursor: grab; touch-action: none; user-select: none; animation: pop .5s cubic-bezier(.2,.9,.3,1.3) both; }
+.dragcard img { width: 90px; height: 70px; object-fit: cover; border-radius: 12px; pointer-events: none; }
+.dragcard.num { font-family: var(--display); font-weight: 900; font-size: clamp(28px, 3vw, 44px); padding: 12px 20px; flex-direction: column; gap: 0; }
+.dragcard.num small { font-size: 13px; color: var(--muted); }
+.dragcard.dragging { position: fixed; z-index: 50; cursor: grabbing; animation: none; margin: 0; }
+.dragph { border-radius: 18px; border: 3px dashed #C9D6D1; }
+.drops7 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.drops4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 980px) { .drops7, .drops4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.drop { min-height: 96px; border: 3px dashed #BFD3CB; border-radius: 18px; padding: 10px 12px; font-weight: 800; font-size: clamp(14px, 1.2vw, 18px); background: rgba(255,255,255,.75); display: flex; flex-direction: column; gap: 6px; transition: all .2s ease; position: relative; }
+.drop b { font-family: var(--display); color: var(--amber); }
+.drop i { font-style: normal; font-family: var(--display); font-weight: 900; font-size: 32px; color: var(--amber); }
+.drop em { font-style: normal; font-size: 13px; color: #13603A; }
+.drop.dim { opacity: .45; } .drop.target { border-color: var(--amber); background: #FFF6E6; }
+.drop.hover { border-style: solid; border-color: var(--amber); transform: scale(1.04); background: #FFF1D6; }
+.drop.good { border-style: solid; border-color: var(--good); background: var(--good-bg); }
+.drop.bad, .drop.shake { border-style: solid; border-color: var(--bad); background: var(--bad-bg); animation: shake .45s ease; }
+@keyframes shake { 20%, 60% { transform: translateX(-8px); } 40%, 80% { transform: translateX(8px); } }
+.rlres { margin-top: 14px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 12px 16px; border-radius: 16px; font-weight: 800; animation: rise .4s ease both; }
+.rlres b { font-family: var(--display); font-size: clamp(22px, 2.2vw, 32px); }
+.rlres.ok { background: var(--good-bg); color: #13603A; } .rlres.no { background: var(--bad-bg); color: #8A2414; }
+.rlres .gloss { margin-left: auto; }
+.cluster { position: relative; display: flex; flex-direction: column; gap: 22px; padding: 4px 0; }
+.cllines { position: absolute; left: 0; top: 0; pointer-events: none; z-index: 0; overflow: visible; }
+.clrow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; position: relative; z-index: 1; }
+.clrow.b { grid-template-columns: repeat(3, minmax(0, 1fr)); width: 76%; margin: 0 auto; }
+.clcenter { position: relative; z-index: 1; align-self: center; text-align: center; max-width: 560px; padding: 12px 22px; border-radius: 999px; background: linear-gradient(180deg, #2B4F45, #17302A); color: #F3EFE4; font-family: var(--display); font-weight: 800; font-size: clamp(15px, 1.4vw, 20px); box-shadow: 0 14px 28px -16px rgba(0,0,0,.6); }
+.clcenter small { display: block; font-family: var(--body); font-weight: 700; font-size: 12px; opacity: .75; }
+.clnode { min-height: 92px !important; }
+.clitems { display: flex; flex-wrap: wrap; gap: 4px; }
+.clit { font-size: 12px; font-weight: 800; padding: 2px 8px; border-radius: 999px; background: #DDF3E6; color: #13603A; }
+.clit.miss { background: #FFF1D6; color: #8A5300; }
+.clit.new { animation: pop .5s cubic-bezier(.2,.9,.3,1.3) both; }
+.cluster.fin .clnode { min-height: 110px !important; }
+.clh { display: flex; gap: 8px; align-items: center; }
+.clh img { flex: none; width: 54px; height: 54px; border-radius: 12px; object-fit: cover; box-shadow: 0 6px 12px -8px rgba(0,0,0,.6); }
+.clh b { display: block; font-size: 11px; letter-spacing: .5px; text-transform: uppercase; color: var(--amber); }
+.clh span { display: block; line-height: 1.15; }
+.clcenter { display: flex; align-items: center; gap: 12px; text-align: left; padding: 8px 22px 8px 8px; }
+.clcenter img { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; border: 3px solid rgba(255,255,255,.6); }
+.clst { display: flex; flex-direction: column; gap: 2px; background: #F2F7F4; border-radius: 12px; padding: 6px 8px; }
+.clst strong { font-family: var(--display); font-weight: 900; font-size: clamp(18px, 1.7vw, 26px); color: #1F7A45; line-height: 1.05; }
+.clst span { font-size: 12px; font-weight: 700; color: var(--ink); } .clst small { font-size: 10px; color: var(--muted); font-weight: 700; }
+.clbar { display: block; height: 7px; border-radius: 99px; background: #DCE7E2; overflow: hidden; } .clbar i { display: block; height: 100%; background: linear-gradient(90deg, #F2A541, #C0661A); border-radius: 99px; }
+.optlist.cmp { gap: 8px; } .optlist.cmp .opt { padding: 9px 16px; font-size: clamp(15px, 1.35vw, 21px); }
+.flowh .fbox { padding: 6px 8px; flex-direction: row; justify-content: center; }
+.tbtn { padding: 6px 14px !important; font-size: 14px !important; min-height: 0 !important; }
+.tbtn.idle { animation: pulse 1.4s ease infinite; }
+.tbtn.run { background: linear-gradient(180deg, #E9EEF0, #CFD8DC) !important; color: var(--ink) !important; }
+.tstart { position: fixed; z-index: 30; right: 24px; bottom: 110px; font-size: 18px !important; padding: 12px 22px !important; }
+.pick3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; width: 100%; }
+.pcol { display: flex; flex-direction: column; gap: 8px; align-items: center; padding: 10px; border-radius: 18px; background: rgba(255,255,255,.6); border: 2px solid var(--c1); }
+.pcol h3 { margin: 0; font-family: var(--display); color: var(--c2); }
+.roulette.sm { min-width: 0; width: 100%; padding: 12px 10px; font-size: clamp(20px, 2vw, 32px); text-align: center; }
+.rlhead3 { display: flex; gap: 8px; align-items: center; }
+.rlhead3 span:not(.rltime) { flex: 1; text-align: center; padding: 8px 10px; border-radius: 14px; color: #fff; font-weight: 900; font-size: clamp(16px, 1.5vw, 22px); background: linear-gradient(180deg, var(--c1), var(--c2)); }
+.rlhead3 .rltime { background: var(--ink); color: #fff; font-size: 22px; border-radius: 14px; padding: 8px 12px; }
+.rlcardrow.three { flex-wrap: nowrap; align-items: stretch; }
+.tcard { flex: 1; max-width: none; position: relative; border-color: var(--c2) !important; font-size: clamp(13px, 1.15vw, 17px) !important; padding: 8px 10px 8px 8px !important; }
+.tcard img { width: 64px !important; height: 56px !important; }
+.tcard small { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: var(--c2); }
+.tcard.used { opacity: .5; cursor: default; } .tcard .mark { position: absolute; right: 8px; top: 6px; font-style: normal; font-weight: 900; font-size: 22px; }
+.tcard.okc .mark { color: var(--good); } .tcard.noc .mark { color: var(--bad); }
+.rlres.ok3 { background: #F2F7F4; color: var(--ink); }
+.r3 { display: flex; flex-direction: column; padding: 4px 10px; border-left: 4px solid var(--c2); }
+.r3 b { font-family: var(--body) !important; font-size: 18px !important; } .r3.n b { color: var(--bad); } .r3 small { font-size: 12px; }
+.allres { padding: 12px 14px; }
+.argrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 6px; max-height: 30vh; overflow: auto; }
+.arc { display: flex; flex-direction: column; padding: 5px 10px; border-radius: 10px; border-left: 5px solid var(--tc); background: #F4F6F5; font-size: 14px; }
+.arc b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .arc i { font-style: normal; font-weight: 800; font-size: 13px; }
+.arc.ok { background: #E4F6EB; } .arc.ok i { color: #1E7A47; } .arc.no { background: #FDE8E4; } .arc.no i { color: #B23A27; } .arc.none i { color: var(--muted); }
+.mx .tbl td.mc { text-align: center; font-weight: 900; } .mx .tbl td.mc small { display: block; font-size: 10px; font-weight: 700; color: var(--muted); }
+.mx .tbl td.mc.ok { color: #1E7A47; background: #EFFAF3; } .mx .tbl td.mc.no { color: #B23A27; background: #FDF0ED; }
+.mx { max-height: 52vh; }
+.oic { font-style: normal; font-size: 1.3em; position: relative; z-index: 1; }
+.flowh { margin-top: 12px; padding: 12px 14px; }
+.frow2 { display: flex; align-items: stretch; gap: 6px; }
+.frow2 .far { font-style: normal; align-self: center; font-family: var(--display); font-weight: 900; font-size: 30px; color: #2E9E62; }
+.fbox { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; align-items: center; text-align: center; background: #fff; border: 3px solid #9ED3B2; border-radius: 16px; padding: 10px 8px; font-weight: 800; font-size: clamp(13px, 1.15vw, 17px); animation: pop .5s cubic-bezier(.2,.9,.3,1.3) both; }
+.fbox b { width: 28px; height: 28px; border-radius: 9px; display: grid; place-items: center; color: #fff; background: #2E9E62; font-family: var(--display); }
+.fbox em { font-style: normal; font-size: 34px; line-height: 1; }
+.fbox small { font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: var(--amber); }
+.fbox.empty { border-style: dashed; border-color: #C9D6D1; color: var(--muted); background: rgba(255,255,255,.6); animation: none; } .fbox.empty b { background: #C9D6D1; }
+.frow2.big .fbox { font-size: clamp(14px, 1.25vw, 19px); }
+@media (max-width: 980px) { .clrow, .clrow.b { grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; } }
+.rldone { text-align: center; display: flex; flex-direction: column; gap: 12px; align-items: center; padding: 40px 0; }
+.g1 { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 0; padding: 0 !important; overflow: hidden; animation: rise .5s ease both; }
+@media (max-width: 980px) { .g1 { grid-template-columns: minmax(0, 1fr); } }
+.g1m { position: relative; min-height: 46vh; background: #1F4A40; }
+.g1m video, .g1m img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.g1n { position: absolute; left: 16px; top: 16px; font-family: var(--display); font-weight: 900; font-size: 54px; line-height: 1; color: #fff; padding: 10px 16px; border-radius: 20px; background: linear-gradient(180deg, var(--amber2), var(--amber)); box-shadow: 0 14px 28px -12px rgba(224,122,31,.8); }
+.g1n small { font-size: 20px; opacity: .85; margin-left: 4px; }
+.g1t { padding: 20px 22px; display: flex; flex-direction: column; gap: 12px; justify-content: center; }
+.g1t h2 { font-size: clamp(24px, 2.6vw, 40px); animation: textin .6s ease both; }
+.g1x { font-weight: 700; font-size: clamp(16px, 1.5vw, 22px); }
+.g1q { font-weight: 700; font-size: clamp(15px, 1.35vw, 20px); padding: 10px 12px; border-radius: 12px; background: #EAF4FF; border-left: 4px solid #3FA4E8; }
+.g1strip { display: flex; gap: 8px; justify-content: center; margin-top: 12px; flex-wrap: wrap; }
+.g1strip button { position: relative; width: 84px; height: 56px; border-radius: 12px; overflow: hidden; border: 3px solid transparent; padding: 0; background: #1F4A40; opacity: .55; }
+.g1strip button img { width: 100%; height: 100%; object-fit: cover; }
+.g1strip button b { position: absolute; inset: 0; display: grid; place-items: center; color: #fff; font-family: var(--display); font-size: 22px; text-shadow: 0 1px 4px rgba(0,0,0,.7); }
+.g1strip button.done { opacity: .85; } .g1strip button.on { opacity: 1; border-color: var(--amber); transform: translateY(-3px); }
+.counters { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
+.counter { padding: 14px 18px; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 14px; align-items: center; }
+.counter b { grid-row: span 2; font-family: var(--display); font-weight: 900; font-size: clamp(36px, 4vw, 64px); font-variant-numeric: tabular-nums; min-width: 3ch; }
+.counter span { font-weight: 800; font-size: clamp(15px, 1.3vw, 19px); }
+.counter small { font-weight: 700; color: var(--muted); font-size: clamp(13px, 1.1vw, 16px); }
+.kz { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 980px) { .kz { grid-template-columns: minmax(0, 1fr); } }
+.kzc { padding: 0; display: flex; flex-direction: column; }
+.kzc video { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; background: #0E1F1B; display: block; }
+.kzc .b { padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
+.kzc h3 { font-size: clamp(18px, 1.7vw, 24px); }
+.kzc p { font-weight: 700; font-size: clamp(14px, 1.2vw, 18px); }
+.kzc .src { font-size: 13px; color: var(--muted); }
+.kzc .ans { border-radius: 12px; padding: 8px 12px; background: var(--good-bg); color: #13603A; font-weight: 800; animation: pop .45s ease both; }
+.treewrap { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 14px; align-items: stretch; }
+@media (max-width: 980px) { .treewrap { grid-template-columns: minmax(0, 1fr); } }
+.treecard { padding: 10px; position: relative; display: flex; align-items: center; justify-content: center; background: radial-gradient(80% 70% at 50% 35%, #F3FBEF, #FFFFFF 70%) !important; }
+.treecard svg { width: 100%; max-height: 62vh; display: block; }
+.treecard .cnt { position: absolute; left: 18px; top: 14px; font-family: var(--display); font-weight: 900; font-size: clamp(16px, 1.5vw, 22px); }
+.treecard .cnt b { font-size: 1.8em; color: var(--good); }
+.leaf { transform-box: fill-box; transform-origin: 50% 100%; animation: leafpop .9s cubic-bezier(.2,.9,.3,1.4) both; cursor: pointer; }
+.leaf.sway { animation: sway 4s ease-in-out infinite alternate; }
+@keyframes leafpop { 0% { transform: scale(0) rotate(-40deg); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+@keyframes sway { from { transform: rotate(-6deg); } to { transform: rotate(6deg); } }
+.quote { padding: 22px; display: flex; flex-direction: column; gap: 12px; justify-content: center; min-height: 200px; }
+.quote .qtext { font-family: var(--display); font-weight: 800; font-size: clamp(22px, 2.3vw, 36px); line-height: 1.2; transition: opacity .5s ease, transform .5s ease; }
+.quote .qtext.out { opacity: 0; transform: translateY(10px); }
+.quote .qleaf { width: 46px; height: 46px; }
+.guestqr { padding: 14px; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 14px; align-items: center; background: linear-gradient(160deg, #FFF8E8, #FFFFFF) !important; }
+.guestqr .qrfx { --qs: 110px; padding: 5px; } .guestqr .qrin { padding: 9px; } .guestqr .cn { width: 16px; height: 16px; border-width: 3px; } .guestqr .scan { display: none; }
+.guestqr p { font-weight: 700; font-size: clamp(13px, 1.1vw, 16px); }
+.guestqr b.n { font-family: var(--display); font-size: 28px; color: #C98A0B; }
+.qlabel { display: inline-flex; align-self: flex-start; gap: 6px; align-items: center; padding: 4px 12px; border-radius: 999px; font-weight: 800; font-size: 13px; background: var(--good-bg); color: #13603A; }
+.qlabel.guest { background: #FFF1D6; color: #8A5300; }
+.quote .qtext.g { font-size: clamp(19px, 1.8vw, 28px); }
+.quote .qtext small { display: block; margin-top: 8px; font-family: var(--body); font-weight: 800; font-size: .6em; color: var(--muted); }
+.apple { transform-box: fill-box; transform-origin: 50% 0%; animation: leafpop .9s cubic-bezier(.2,.9,.3,1.4) both; cursor: pointer; }
+.side3 { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.mini3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.mini3 div { border-radius: 16px; padding: 10px; text-align: center; font-weight: 800; }
+.mini3 b { display: block; font-family: var(--display); font-size: clamp(26px, 3vw, 44px); }
+.bigfb .fb b { font-size: clamp(40px, 5vw, 72px); }
+.bigfb .fb div { font-size: clamp(16px, 1.5vw, 22px); padding: 18px; }
+.bigfb .cmts { max-height: 40vh; }
+.bigfb .cmts p { font-size: clamp(15px, 1.3vw, 19px); animation: rise .4s ease both; }
+/* ===== 3-сынып: қазақ тілі ===== */
+.progtag { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; padding: 5px 12px; border-radius: 999px; background: linear-gradient(90deg, #EDE7FF, #E3F2FF); color: #3B2E8F; font-weight: 800; font-size: 13px; border: 1px solid #CFC4FF; }
+.kidhead h1 { font-size: clamp(26px, 2.8vw, 44px) !important; }
+.goals2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
+.goals2 p { margin: 0; padding: 10px 14px; border-radius: 14px; background: #F3F8FF; border: 2px solid #CFE3FA; font-weight: 700; }
+.goals2 b { display: inline-block; padding: 2px 8px; border-radius: 8px; background: #2F6FB8; color: #fff; margin-right: 6px; }
+.flipq { display: flex; flex-direction: column; gap: 8px; }
+.fq { position: relative; text-align: left; border: 2px solid #CFE3FA; background: #fff; border-radius: 14px; padding: 12px 14px; font: inherit; font-weight: 800; cursor: pointer; min-height: 56px; }
+.fq .a { display: none; font-weight: 700; } .fq.open .q { display: none; } .fq.open .a { display: block; animation: pop .4s ease both; } .fq.open { background: #F0FAF4; border-color: #9ED3B2; }
+.sym { font-size: 1.3em; font-weight: 900; color: #2F6FB8; }
+.readtxt p { font-size: clamp(16px, 1.45vw, 21px); line-height: 1.5; margin: 0 0 8px; } .readtxt .au { text-align: right; font-style: italic; color: var(--muted); }
+mark.hw { background: #FFE7A6; border-radius: 6px; padding: 0 4px; font-weight: 900; cursor: pointer; } mark.hw.done { background: #CDEFD9; }
+.tq { display: flex; flex-direction: column; gap: 10px; padding-left: 20px; } .tq li { font-size: clamp(15px, 1.3vw, 19px); }
+.rv { display: none; margin-top: 4px; padding: 6px 10px; border-radius: 10px; background: #E9F7EE; font-weight: 800; color: #1E7A47; } .rv.on { display: block; animation: pop .4s ease both; }
+.plain.sm { padding: 3px 10px !important; font-size: 13px !important; min-height: 0 !important; }
+.hwout { display: inline-block; padding: 2px 10px; border-radius: 10px; background: #F4F6F5; font-weight: 800; }
+.aihelp { display: flex; gap: 12px; align-items: flex-start; margin-top: 12px; padding: 12px 14px; border-radius: 16px; background: linear-gradient(135deg, #F1ECFF, #E8F4FF); border: 2px solid #D5CBFF; }
+.aihelp .bot { font-size: 34px; line-height: 1; animation: bob 2.4s ease-in-out infinite; } .aihelp p { margin: 2px 0 0; font-weight: 700; }
+@keyframes bob { 50% { transform: translateY(-5px) rotate(-4deg); } }
+/* 3D кубтар */
+.cube { --s: clamp(52px, 5.6vw, 84px); position: relative; display: inline-block; width: var(--s); height: var(--s); transform-style: preserve-3d; transform: rotateX(-14deg) rotateY(-22deg); transition: transform .8s cubic-bezier(.2,.9,.3,1.2), opacity .6s, margin .6s; margin: 0 4px; }
+.cube .f { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--display); font-weight: 900; font-size: calc(var(--s) * .55); color: #fff; border-radius: 12px; backface-visibility: hidden; border: 2px solid rgba(255,255,255,.55); }
+.cube .fr { transform: translateZ(calc(var(--s) / 2)); background: linear-gradient(160deg, #5CCB84, #1F7A45); }
+.cube .bk { transform: rotateY(180deg) translateZ(calc(var(--s) / 2)); background: #1F7A45; }
+.cube .tp { transform: rotateX(90deg) translateZ(calc(var(--s) / 2)); background: #7FDCA0; }
+.cube .bt { transform: rotateX(-90deg) translateZ(calc(var(--s) / 2)); background: linear-gradient(160deg, #F47C9B, #B5345A); }
+.cube .lf { transform: rotateY(-90deg) translateZ(calc(var(--s) / 2)); background: #258A50; }
+.cube .rt { transform: rotateY(90deg) translateZ(calc(var(--s) / 2)); background: #2E9E5E; }
+.cube.suf .fr { background: linear-gradient(160deg, #F7BC5F, #C0661A); } .cube.suf .tp { background: #FBD58E; } .cube.suf .lf, .cube.suf .rt, .cube.suf .bk { background: #D9822B; }
+.b3stage { perspective: 900px; display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 16px 8px; }
+.b3word { display: flex; align-items: center; flex-wrap: wrap; justify-content: center; }
+.plus3 { font-family: var(--display); font-weight: 900; font-size: clamp(34px, 3.6vw, 56px); color: #C0661A; margin: 0 10px; transition: all .6s; }
+.b3word .suf { transform: translateX(80px) rotateX(-14deg) rotateY(-22deg); opacity: .9; }
+.b3word.join .plus3 { opacity: 0; width: 0; margin: 0; overflow: hidden; }
+.b3word.join .suf { transform: rotateX(-14deg) rotateY(-22deg); }
+.cube.chg.flip { transform: rotateX(76deg) rotateY(-10deg); }
+.cube.drp.fall { transform: translateY(160px) rotateZ(40deg); opacity: 0; width: 0; margin: 0; }
+.b3res { font-family: var(--display); font-size: clamp(30px, 3.4vw, 54px); opacity: 0; transform: translateY(10px); transition: all .5s; }
+.b3res.on { opacity: 1; transform: none; } .b3res b { color: #1F7A45; } .b3res .eq { color: var(--muted); } .b3res .rl { font-size: .45em; padding: 4px 12px; border-radius: 999px; background: #B5345A; color: #fff; vertical-align: middle; }
+.b3why { margin: 0; text-align: center; font-weight: 800; color: #5A4A00; background: #FFF4CF; padding: 8px 14px; border-radius: 12px; opacity: 0; transition: opacity .5s .2s; } .b3why.on { opacity: 1; }
+.b3box { padding: 10px 14px 14px; display: flex; flex-direction: column; gap: 10px; }
+.b3list { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.b3list button { border: 2px solid #CFE3FA; background: #fff; border-radius: 999px; padding: 6px 14px; font: inherit; font-weight: 800; cursor: pointer; } .b3list button.on { background: #2F6FB8; color: #fff; border-color: #2F6FB8; }
+.rulecard p { margin: 0 0 8px; padding: 10px 12px; border-radius: 12px; background: #FDEAF1; font-weight: 700; }
+.rgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.rgrid div { padding: 10px; border-radius: 14px; background: #F3F8FF; border: 2px solid #CFE3FA; text-align: center; } .rgrid b { display: block; font-family: var(--display); font-size: clamp(20px, 1.9vw, 28px); color: #B5345A; } .rgrid span { font-weight: 800; }
+/* Сәлемдесу: ұшқан кубтар */
+.hero.kids { background: radial-gradient(circle at 20% 20%, #FFE9A8, transparent 40%), radial-gradient(circle at 80% 30%, #CDE7FF, transparent 45%), linear-gradient(160deg, #3F8FD8, #2B5FA8 60%, #24477F); }
+.hero.kids .topiccard .ic { font-family: var(--display); font-weight: 900; color: #fff; font-size: 22px; }
+.fly3d { position: absolute; inset: 0; perspective: 800px; overflow: hidden; pointer-events: none; }
+.flyc { position: absolute !important; left: var(--x); top: var(--y); --s: 54px; opacity: .55; animation: spin3 var(--t) linear infinite; animation-delay: var(--dl); margin: 0; }
+@keyframes spin3 { from { transform: rotateX(0) rotateY(0) translateY(0); } 50% { transform: rotateX(180deg) rotateY(160deg) translateY(-20px); } to { transform: rotateX(360deg) rotateY(360deg) translateY(0); } }
+/* сергіту */
+.movebox { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 24px; min-height: 40vh; }
+.mvw { font-family: var(--display); font-weight: 900; font-size: clamp(60px, 9vw, 140px); color: var(--ink); animation: pop .5s ease both; }
+.mvw.up { color: #C0661A; } .mvw.dn { color: #1F7A45; }
+.mvh { font-weight: 900; font-size: clamp(22px, 2.4vw, 36px); margin: 0; }
+/* үй тапсырмасы */
+.lvls { display: flex; flex-direction: column; gap: 10px; } .lv { display: flex; gap: 12px; align-items: center; padding: 12px; border-radius: 16px; }
+.lv b { flex: none; width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; color: #fff; font-family: var(--display); font-size: 24px; } .lv p { margin: 0; font-weight: 700; }
+.lv.a { background: #E9F7EE; } .lv.a b { background: #2E9E62; } .lv.b { background: #FFF4DE; } .lv.b b { background: #E08A1E; } .lv.c { background: #FDE8EF; } .lv.c b { background: #B5345A; }
+.motto2 { font-family: var(--display); font-weight: 900; font-size: clamp(22px, 2.2vw, 32px); color: #2F6FB8; }
+/* тақтадағы топ панельдері */
+.pads3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 10px; }
+.pad1 { border-radius: 18px; padding: 10px; background: #fff; border: 3px solid var(--c1); display: flex; flex-direction: column; gap: 8px; }
+.pad1 h4 { margin: 0; padding: 6px 10px; border-radius: 12px; color: #fff; background: linear-gradient(180deg, var(--c1), var(--c2)); font-family: var(--display); text-align: center; font-size: clamp(16px, 1.4vw, 22px); }
+.pbtns { display: flex; gap: 6px; } .pbtns button { flex: 1; min-height: 52px; border-radius: 14px; border: 2px solid var(--c1); background: #fff; font: inherit; font-weight: 900; font-size: clamp(18px, 1.7vw, 26px); color: var(--c2); cursor: pointer; }
+.pbtns button:active { transform: scale(.96); } .pbtns button:disabled { opacity: .35; }
+.pbtns .pok { background: var(--c2); color: #fff; } .pword { text-align: center; font-family: var(--display); font-weight: 900; font-size: clamp(20px, 2vw, 30px); min-height: 1.3em; }
+.pdone { text-align: center; padding: 14px; border-radius: 14px; background: #E9F7EE; color: #1E7A47; font-weight: 900; font-size: clamp(16px, 1.5vw, 22px); }
+.wordres { text-align: center; font-family: var(--display); font-weight: 900; font-size: clamp(28px, 3vw, 46px); color: #1F7A45; margin-top: 6px; }
+.tw { display: block; font-family: var(--display); font-size: clamp(22px, 2.2vw, 34px); }
+.cluster.c4 .clrow { grid-template-columns: repeat(2, minmax(0, 1fr)); width: 84%; margin: 0 auto; }
+.clh span.big { font-family: var(--display); font-weight: 900; font-size: clamp(22px, 2.2vw, 34px); color: #B5345A; }
+.clh img { width: 64px !important; height: 48px !important; }
+.bleaf { padding: 12px 14px; } .bl3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.bl3 button { display: flex; flex-direction: column; align-items: center; gap: 4px; border: 2px solid var(--lc); background: #fff; border-radius: 14px; padding: 8px 4px; font: inherit; font-weight: 800; cursor: pointer; } .bl3 svg { width: 30px; height: 30px; }
+/* тыңдалым */
+.wave { display: flex; align-items: center; justify-content: center; gap: 5px; height: 90px; margin: 10px 0; }
+.wave i { width: 8px; height: 14px; border-radius: 6px; background: linear-gradient(180deg, #7C6CF0, #3FA4E8); }
+.wave.on i { animation: wv .9s ease-in-out infinite; animation-delay: calc(var(--k) * -0.07s); }
+@keyframes wv { 50% { height: 80px; } }
+.ltext p { margin: 0 0 6px; font-weight: 600; font-size: clamp(15px, 1.3vw, 19px); }
+/* айтылым */
+.spkbox { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 18px; }
+.spkt span { color: #fff; padding: 6px 16px; border-radius: 999px; font-weight: 900; }
+.spkw { font-family: var(--display); font-weight: 900; font-size: clamp(36px, 4.4vw, 70px); text-align: center; } .spkw i { font-style: normal; color: var(--muted); } .spkw b.g { color: #1F7A45; } .spkw b.b { color: #B23A27; }
+.mic { width: 110px; height: 110px; border-radius: 50%; display: grid; place-items: center; font-size: 52px; background: radial-gradient(circle, #fff, #EDE7FF); border: 4px solid #CFC4FF; }
+.mic.on { animation: micp 1s ease-in-out infinite; border-color: #E8692A; } @keyframes micp { 50% { box-shadow: 0 0 0 18px rgba(232,105,42,.15); } }
+.spkr { font-weight: 900; font-size: clamp(16px, 1.5vw, 22px); text-align: center; margin: 0; } .spkr.g { color: #1E7A47; } .spkr.b { color: #B23A27; }
+.spsr { display: flex; justify-content: space-between; padding: 10px 14px; border-radius: 12px; border-left: 6px solid var(--c2); background: #F4F6F5; margin-bottom: 6px; font-size: clamp(16px, 1.5vw, 22px); } .spsr span { font-family: var(--display); font-weight: 900; }
+
+.wsplit textarea { width: 100%; box-sizing: border-box; font: inherit; font-size: clamp(16px, 1.5vw, 22px); font-weight: 700; padding: 12px; border-radius: 14px; border: 2px solid #CFE3FA; resize: vertical; }
+.wbox { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.wout p { margin: 0; font-size: clamp(16px, 1.5vw, 22px); line-height: 1.9; font-weight: 700; }
+mark.er { background: #FDE0DA; color: #B23A27; border-radius: 6px; padding: 0 3px; } mark.pa { background: #FFE9B8; color: #8A5300; border-radius: 6px; padding: 0 3px; text-decoration: line-through; } mark.ok { background: #DDF3E6; color: #13603A; border-radius: 6px; padding: 0 3px; }
+mark sup { font-size: .62em; font-weight: 900; margin-left: 2px; text-decoration: none; display: inline-block; }
+.wsc { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; } .wsc span { text-align: center; padding: 6px; border-radius: 12px; background: #F4F6F5; font-weight: 800; font-size: 12px; } .wsc b { display: block; font-family: var(--display); font-size: clamp(20px, 2vw, 30px); }
+.wsc .g b { color: #1E7A47; } .wsc .b b { color: #B23A27; }
+.vocab { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; } .vc { text-align: left; border: 2px solid #D5CBFF; background: #fff; border-radius: 12px; padding: 6px 10px; font: inherit; cursor: pointer; } .vc b { display: block; color: #3B2E8F; } .vc span { font-size: 13px; font-weight: 700; color: var(--muted); }
+.paras { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; } .paras span { padding: 6px 10px; border-radius: 10px; background: #FFF6E2; font-weight: 800; } .paras s { color: #B23A27; }
+.tools { display: flex; gap: 4px; margin-right: 6px; }
+.tool { display: flex; flex-direction: column; align-items: center; gap: 0; border: 1px solid var(--line); background: #fff; border-radius: 12px; padding: 4px 8px; font: inherit; cursor: pointer; line-height: 1.1; }
+.tool span { font-size: 18px; } .tool small { font-size: 10px; font-weight: 800; color: var(--muted); white-space: nowrap; } .tool:hover { background: #F3F8FF; border-color: #CFE3FA; }
+.tov { z-index: 60; } .gqrbig { display: flex; justify-content: center; margin: 10px 0; }
+.hero .guestmini { right: auto !important; left: 24px; } .tpanel { position: relative; width: min(980px, 92vw); max-height: 86vh; overflow: auto; padding: 22px 26px; text-align: left; }
+.tpanel h2 { margin: 0 0 6px; } .tpanel .tclose { position: absolute; right: 16px; top: 14px; }
+.kt { width: 100%; border-collapse: collapse; margin: 8px 0; } .kt th, .kt td { border-bottom: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; font-size: 15px; } .kt th { background: #F3F8FF; } .kt tr.cur td { background: #FFF4DE; } .kt small { color: var(--muted); font-weight: 700; }
+.dl { text-decoration: none; display: inline-flex; } .setg { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0; } .wsl { display: flex; flex-direction: column; gap: 8px; margin: 8px 0; }
+.wsl .lv { display: flex; gap: 12px; align-items: center; padding: 10px; border-radius: 14px; } .wsl .lv b { flex: none; width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; color: #fff; font-family: var(--display); font-size: 22px; } .wsl .lv p { margin: 0; font-weight: 700; }
+@media (max-width: 1500px) { .tool small { display: none; } }
+</style>
+</head>
+<body>
+<div id="app"><p class="muted" style="padding:20px">Жүктелуде…</p></div>
+<div class="confetti" id="confetti" aria-hidden="true"></div>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js"></script>
+<script src="config.js"></script>
+<script src="core.js"></script>
+<script>
+(async function () {
+  const Q = ECO.QUESTIONS, T = ECO.TEAMS, L = ECO.LETTERS, esc = ECO.esc;
+  const app = document.getElementById('app');
+  /* Интерактивті тақта: бәрі бір экранға сыяды, жылжытпайсыз */
+  const zf = () => parseFloat(app.style.zoom) || 1;
+  let fitQ = 0, fitting = false;
+  function fitNow() {
+    if (fitting) return; fitting = true; fitQ = 0;
+    const old = zf(), oldW = app.style.maxWidth;
+    const st = document.querySelector('.stepper');
+    const avail = (st ? st.getBoundingClientRect().top : innerHeight) - 8, W = document.documentElement.clientWidth;
+    const fits = (z, f) => { app.style.zoom = z; app.style.maxWidth = f < 1 ? Math.round(W * f / z) + 'px' : ''; let bottom = 0; for (const ch of app.children) { const b = ch.getBoundingClientRect().bottom; if (b > bottom) bottom = b; } return bottom - app.getBoundingClientRect().top + 6 <= avail; };
+    const best = (f) => { let lo = 0.45, hi = 1.9; if (fits(hi, f)) return hi; for (let k = 0; k < 8; k++) { const mid = (lo + hi) / 2; if (fits(mid, f)) lo = mid; else hi = mid; } return lo; };
+    /* экранды толық алады, төмен жылжытпайды: ең ірі мәтін беретін ен мен масштабты таңдаймыз */
+    let bz = best(1), bf = 1;
+    if (bz < 0.9) [0.84, 0.7].forEach((f) => { const z = best(f); if (z > bz * 1.06) { bz = z; bf = f; } });
+    const z = Math.floor(bz * 1000) / 1000; fits(z, bf);
+    if (Math.abs(z - old) > 0.005 || app.style.maxWidth !== oldW) { window.scrollTo(0, 0); if (document.getElementById('clu')) requestAnimationFrame(() => drawCluster()); }
+    fitting = false;
+  }
+  function fitSoon() { if (fitQ) return; fitQ = requestAnimationFrame(fitNow); }
+  document.body.classList.add('fitmode');
+  new MutationObserver((ms) => { if (fitting) return; if (ms.every((mm) => (mm.target.closest && mm.target.closest('.lbar')) || (Array.from(mm.addedNodes).every((n) => n.nodeType === 3) && Array.from(mm.removedNodes).every((n) => n.nodeType === 3)))) return; fitSoon(); }).observe(app, { childList: true, subtree: true });
+  addEventListener('resize', fitSoon);
+  app.addEventListener('load', fitSoon, true); app.addEventListener('loadedmetadata', fitSoon, true);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitSoon);
+  const $ = (id) => document.getElementById(id);
+  /* ойын коды */
+  const params = new URLSearchParams(location.search);
+  let code = params.get('code');
+  try { if (!code) code = localStorage.getItem('qaz3live_host_code'); } catch (e) {}
+  const newCode = () => String(Math.floor(1000 + Math.random() * 9000));
+  if (!code) code = newCode();
+  try { localStorage.setItem('qaz3live_host_code', code); } catch (e) {}
+  let be;
+  try { be = await ECO.connect({ role: 'host', code }); } catch (e) {
+    if (e && e.code === 'busy') { try { localStorage.removeItem('qaz3live_host_code'); } catch (x) {} location.replace('host.html'); return; }
+    app.innerHTML = '<div class="glass" style="padding:20px"><h2>Қосылу мүмкін болмады</h2><p class="muted">Интернетті тексеріп, бетті жаңартыңыз.</p><p class="muted">' + esc(e.message) + '</p></div>'; return; }
+  const G = 'games/' + code;
+
+  let capsule = null; try { capsule = JSON.parse(localStorage.getItem('qaz3_teams_v1') || 'null'); } catch (e) {}
+  const teamNames = (capsule && capsule.names) || T.map((t) => t.name);
+  const existing = await be.get(G + '/meta');
+  if (existing && typeof existing.created === 'number' && be.now() - existing.created > 3 * 3600000 && (existing.host === be.uid || be.demo)) {
+    try { localStorage.removeItem('qaz3live_host_code'); localStorage.removeItem('qaz3live_p2p_' + code); } catch (e) {}
+    location.replace('host.html'); return;
+  }
+  if (!existing) await be.set(G + '/meta', { host: be.uid, phase: 'slide', stage: 0, stageTitle: 'Сәлемдесу', stageNote: 'Телефоныңды дайында. Келесі кезеңде QR-код шығады.', stageStart: be.TS, lsAcc: 0, lsRun: null, stAcc: 0, stRun: null, q: -1, created: be.TS, teamNames });
+  else if (existing.stage === undefined && existing.phase === 'lobby' && existing.host === be.uid) await be.update(G + '/meta', { phase: 'slide', stage: 0, stageTitle: 'Сәлемдесу', stageNote: '', stageStart: be.TS });
+  else if (existing.host !== be.uid && !be.demo) { app.innerHTML = '<div class="glass" style="padding:20px"><h2>Бұл код бос емес</h2><p class="muted">Басқа құрылғыда осы кодпен ойын ашылған.</p><button class="gloss" id="nw">Жаңа ойын ашу</button></div>'; $('nw').onclick = () => { try { localStorage.removeItem('qaz3live_host_code'); } catch (e) {} location.href = 'host.html'; }; return; }
+
+  /* Таймер бетті жаңартқанда өздігінен жүре бермейді: жүріп тұрса, кідіртіледі */
+  { const ex = await be.get(G + '/meta');
+    if (ex && (typeof ex.lsRun === 'number' || typeof ex.stRun === 'number')) { const n = be.now();
+      await be.update(G + '/meta', { lsAcc: (ex.lsAcc || 0) + (typeof ex.lsRun === 'number' ? n - ex.lsRun : 0), lsRun: null, stAcc: (ex.stAcc || 0) + (typeof ex.stRun === 'number' ? n - ex.stRun : 0), stRun: null }); } }
+  const joinUrl = new URL('join.html?code=' + code, location.href).href;
+  const guestUrl = joinUrl + '&g=1';
+  let game = {}; let mounted = ''; let seen = new Set(); let tick = null;
+
+  function confetti(n) { const box = $('confetti'); const cols = ['#43B36B', '#3FA4E8', '#F2A541', '#FFD86B', '#F27C6B'];
+    for (let i = 0; i < n; i++) { const p = document.createElement('i'); p.style.left = Math.random() * 100 + 'vw'; p.style.background = cols[i % 5]; p.style.animationDuration = (1.8 + Math.random() * 1.8) + 's'; p.style.animationDelay = Math.random() * .5 + 's'; box.appendChild(p); setTimeout(() => p.remove(), 4500); } }
+  const tname = (i) => esc(((game.meta && game.meta.teamNames) || teamNames)[i] || T[i].name);
+  const grad = (i) => 'linear-gradient(180deg,' + T[i].c1 + ',' + T[i].c2 + ')';
+
+  /* ---------- 45 минуттық сабақтың кезеңдері ---------- */
+  const PHASES = ['Ұйымдастыру', 'Жаңа сабақ', 'Тапсырмалар', 'Бекіту', 'Кері байланыс'];
+  const STAGES = [
+    { ph: 0, id: 'title', kind: 'slide', min: 1, short: 'Сәлем', title: 'Сәлемдесу', note: 'Ашық сабағымызға қош келдіңіздер!' },
+    { ph: 0, id: 'goal', kind: 'slide', min: 2, short: 'Мақсат', title: 'Мақсат және еске түсіру', note: 'Түбір мен қосымша дегеніміз не? Еске түсір.' },
+    { ph: 0, id: 'join', kind: 'join', min: 1, short: 'Топ', title: 'Топтар', note: '' },
+    { ph: 1, id: 'listen', kind: 'slide', min: 3, short: 'Тыңдалым', title: 'Тыңдалым: «Бір минут»', note: 'ЖИ дауысымен мәтінді тыңда. Мәтін кім туралы?' },
+    { ph: 1, id: 'text', kind: 'slide', min: 4, short: 'Оқылым', title: 'Оқылым: мәтіннің негізгі ойы', note: 'Мәтінді оқы. Негізгі ойды анықта.' },
+    { ph: 1, id: 'rule3d', kind: 'slide', min: 4, short: '3D ереже', title: '3D сөз құрастырғыш: ереже', note: 'Қосымша жалғанғанда түбір қалай өзгереді?' },
+    { ph: 1, id: 'speak', kind: 'slide', min: 3, short: 'Айтылым', title: 'Айтылым: ЖИ тыңдайды', note: 'Сөзді дауыстап, анық айт. ЖИ тексереді.' },
+    { ph: 1, id: 'move', kind: 'slide', min: 1, short: 'Сергіту', title: 'Сергіту сәті', note: 'Түбір — отырамыз, қосымша — тұрамыз!' },
+    { ph: 2, id: 'relay', kind: 'relay', min: 4, short: 'Тақтада', title: 'Тақтадағы эстафета: сөз кластері', note: 'Әр топтан бір оқушы тақтаға шығады.' },
+    { ph: 2, id: 'write', kind: 'slide', min: 5, short: 'Жазылым', title: 'Жазылым: ЖИ редактор', note: '«Уақытты бағала»: 3–4 сөйлем жаз. Паразит сөздерсіз!' },
+    { ph: 2, id: 'r1', kind: 'round', min: 5, short: '1-раунд', title: '1-раунд: Сөз шебері', from: 0, to: 5 },
+    { ph: 3, id: 'r2', kind: 'round', min: 3, short: '2-раунд', title: '2-раунд: Деңгейлік тапсырмалар (А, В, С)', from: 6, to: Q.length - 1 },
+    { ph: 3, id: 'results', kind: 'results', min: 1, short: 'Нәтиже', title: 'Қорытынды және бағалау', note: 'Нәтижені тақтадан көр.' },
+    { ph: 4, id: 'feedback', kind: 'feedback', min: 2, short: 'Пікір', title: 'Кері байланыс', note: '' },
+    { ph: 4, id: 'home', kind: 'slide', min: 1, short: 'Үйге', title: 'Үй тапсырмасы', note: 'Деңгейіңді таңда: А, В немесе С.' }
+  ];
+  const TOTAL = STAGES.reduce((s, x) => s + x.min, 0); /* 40 */
+  const curStage = () => { const s = (game.meta || {}).stage; return typeof s === 'number' ? s : -1; };
+  const roundOf = (qi) => STAGES.findIndex((s) => s.kind === 'round' && qi >= s.from && qi <= s.to);
+
+  function goStage(i) {
+    if (i < 0 || i >= STAGES.length) return;
+    const s = STAGES[i], m = game.meta || {};
+    const upd = { stage: i, stageTitle: s.title, stageNote: s.note || '', stageStart: be.TS, stageExtra: 0, stAcc: 0, stRun: typeof m.lsRun === 'number' ? be.TS : null };
+    const prev = curStage(); if (prev >= 0 && prev !== i) upd['stlog/' + prev] = ((m.stlog || {})[prev] || 0) + stMs(m);
+    if (s.kind === 'results' && !m.realEnd) upd.realEnd = Date.now();
+    if (s.kind === 'slide') upd.phase = 'slide';
+    else if (s.kind === 'join') upd.phase = 'lobby';
+    else if (s.kind === 'results') upd.phase = 'end';
+    else if (s.kind === 'feedback') upd.phase = 'feedback';
+    else if (s.kind === 'relay') upd.phase = 'relay';
+    else if (s.kind === 'round') {
+      const starts = m.starts || {}; let k = s.from;
+      while (k <= s.to && typeof starts[k] === 'number') k++;
+      if (k > s.to) { upd.phase = 'board'; upd.q = s.to; }
+      else { upd.phase = 'question'; upd.q = k; upd['starts/' + k] = be.TS; }
+    }
+    be.update(G + '/meta', upd);
+  }
+  /* сұрақтан кейін: раунд ішінде келесі сұрақ, раунд соңында рейтинг, рейтингтен кейін келесі кезең */
+  function afterReveal(fromBoard) {
+    const m = game.meta; const r = roundOf(m.q);
+    if (r < 0) return m.q < Q.length - 1 ? startQ(m.q + 1) : be.update(G + '/meta', { phase: 'end' });
+    if (m.q < STAGES[r].to) return startQ(m.q + 1);
+    if (!fromBoard) return be.update(G + '/meta', { phase: 'board' });
+    goStage(r + 1);
+  }
+  function nextLabel(fromBoard) {
+    const m = game.meta; const r = roundOf(m.q);
+    if (r >= 0 && m.q < STAGES[r].to) return 'Келесі сұрақ →';
+    if (r >= 0 && !fromBoard) return 'Раунд қорытындысы →';
+    return r >= 0 && STAGES[r + 1] ? STAGES[r + 1].title + ' →' : 'Қорытынды →';
+  }
+
+  const mmss = (ms) => { ms = Math.max(0, ms); const s = Math.floor(ms / 1000); return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); };
+  const lsMs = (m) => (m.lsAcc || 0) + (typeof m.lsRun === 'number' ? be.now() - m.lsRun : 0);
+  const stMs = (m) => (m.stAcc || 0) + (typeof m.stRun === 'number' ? be.now() - m.stRun : 0);
+  const lsRunning = (m) => typeof m.lsRun === 'number';
+  const lsLabel = (m) => lsRunning(m) ? '⏸ Кідірту' : (m.lsAcc ? '▶ Жалғастыру' : '▶ Сабақты бастау');
+  function lsToggle() { const m = game.meta || {};
+    if (lsRunning(m)) be.update(G + '/meta', { lsAcc: lsMs(m), lsRun: null, stAcc: stMs(m), stRun: null });
+    else { const u = { lsRun: be.TS, stRun: be.TS }; if (!m.realStart) u.realStart = Date.now(); be.update(G + '/meta', u); } }
+  function lsReset() { be.update(G + '/meta', { lsAcc: 0, lsRun: null, stAcc: 0, stRun: null, realStart: null, realEnd: null, stlog: null }); }
+  const stageTotal = () => { const s = STAGES[curStage()], m = game.meta || {}; return s ? (s.min + (m.stageExtra || 0)) * 60000 : 0; };
+  let overFlag = '';
+  function lessonBar() {
+    const i = curStage(); if (i < 0) return '';
+    const s = STAGES[i];
+    const before = STAGES.slice(0, i).reduce((a, x) => a + x.min, 0);
+    const L2 = 2 * Math.PI * 20;
+    return '<div class="lbar glass"><div class="cdown" id="cdw"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="20" fill="none" stroke="rgba(20,43,38,.1)" stroke-width="5"/><circle id="cdr" cx="24" cy="24" r="20" fill="none" stroke="url(#cdg)" stroke-width="5" stroke-linecap="round" stroke-dasharray="' + L2 + ' ' + L2 + '" transform="rotate(-90 24 24)"/><defs><linearGradient id="cdg"><stop offset="0" stop-color="#5FCB8B"/><stop offset="1" stop-color="#1F8A55"/></linearGradient></defs></svg><div><small>Тапсырма уақыты</small><b id="cdn">00:00</b></div><button class="plain" id="addm" title="Кезеңге 1 минут қосу">+1 мин</button></div>' +
+      '<span class="phpill">' + PHASES[s.ph] + ' кезеңі</span><span class="stg">' + (i + 1) + '. ' + esc(s.title) + '</span><span class="pill">Кезеңде: <span class="clock" id="stc">00:00</span></span><span class="pill">Сабақ: <span class="clock" id="lsc">00:00</span> / ' + TOTAL + ':00</span><button class="gloss tbtn" id="lsgo">' + lsLabel(game.meta || {}) + '</button><button class="plain tbtn" id="lsrs" title="Таймерді нөлге қайтару">↺ Нөлдеу</button>' +
+      '<div class="lprog">' + STAGES.map((x, k) => '<i style="width:' + (x.min / TOTAL * 100) + '%;background:' + (k < i ? '#43B36B' : k === i ? 'linear-gradient(90deg,#F7B24A,#E07A1F)' : 'transparent') + ';' + (k ? 'border-left:2px solid rgba(255,255,255,.9)' : '') + '"></i>').join('') + '</div>' +
+      '<span class="muted" style="font-weight:700;font-size:13px;flex-basis:100%">Жоспар бойынша бұл кезең ' + before + '–' + (before + s.min) + '-минуттарда.</span></div>';
+  }
+  function stepper() {
+    const i = curStage(); if (i < 0) return '';
+    return '<nav class="stepper glass" aria-label="Сабақ кезеңдері"><button class="nav" id="sp" aria-label="Алдыңғы кезең">‹</button>' +
+      PHASES.map((p, pi) => '<div class="sgrp' + (STAGES[i] && STAGES[i].ph === pi ? ' cur' : '') + '"><span class="sgl">' + p + '</span><div class="sgb">' + STAGES.map((s, k) => s.ph !== pi ? '' : '<button data-st="' + k + '" class="' + (k === i ? 'on' : k < i ? 'done' : '') + '"><b>' + (k < i ? '✓' : k + 1) + '</b>' + esc(s.short) + '<span style="font-weight:700;opacity:.8">' + s.min + ' мин</span></button>').join('') + '</div></div>').join('') +
+      '<button class="nav" id="sn" aria-label="Келесі кезең">›</button><button class="fsbtn" id="fsb" title="Толық экран">⛶</button></nav>';
+  }
+  function chrome() {
+    if (curStage() < 0) return;
+    const tb = app.querySelector('.top');
+    if (tb && curStage() !== 0 && !app.querySelector('.lbar')) tb.insertAdjacentHTML('afterend', lessonBar());
+    const ob = document.querySelector('.tstart'); if (ob) ob.remove();
+    if (curStage() === 0) { document.body.insertAdjacentHTML('beforeend', '<button class="gloss tbtn tstart" id="lsgo">' + lsLabel(game.meta || {}) + '</button>'); }
+    if ($('lsgo')) $('lsgo').onclick = lsToggle; if ($('lsrs')) $('lsrs').onclick = lsReset;
+    const old = document.querySelector('.stepper'); if (old) old.remove();
+    const oq = document.querySelector('.qrbtn'); if (oq) oq.remove();
+    const ph = (game.meta || {}).phase;
+    if (ph !== 'lobby' && ph !== 'relay' && curStage() !== 0) { document.body.insertAdjacentHTML('beforeend', '<button class="gloss qrbtn" id="qrb">QR · ' + code + '</button>'); $('qrb').onclick = showQR; }
+    document.body.insertAdjacentHTML('beforeend', stepper());
+    document.querySelectorAll('[data-st]').forEach((b) => b.onclick = () => goStage(+b.dataset.st));
+    $('sp').onclick = () => goStage(curStage() - 1);
+    $('sn').onclick = () => goStage(curStage() + 1);
+    $('fsb').onclick = () => { try { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen(); } catch (e) {} };
+    fitSoon();
+    const on = document.querySelector('.stepper .on'); if (on && on.scrollIntoView) on.scrollIntoView({ block: 'nearest', inline: 'center' });
+    if ($('addm')) $('addm').onclick = () => be.update(G + '/meta', { stageExtra: ((game.meta || {}).stageExtra || 0) + 1 });
+    clockTick();
+  }
+  function makeQR(el, size, url) {
+    url = url || joinUrl;
+    if (!el) return;
+    el.innerHTML = '<div class="qrfx"><div class="qrin"><div class="qrc"></div><i class="cn c1"></i><i class="cn c2"></i><i class="cn c3"></i><i class="cn c4"></i><span class="logo"><svg viewBox="-20 -20 40 40" aria-hidden="true"><path d="M0,-17 C12,-12 14,7 0,17 C-14,7 -12,-12 0,-17Z" fill="#fff"/><path d="M0,-12 L0,14" stroke="#1F8A55" stroke-width="2.4"/></svg></span><i class="scan"></i></div></div>';
+    try { new QRCode(el.querySelector('.qrc'), { text: url, width: size, height: size, colorDark: '#0F3D2E', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H }); }
+    catch (e) { el.querySelector('.qrc').innerHTML = '<p class="muted" style="max-width:200px;font-weight:700">QR жүктелмеді. Сілтеме: ' + esc(joinUrl.replace(/^https?:\/\//, '')) + '</p>'; el.querySelector('.logo').remove(); }
+  }
+  function showQR() {
+    const n = Object.keys(game.players || {}).length;
+    document.body.insertAdjacentHTML('beforeend', '<div class="qrov" id="qrov"><div class="glass"><p class="eyebrow">Сабаққа қосылу</p><div id="qrbig"></div><div class="big">' + code + '</div><p class="muted" style="font-weight:800">Қосылғандар: ' + n + ' · Жаңа оқушы автоматты түрде топқа түседі</p><div class="guestqr glass" style="text-align:left"><div id="gqr2"></div><div><p class="eyebrow">Ұстаздарға</p><p>Сабақ туралы пікіріңізді «Екі жұлдыз, бір тілек» әдісімен кез келген уақытта жазыңыз.</p></div></div><button class="plain" id="qrx">Жабу</button></div></div>');
+    makeQR($('qrbig'), 512); makeQR($('gqr2'), 256, guestUrl);
+    const close = () => { const o = $('qrov'); if (o) o.remove(); };
+    $('qrx').onclick = close; $('qrov').onclick = (e) => { if (e.target.id === 'qrov') close(); };
+  }
+  function clockTick() {
+    const m = game.meta || {}; const s = STAGES[curStage()];
+    const st = $('stc'), ls = $('lsc');
+    const run = lsRunning(m), gb = $('lsgo'), rb = $('lsrs');
+    if (gb) { const lb = lsLabel(m); if (gb.textContent !== lb) gb.textContent = lb; gb.classList.toggle('run', run); gb.classList.toggle('idle', !run); }
+    if (rb) rb.hidden = run || !(m.lsAcc || m.stAcc);
+    if (st) { const ms = stMs(m); st.textContent = mmss(ms); st.classList.toggle('over', s && ms > s.min * 60000); }
+    if (ls) { const ms = lsMs(m); ls.textContent = mmss(ms); ls.classList.toggle('over', ms > TOTAL * 60000); }
+    const cn = $('cdn'), cr = $('cdr'), cw = $('cdw');
+    if (cn) {
+      const tot = stageTotal(), left = Math.max(0, tot - stMs(m)); const L2 = 2 * Math.PI * 20;
+      cn.textContent = mmss(left + 999); if (cr) cr.setAttribute('stroke-dasharray', (L2 * left / tot) + ' ' + L2);
+      cw.classList.toggle('warn', left > 0 && left <= 30000); cw.classList.toggle('done', left <= 0);
+      const key = curStage() + ':' + m.stageStart + ':' + (m.stageExtra || 0);
+      if (left <= 0 && run && overFlag !== key) { overFlag = key; if (m.phase === 'slide' || m.phase === 'lobby' || m.phase === 'feedback' || m.phase === 'end') flashMsg('Уақыт бітті!', 'time'); }
+    }
+  }
+  function flashMsg(text, kind) {
+    document.body.insertAdjacentHTML('beforeend', '<div class="flash ' + kind + '" id="flash2"><b>' + text + '</b></div>');
+    setTimeout(() => { const f = $('flash2'); if (f) f.remove(); }, 1600);
+  }
+  setInterval(clockTick, 500);
+  document.addEventListener('keydown', (e) => {
+    if (e.target && /INPUT|TEXTAREA|VIDEO/.test(e.target.tagName)) return;
+    const ph = (game.meta || {}).phase; if (!['slide', 'lobby', 'end', 'feedback'].includes(ph)) return;
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); goStage(curStage() + 1); }
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); goStage(curStage() - 1); }
+  });
+
+  /* ---------- SLIDES: 3-сынып, 46-сабақ «Түбір мен қосымшаның жазылуы» ---------- */
+  const PROG = 'Авторлық бағдарлама: «Тілдік дағдыларын ЖИ көмегімен жетілдіру»';
+  const progTag = (skill) => '<span class="progtag" title="' + esc(PROG) + '">🤖 ' + esc(skill) + '</span>';
+  /* 3D сөз құрастырғыш: түбір + қосымша → нәтиже. ch — өзгеретін әріптің орны, to — жаңа әріп, drop — түсетін әріп */
+  const B3 = [
+    { r: 'кітап', s: 'ы', res: 'кітабы', ch: 4, to: 'б', rule: 'п → б', why: 'Дауысты дыбыстан басталатын қосымша жалғанғанда п дыбысы б-ға айналады.' },
+    { r: 'парақ', s: 'ы', res: 'парағы', ch: 4, to: 'ғ', rule: 'қ → ғ', why: 'Дауысты дыбыстан басталатын қосымша жалғанғанда қ дыбысы ғ-ға айналады.' },
+    { r: 'жүрек', s: 'і', res: 'жүрегі', ch: 4, to: 'г', rule: 'к → г', why: 'Дауысты дыбыстан басталатын қосымша жалғанғанда к дыбысы г-ға айналады.' },
+    { r: 'ерін', s: 'і', res: 'ерні', drop: 2, rule: 'і түседі', why: 'Дауысты дыбыстан басталатын қосымша жалғанғанда түбірдегі і түсіп қалады.' },
+    { r: 'халық', s: 'ы', res: 'халқы', drop: 3, rule: 'ы түседі', why: 'Дауысты дыбыстан басталатын қосымша жалғанғанда түбірдегі ы түсіп қалады.' },
+    { r: 'адам', s: 'дар', res: 'адамдар', rule: 'өзгермейді', why: 'Қосымша дауыссыз дыбыстан басталса, түбір өзгермейді. Түбір жуан — қосымша да жуан.' }
+  ];
+  const cube = (ch, cls, extra) => '<span class="cube ' + (cls || '') + '"' + (extra || '') + '><i class="f fr">' + esc(ch) + '</i><i class="f bk"></i><i class="f tp"></i><i class="f bt"></i><i class="f lf"></i><i class="f rt"></i></span>';
+  function render3D(k) {
+    const box = $('b3'); if (!box) return; const e = B3[k];
+    const L = Array.from(e.r);
+    box.innerHTML = '<div class="b3stage"><div class="b3word" id="b3w">' + L.map((c, j) => cube(c, 'root' + (j === e.ch ? ' chg' : '') + (j === e.drop ? ' drp' : ''), ' style="--d:' + (j * 0.08) + 's"')).join('') +
+      '<span class="plus3">+</span>' + Array.from(e.s).map((c) => cube(c, 'suf')).join('') + '</div>' +
+      '<div class="b3res" id="b3r"><span class="eq">=</span> <b>' + esc(e.res) + '</b> <span class="rl">' + esc(e.rule) + '</span></div><p class="b3why" id="b3y">' + esc(e.why) + '</p></div>' +
+      '<div class="row"><button class="gloss" id="b3go">Қосымшаны жалғау ▶</button><button class="plain" id="b3re">Қайта</button></div>' +
+      '<div class="b3list">' + B3.map((x, j) => '<button data-b3="' + j + '" class="' + (j === k ? 'on' : '') + '">' + esc(x.r) + ' + ' + esc(x.s) + '</button>').join('') + '</div>';
+    const w = $('b3w');
+    $('b3go').onclick = () => { w.classList.add('join'); ECO.sfx.pop();
+      setTimeout(() => { if (typeof e.ch === 'number') { const c = w.querySelector('.chg'); c.querySelector('.bt').textContent = e.to; c.classList.add('flip'); }
+        if (typeof e.drop === 'number') w.querySelector('.drp').classList.add('fall');
+        $('b3r').classList.add('on'); $('b3y').classList.add('on'); confetti(40); ECO.sfx.ok(); }, 900); };
+    $('b3re').onclick = () => render3D(k);
+    box.querySelectorAll('[data-b3]').forEach((b) => b.onclick = () => render3D(+b.dataset.b3));
+  }
+  const TEXT1 = ['Бір минут.', 'Отбасында бәрі де өз уақытында жүріп-тұрғанды жақсы көретін. Тек Талғат қана үнемі кешігіп жүретін.', '– Талғат, кел, тамағыңды іш, – деп шақыратын шешесі.', '– Қазір бір минуттан кейін барамын, – деп Талғат кітабын оқи беретін. Бұл оның әдеттегі жауабы еді. Ылғи осылай дейтін.', 'Бір күні мектепте шаңғы жарысы өтті. Талғат шаңғыны жақсы тебетін. Бірақ ол жеңімпаз болған жоқ. Оның жолдасы бір минутқа озып келді. Талғат екінші орын алып, үйге көңілсіз оралды.', 'Талғат бір минуттың адам өміріндегі маңызын енді ғана түсінгендей болды.'];
+  const LQ = [['Мәтін кім туралы?', 'Талғат туралы.'], ['Талғат шешесіне қалай жауап беретін?', '«Қазір бір минуттан кейін барамын».'], ['Шаңғы жарысында не болды?', 'Жолдасы бір минутқа озып келді, Талғат екінші орын алды.'], ['Талғат нені түсінді?', 'Бір минуттың адам өміріндегі маңызын.']];
+  const SPK = [['кітап', 'ы', 'кітабы'], ['парақ', 'ы', 'парағы'], ['жүрек', 'і', 'жүрегі'], ['орын', 'ы', 'орны'], ['ерін', 'і', 'ерні'], ['құлақ', 'ы', 'құлағы']];
+  let ttsVoice = null;
+  function findVoice() { try { const vs = speechSynthesis.getVoices(); ttsVoice = vs.find((v) => /^kk/i.test(v.lang)) || null; } catch (e) { ttsVoice = null; } return ttsVoice; }
+  try { speechSynthesis.onvoiceschanged = findVoice; } catch (e) {}
+  /* ЖИ редактор: түбір–қосымша қателері, паразит сөздер, сөздік қор (ережеге негізделген тексеру) */
+  const WRONG = { 'кітапы': 'кітабы', 'кітапын': 'кітабын', 'жауапы': 'жауабы', 'парақы': 'парағы', 'жүрекі': 'жүрегі', 'орыны': 'орны', 'еріні': 'ерні', 'құлақы': 'құлағы', 'халықы': 'халқы', 'мұрыны': 'мұрны', 'доппы': 'добы', 'допы': 'добы', 'етікі': 'етігі', 'жапырақы': 'жапырағы', 'көрікі': 'көркі', 'ерікі': 'еркі', 'шөпі': 'шөбі', 'тілекі': 'тілегі', 'уақыты': null };
+  const PARAS = { 'короче': 'қысқасы', 'типа': 'сияқты', 'кстати': 'айтпақшы', 'вообще': 'жалпы', 'давай': 'кәне', 'ок': 'жарайды', 'окей': 'жарайды', 'okay': 'жарайды', 'ok': 'жарайды', 'просто': 'жай ғана', 'короч': 'қысқасы', 'блин': '(артық сөз)', 'вот': 'міне', 'потом': 'кейін', 'конечно': 'әрине', 'ну': '(артық сөз)', 'щас': 'қазір', 'сейчас': 'қазір', 'привет': 'сәлем', 'пока': 'сау бол', 'спасибо': 'рақмет', 'cool': 'керемет', 'wow': 'тамаша', 'like': 'ұнады', 'да': 'иә', 'нет': 'жоқ', 'сразу': 'бірден', 'уже': 'әлдеқашан', 'опять': 'тағы', 'вроде': 'сияқты' };
+  const VOCAB = [['уақыт', 'кез, мезгіл'], ['маңызы', 'мәні, қажеттілігі'], ['кешігу', 'уақытында келмеу'], ['жеңімпаз', 'жарыста бірінші болған адам'], ['көңілсіз', 'көңілі түсіп кеткен'], ['бағалау', 'құрметтеу, қадірлеу'], ['үнемі', 'әрдайым'], ['озып келу', 'алдын ала жету']];
+  const TARGET = ['кітабы', 'кітабын', 'жауабы', 'парағы', 'жүрегі', 'орны', 'ерні', 'құлағы', 'халқы', 'мұрны', 'добы', 'етігі', 'жапырағы', 'көркі', 'еркі', 'шөбі', 'маңызы', 'уақыт', 'уақытты', 'жеңімпаз', 'көңілсіз', 'бағала', 'бағалау', 'үнемі'];
+  function aiCheck(txt) {
+    const toks = String(txt).split(/(\s+|[.,!?;:«»"()–—-])/);
+    const words = []; let errs = 0, par = 0, tg = new Set();
+    const out = toks.map((t) => { const w = t.toLowerCase(); if (!/[a-zа-яёәіңғүұқөһ]/i.test(w)) return esc(t); words.push(w);
+      if (WRONG[w]) { errs++; return '<mark class="er" title="Дұрысы: ' + WRONG[w] + '">' + esc(t) + '<sup>→ ' + WRONG[w] + '</sup></mark>'; }
+      if (PARAS[w]) { par++; return '<mark class="pa" title="Қазақша: ' + PARAS[w] + '">' + esc(t) + '<sup>→ ' + PARAS[w] + '</sup></mark>'; }
+      if (TARGET.some((x) => w.startsWith(x))) { tg.add(w); return '<mark class="ok">' + esc(t) + '</mark>'; }
+      return esc(t); }).join('');
+    const uniq = new Set(words).size, sent = String(txt).split(/[.!?]+/).filter((x) => x.trim()).length;
+    return { html: out, words: words.length, uniq, sent, errs, par, tg: tg.size };
+  }
+  const WSAMPLE = 'Короче, Талғат кітапы оқып, кешігіп жүрді. Ол бір минуттың маңызын түсінді. Мен де уақытты бағалаймын, ок?';
+  /* 59-жаттығу: жұлдыздарды жұптастыру */
+  const STARS = [['ерік', 'еркі'], ['орын', 'орны'], ['көрік', 'көркі']];
+  const FILL = [['жүре', 'і', 'г', 'жүрек'], ['до', 'ы', 'б', 'доп'], ['шө', 'і', 'б', 'шөп'], ['құла', 'ы', 'ғ', 'құлақ'], ['жапыра', 'ы', 'ғ', 'жапырақ']];
+  /* сергіту сәті: түбір — отыр, қосымша — тұр */
+  const MOVE = [['кітап', 0], ['-ы', 1], ['жүрек', 0], ['-лер', 1], ['парақ', 0], ['-дар', 1], ['-і', 1], ['орын', 0], ['-ға', 1], ['ерін', 0]];
+  function bgv(name) { return '<video class="bgv" src="media/' + name + '.mp4?v=20261106d" autoplay muted loop playsinline aria-hidden="true"></video>'; }
+  function vid(src, cls, attrs) { return '<video class="' + cls + '" src="media/' + src + '.mp4?v=20261106d" playsinline preload="metadata" ' + (attrs || 'controls') + '></video>'; }
+  function mountSlide() {
+    const i = curStage(), s = STAGES[i] || STAGES[0];
+    let h = '';
+    if (s.id === 'title') {
+      const words = ['Ашық', 'сабағымызға', 'қош', 'келдіңіздер!'];
+      const fly = ['к', 'і', 'т', 'а', 'б', 'ы', 'ғ', 'ә', 'п', 'ж'];
+      h = '<div class="hero welcome kids"><div class="fly3d" aria-hidden="true">' + fly.map((c, j) => cube(c, 'flyc', ' style="--x:' + ((j * 37) % 92 + 3) + '%;--y:' + ((j * 53) % 70 + 8) + '%;--t:' + (6 + j % 4) + 's;--dl:-' + j + 's"')).join('') + '</div><div class="in">' +
+        '<div class="schoolbar fadein"><span class="crest">№77</span><span><small>Астана қаласы</small><b>Ф. Оңғарсынова атындағы №77 мектеп-гимназия</b></span></div>' +
+        '<h1 class="wtitle">' + words.map((w, k) => '<span class="go" style="animation-delay:' + (0.25 + k * 0.28) + 's,' + (1.6 + k * 0.1) + 's">' + w + '</span>').join('') + '</h1>' +
+        '<p class="guests fadein" style="animation-delay:1.5s">Құрметті қонақтар, ұстаздар және оқушылар!</p>' +
+        '<div class="topiccard fadein" style="animation-delay:1.9s"><span class="ic">Аа</span><span><small>Қазақ тілі · 3-сынып · 46-сабақ</small><b>Түбір мен қосымшаның жазылуы</b></span></div>' +
+        '<p class="motto fadein" style="animation-delay:2.3s">«Сөз — көңілдің кілті.»</p>' +
+        '<div class="wchips fadein" style="animation-delay:2.7s"><span>Оқулық · 89-бет</span><span>40 минут</span><span>3 топ: Түбір · Жұрнақ · Жалғау</span></div>' +
+        '<div class="row fadein" style="animation-delay:3s"><button class="gloss" id="nx">Сабақты бастау →</button><button class="plain" id="fs">Толық экран</button></div></div>' +
+        '<div class="qrmini fadein" style="animation-delay:3.2s"><div id="qr"></div>Оқушыларға · код: ' + code + '</div><div class="qrmini guestmini fadein" style="animation-delay:3.4s"><div id="gqrh"></div>Қонақтарға: сабақ туралы<br>және пікір</div></div>';
+      setTimeout(() => confetti(70), 1500);
+    } else if (s.id === 'goal') {
+      h = '<div class="shead glass kidhead"><span class="pg">Оқулық · 89-бет</span><p class="eyebrow">46-сабақ · Оқу мақсаттары</p><h1>Түбір мен қосымшаның жазылуы</h1>' +
+        '<div class="goals2"><p><b>3.4.1.2</b> түбір сөздегі -ы, -і-нің дауысты дыбыстан басталатын қосымша жалғанған кездегі өзгерісін сақтап жазу</p><p><b>3.2.4.1</b> өз бетінше мәтіннің тақырыбын және мұғалімнің көмегімен негізгі ойды анықтау</p></div></div>' +
+        '<div class="cols3"><div class="boxp glass"><p class="eyebrow">Еске түсірейік</p><div class="flipq">' +
+        [['Түбір дегеніміз не?', 'Сөздің негізгі, бөлшектенбейтін бөлігі: <b>кітап</b>, <b>жүрек</b>.'], ['Қосымша дегеніміз не?', 'Түбірге жалғанатын бөлік: кітап<b>ы</b>, адам<b>дар</b>.'], ['Белгілері қандай?', '<span class="sym">⌒</span> түбір · <span class="sym">∧</span> жұрнақ · <span class="sym">□</span> жалғау']].map((x, k) => '<button class="fq" data-fq="' + k + '"><span class="q">' + x[0] + '</span><span class="a">' + x[1] + '</span></button>').join('') + '</div></div>' +
+        '<div class="boxp glass"><p class="eyebrow">Бүгін үйренемін</p><ul><li><b>Бәрі:</b> қосымша жалғанғанда кейбір түбір сөздердің жазылуы өзгеретінін біледі</li><li><b>Көбі:</b> п→б, қ→ғ, к→г өзгерістерін және ы, і-нің түсуін дұрыс жазады</li><li><b>Кейбірі:</b> мәтіннен осындай сөздерді тауып, ережені өз сөзімен түсіндіреді</li></ul></div>' +
+        '<div class="boxp glass"><p class="eyebrow">Бағалау критерийлері</p><ul><li>Мәтіннің тақырыбы мен негізгі ойын анықтайды</li><li>Қосымша жалғанғанда түбірдің өзгерісін сақтап жазады</li><li>Дұрыс жауап — <b>500</b> ұпай, жылдамдыққа <b>+500</b>-ге дейін</li></ul>' + progTag('ЖИ кері байланыс: әр жауаптан кейін түсіндірме') + '</div></div>' +
+        '<div class="ctrl"><button class="gloss" id="nx">Келесі →</button></div>';
+    } else if (s.id === 'text') {
+      h = '<div class="split txtsplit"><div class="boxp glass readtxt"><span class="pg">58-жаттығу · 89-бет</span><p class="eyebrow">Оқылым · ЖИ көмекші</p><h2>Бір минут</h2>' +
+        '<p>Отбасында бәрі де өз уақытында жүріп-тұрғанды жақсы көретін. Тек Талғат қана үнемі кешігіп жүретін.</p><p>– Талғат, кел, тамағыңды іш, – деп шақыратын шешесі.</p><p>– Қазір бір минуттан кейін барамын, – деп Талғат <mark class="hw" data-hw="кітап + ы + н">кітабын</mark> оқи беретін. Бұл оның әдеттегі <mark class="hw" data-hw="жауап + ы">жауабы</mark> еді. Ылғи осылай дейтін.</p>' +
+        '<p>Бір күні мектепте шаңғы жарысы өтті. Талғат шаңғыны жақсы тебетін. Бірақ ол жеңімпаз болған жоқ. Оның жолдасы бір минутқа озып келді. Талғат екінші орын алып, үйге көңілсіз оралды.</p><p>Талғат бір минуттың адам өміріндегі маңызын енді ғана түсінгендей болды.</p><p class="au">Рафиқа Нұртазина, Ләйлә Асқар</p></div>' +
+        '<div class="boxp glass"><p class="eyebrow">Тапсырма</p><ol class="tq"><li><b>Мәтін не туралы?</b> <button class="plain sm" data-rv="0">Жауабы</button><span class="rv" id="rv0">Бір минуттың маңызы туралы.</span></li><li><b>Мәтіндегі негізгі ойды анықта.</b> <button class="plain sm" data-rv="1">Жауабы</button><span class="rv" id="rv1">Бір минуттың да адам өмірінде маңызы зор, уақытты бағалау керек.</span></li><li><b>Қарамен жазылған сөздердің түбірін тап.</b> Сөзді бас: <span id="hwout" class="hwout">кітабын → ?</span></li></ol>' +
+        '<div class="aihelp"><span class="bot">🤖</span><div><b>Ақылды көмекші</b><p id="aitip">Қарамен жазылған сөзді бассаң, мен оның құрамын көрсетемін.</p></div></div>' + progTag('Оқылым · ЖИ кері байланыс') + '</div></div>' +
+        '<div class="ctrl"><button class="gloss" id="nx">Келесі →</button></div>';
+    } else if (s.id === 'listen') {
+      h = '<div class="split txtsplit"><div class="boxp glass listenbox"><span class="pg">58-жаттығу · 89-бет</span><p class="eyebrow">Тыңдалым · ЖИ дауысы</p><h2>Мәтінді тыңда: «Бір минут»</h2>' +
+        '<div class="wave" id="wave">' + Array.from({ length: 24 }, (_, k) => '<i style="--k:' + k + '"></i>').join('') + '</div>' +
+        '<div class="row"><button class="gloss" id="ttsgo">🔊 Тыңдау</button><button class="plain" id="ttsst">⏹ Тоқтату</button><button class="plain" id="ttsshow">Мәтінді көрсету</button></div>' +
+        '<p class="muted" id="ttsinfo" style="font-weight:700"></p><div class="ltext" id="ltext" hidden>' + TEXT1.map((p) => '<p>' + esc(p) + '</p>').join('') + '</div></div>' +
+        '<div class="boxp glass"><p class="eyebrow">Тыңдап болған соң</p><ol class="tq">' + LQ.map((x, k) => '<li><b>' + esc(x[0]) + '</b> <button class="plain sm" data-rv="' + k + '">Жауабы</button><span class="rv" id="rv' + k + '">' + esc(x[1]) + '</span></li>').join('') + '</ol>' +
+        '<div class="aihelp"><span class="bot">🤖</span><div><b>ЖИ дауысы</b><p>Мәтінді жасанды интеллект дауысы оқиды. Тыңдап, тірек сөздерді есте сақта: <b>бір минут, кешігу, шаңғы жарысы</b>.</p></div></div>' + progTag('Тыңдалым · ЖИ дауысы') + '</div></div>' +
+        '<div class="ctrl"><button class="gloss" id="nx">Келесі →</button></div>';
+    } else if (s.id === 'speak') {
+      h = '<div class="shead glass kidhead"><p class="eyebrow">Айтылым · ЖИ тыңдайды</p><h1>Сөзді дұрыс айт!</h1><p class="lead">Топтан бір оқушы шығып, түбірге қосымша жалғап, сөзді дауыстап айтады. ЖИ сөзді тыңдап, тексереді.</p>' + progTag('Айтылым · сөйлеуді тану') + '</div>' +
+        '<div class="split"><div class="glass spkbox"><div class="spkt" id="spkt"></div><div class="spkw" id="spkw"></div><div class="mic" id="mic">🎙</div><p class="spkr" id="spkr">Микрофонды басып, сөзді айт</p>' +
+        '<div class="row" style="justify-content:center"><button class="gloss" id="spgo">🎙 Айту</button><button class="plain" id="spok">✓ Дұрыс</button><button class="plain" id="spno">✗ Қате</button><button class="plain" id="spnx">Келесі сөз →</button></div></div>' +
+        '<div class="boxp glass"><p class="eyebrow">Топтар ұпайы</p><div id="spsc"></div><div class="aihelp"><span class="bot">🤖</span><div><b>Ақылды көмекші</b><p id="sptip">ЖИ айтылған сөзді мәтінге айналдырып, дұрыс жазылуымен салыстырады. Интернет немесе микрофон болмаса, мұғалім ✓ немесе ✗ басады.</p></div></div></div></div>' +
+        '<div class="ctrl"><button class="gloss" id="nx">Келесі →</button></div>';
+    } else if (s.id === 'write') {
+      h = '<div class="shead glass kidhead"><p class="eyebrow">Жазылым · ЖИ редактор</p><h1>«Уақытты бағала»: 3–4 сөйлем жаз</h1><p class="lead">Мәтін бойынша өз ойыңды жаз. Қосымша жалғанған сөздерді дұрыс жаз, сөздік сөздерін қолдан, <b>паразит сөздерсіз</b> таза сөйле!</p>' + progTag('Жазылым · сөздік қор · ЖИ редактор') + '</div>' +
+        '<div class="split wsplit"><div class="glass wbox"><label class="eyebrow" for="wta">Оқушының сөйлемдері</label><textarea id="wta" rows="4" placeholder="Мысалы: Талғат бір минуттың маңызын түсінді. Мен де уақытты бағалаймын."></textarea>' +
+        '<div class="row"><button class="gloss" id="wgo">🤖 ЖИ тексерсін</button><button class="plain" id="wex">Үлгі мәтін</button><button class="plain" id="wcl">Тазалау</button></div><div class="wout" id="wout"></div><div class="wstat" id="wst"></div></div>' +
+        '<div class="boxp glass"><p class="eyebrow">Сөздік қор</p><div class="vocab">' + VOCAB.map((v) => '<button class="vc" data-vc="' + esc(v[0]) + '"><b>' + esc(v[0]) + '</b><span>' + esc(v[1]) + '</span></button>').join('') + '</div>' +
+        '<p class="eyebrow" style="margin-top:10px">Таза сөйле: паразит сөздің орнына</p><div class="paras">' + [['короче', 'қысқасы'], ['типа', 'сияқты'], ['ок', 'жарайды'], ['кстати', 'айтпақшы'], ['давай', 'кәне'], ['вообще', 'жалпы']].map((p) => '<span><s>' + p[0] + '</s> → <b>' + p[1] + '</b></span>').join('') + '</div></div></div>' +
+        '<div class="ctrl"><button class="gloss" id="nx">Келесі →</button></div>';
+    } else if (s.id === 'rule3d') {
+      h = '<div class="shead glass kidhead"><span class="pg">89-бет · ереже</span><p class="eyebrow">3D сөз құрастырғыш</p><h1>Қосымша жалғанғанда түбір қалай өзгереді?</h1><p class="lead">Қосымша жалғанғанда кейбір түбір сөздердің жазылуы өзгереді: <b>кітап – кітабы, парақ – парағы, ерін – ерні, халық – халқы.</b></p></div>' +
+        '<div class="split b3split"><div class="glass b3box" id="b3"></div><div class="boxp glass"><p class="eyebrow">Ереже</p><div class="rulecard"><p>Түбір сөздің соңғы буыны <b>жуан</b> болса, қосымша да <b>жуан</b>: адам+дар+дың.</p><p>Соңғы буыны <b>жіңішке</b> болса, қосымша да <b>жіңішке</b>: сурет+ші+лер.</p></div>' +
+        '<div class="rgrid"><div><b>п → б</b><span>кітап – кітабы</span></div><div><b>қ → ғ</b><span>парақ – парағы</span></div><div><b>к → г</b><span>жүрек – жүрегі</span></div><div><b>ы, і түседі</b><span>ерін – ерні</span></div></div>' + progTag('Визуализация: 3D модель') + '</div></div>' +
+        '<div class="ctrl"><button class="gloss" id="nx">Келесі →</button></div>';
+    } else if (s.id === 'stars') {
+      const R = STARS.map((p) => p[1]).sort((a, b) => a.localeCompare(b, 'kk') * -1);
+      h = '<div class="split"><div class="boxp glass"><span class="pg">59-жаттығу · 90-бет</span><p class="eyebrow">Жұлдыздарды жұптастыр</p><p>Сол жақтағы түбірді, сосын оң жақтағы сөзді бас.</p><div class="starsg" id="stg"><div class="col">' + STARS.map((p, k) => '<button class="star" data-sl="' + k + '">' + p[0] + '</button>').join('') + '</div><svg class="stl" id="stl"></svg><div class="col">' + R.map((w) => '<button class="star r" data-sr="' + esc(w) + '">' + w + '</button>').join('') + '</div></div>' +
+        '<p class="muted" id="stm" style="font-weight:800">Түбір сөздің жазылуын өзгерткен қосымшаны ата.</p></div>' +
+        '<div class="boxp glass"><span class="pg">60-жаттығу · 90-бет</span><p class="eyebrow">Тиісті әріпті қой</p><div class="fillg">' + FILL.map((f, k) => '<button class="fill" data-fl="' + k + '"><span>' + f[0] + '<u>…</u>' + f[1] + '</span><small>' + f[3] + ' + ' + f[1] + '</small></button>').join('') + '</div>' + progTag('Жазылым · сауаттылық') + '</div></div>' +
+        '<div class="ctrl"><button class="gloss" id="nx">Келесі →</button></div>';
+    } else if (s.id === 'move') {
+      h = '<div class="shead glass kidhead"><p class="eyebrow">Сергіту сәті</p><h1>Түбір — отырамыз, қосымша — тұрамыз!</h1><p class="lead">Экрандағы сөзге қарап, тез қимылда.</p></div>' +
+        '<div class="movebox glass" id="mvb"><div class="mvw" id="mvw">Дайынсыңдар ма?</div><p class="mvh" id="mvh">Бастау батырмасын бас</p></div>' +
+        '<div class="ctrl"><button class="plain" id="mvgo">Бастау ▶</button><button class="gloss" id="nx">Келесі →</button></div>';
+    } else if (s.id === 'home') {
+      h = '<div class="split"><div class="boxp glass"><span class="pg">Оқулық · 90–91-беттер</span><p class="eyebrow">Үй тапсырмасы · деңгей бойынша</p><div class="lvls">' +
+        '<div class="lv a"><b>А</b><p>61-жаттығу: мақалды қатесін түзеп, көшіріп жаз.</p></div><div class="lv b"><b>В</b><p>Қосымша жалғанғанда түбірі өзгеретін 5 сөз жазып, түбірін белгіле.</p></div><div class="lv c"><b>С</b><p>Сол сөздермен «Уақытты бағала» тақырыбында 3–4 сөйлемнен тұратын шағын мәтін құра.</p></div></div>' + progTag('Электрондық портфолио') + '</div>' +
+        '<div class="boxp glass"><p class="eyebrow">Бүгінгі сабақтан</p><ul><li>Қосымша жалғанғанда <b>п→б, қ→ғ, к→г</b> болып өзгереді</li><li>Кейбір сөздерде <b>ы, і</b> түсіп қалады: орын – орны</li><li>Мәтіннің негізгі ойы: бір минуттың да маңызы зор</li></ul><p class="motto2">Рақмет, балалар! Жарайсыңдар!</p><div class="row"><button class="gloss" id="nx">Сабақ аяқталды 🎉</button></div></div></div>';
+    }
+    app.innerHTML = topbar() + '<div class="slide">' + h + '</div>';
+    if ($('qr')) makeQR($('qr'), 256);
+    if ($('gqrh')) makeQR($('gqrh'), 256, guestUrl);
+    if ($('fs')) $('fs').onclick = () => { try { const r = document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); if (r && r.catch) r.catch(() => {}); } catch (e) {} };
+    if ($('nx')) { if (s.id !== 'title' && STAGES[i + 1]) $('nx').textContent = STAGES[i + 1].title + ' →'; $('nx').onclick = () => (i < STAGES.length - 1 ? goStage(i + 1) : confetti(220)); }
+    app.querySelectorAll('[data-fq]').forEach((b) => b.onclick = () => { b.classList.toggle('open'); ECO.sfx.pop(); });
+    app.querySelectorAll('[data-rv]').forEach((b) => b.onclick = () => { $('rv' + b.dataset.rv).classList.add('on'); b.remove(); });
+    app.querySelectorAll('[data-hw]').forEach((m) => m.onclick = () => { $('hwout').innerHTML = esc(m.textContent) + ' → <b>' + esc(m.dataset.hw) + '</b>'; $('aitip').textContent = m.dataset.hw.startsWith('кітап') ? 'Түбірі — кітап. Қосымша жалғанғанда п дыбысы б-ға айналды: кітап → кітабы(н).' : 'Түбірі — жауап. Қосымша жалғанғанда п дыбысы б-ға айналды: жауап → жауабы.'; m.classList.add('done'); });
+    if ($('b3')) render3D(0);
+    if ($('wgo')) { const run = () => { const v = $('wta').value.trim(); if (!v) { $('wout').innerHTML = '<p class="muted">Алдымен сөйлем жаз.</p>'; $('wst').innerHTML = ''; return; } const r = aiCheck(v);
+        $('wout').innerHTML = '<p>' + r.html + '</p>';
+        const tips = []; if (r.errs) tips.push('Түбір мен қосымшаның жазылуында ' + r.errs + ' қате бар: ережені еске түсір.'); if (r.par) tips.push(r.par + ' паразит сөз табылды: қазақша баламасын қолдан.'); if (r.sent < 3) tips.push('Тағы ' + (3 - r.sent) + ' сөйлем қос.'); if (r.tg < 2) tips.push('Сөздік сөздерін көбірек қолдан.');
+        $('wst').innerHTML = '<div class="wsc"><span><b>' + r.sent + '</b>сөйлем</span><span><b>' + r.words + '</b>сөз</span><span><b>' + r.uniq + '</b>әртүрлі сөз</span><span class="' + (r.errs ? 'b' : 'g') + '"><b>' + r.errs + '</b>жазу қатесі</span><span class="' + (r.par ? 'b' : 'g') + '"><b>' + r.par + '</b>паразит сөз</span><span><b>' + r.tg + '</b>сабақ сөзі</span></div>' +
+          '<div class="aihelp"><span class="bot">🤖</span><div><b>ЖИ редактор</b><p>' + (tips.length ? esc(tips.join(' ')) : 'Тамаша! Қатесіз, таза қазақ тілінде жаздың.') + '</p></div></div>'; if (!tips.length) { confetti(60); ECO.sfx.win(); } else ECO.sfx.pop(); };
+      $('wgo').onclick = run; $('wex').onclick = () => { $('wta').value = WSAMPLE; run(); }; $('wcl').onclick = () => { $('wta').value = ''; $('wout').innerHTML = ''; $('wst').innerHTML = ''; };
+      app.querySelectorAll('[data-vc]').forEach((b) => b.onclick = () => { const ta = $('wta'); ta.value = (ta.value ? ta.value.replace(/\s*$/, ' ') : '') + b.dataset.vc; ta.focus(); }); }
+
+    if ($('ttsgo')) { const info = (t) => { $('ttsinfo').textContent = t; };
+      const ok = !!(window.speechSynthesis) && findVoice();
+      info(ok ? 'Дауыс: ' + ttsVoice.name : 'Бұл браузерде қазақша ЖИ дауысы табылмады. Microsoft Edge браузерінде ашыңыз немесе мәтінді мұғалім оқиды.');
+      $('ttsgo').onclick = () => { if (!findVoice()) { info('Қазақша дауыс жоқ: Edge браузерінде ашыңыз немесе мұғалім оқиды.'); $('ltext').hidden = false; return; }
+        speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(TEXT1.join(' ')); u.voice = ttsVoice; u.lang = ttsVoice.lang; u.rate = 0.9;
+        u.onstart = () => $('wave').classList.add('on'); u.onend = () => $('wave').classList.remove('on'); speechSynthesis.speak(u); };
+      $('ttsst').onclick = () => { try { speechSynthesis.cancel(); } catch (e) {} $('wave').classList.remove('on'); };
+      $('ttsshow').onclick = () => { $('ltext').hidden = !$('ltext').hidden; }; }
+    if ($('spgo')) { let si = 0, team = 0; const sc = (game.meta || {}).spk || {};
+      const showSc = () => { const c = (game.meta || {}).spk || {}; $('spsc').innerHTML = [0, 1, 2].map((t) => '<div class="spsr" style="--c2:' + T[t].c2 + '"><b>' + tname(t) + '</b><span>' + (c[t] || 0) + '</span></div>').join(''); };
+      const show = () => { const w = SPK[si]; team = si % 3; $('spkt').innerHTML = '<span style="background:' + T[team].c2 + '">' + tname(team) + ' тобы</span>'; $('spkw').innerHTML = esc(w[0]) + ' <i>+</i> ' + esc(w[1]) + ' <i>=</i> <b>?</b>'; $('spkr').textContent = 'Микрофонды басып, сөзді айт'; $('spkr').className = 'spkr'; };
+      const mark = (good, heard) => { const w = SPK[si]; ECO.sfx[good ? 'ok' : 'no'](); $('spkw').innerHTML = esc(w[0]) + ' <i>+</i> ' + esc(w[1]) + ' <i>=</i> <b class="' + (good ? 'g' : 'b') + '">' + esc(w[2]) + '</b>';
+        $('spkr').innerHTML = (heard ? 'ЖИ естіді: «' + esc(heard) + '» · ' : '') + (good ? '✓ Дұрыс! +100' : '✗ Дұрысы: ' + esc(w[2])); $('spkr').className = 'spkr ' + (good ? 'g' : 'b');
+        $('sptip').textContent = good ? 'Жарайсың! Анық айттың.' : 'Ережені еске түсір: ' + B3.concat([]).map((x) => x.rule).filter((v, i, a) => a.indexOf(v) === i).slice(0, 4).join(', ') + '.';
+        if (good) { const upd = {}, c = (game.meta || {}).spk || {}; upd['spk/' + team] = (c[team] || 0) + 100; const bp = (game.meta || {}).boardPts || {}; upd['boardPts/' + team] = (bp[team] || 0) + 100; be.update(G + '/meta', upd); confetti(40); setTimeout(showSc, 400); } };
+      const norm = (t) => String(t || '').toLowerCase().replace(/[^a-zа-яёәіңғүұқөһ]/g, '');
+      $('spgo').onclick = () => { const SR = window.SpeechRecognition || window.webkitSpeechRecognition; if (!SR) { $('spkr').textContent = 'Бұл браузер сөйлеуді танымайды. Мұғалім ✓ немесе ✗ басады.'; return; }
+        try { const r = new SR(); r.lang = 'kk-KZ'; r.interimResults = false; r.maxAlternatives = 5; $('mic').classList.add('on'); $('spkr').textContent = 'Тыңдап тұрмын…';
+          r.onresult = (e) => { const alts = Array.from(e.results[0]).map((x) => x.transcript); const target = norm(SPK[si][2]); const good = alts.some((t) => norm(t).split(/\s+/).join('').includes(target)); mark(good, alts[0]); };
+          r.onerror = () => { $('spkr').textContent = 'Естілмеді немесе микрофон рұқсаты жоқ. Қайта айт немесе мұғалім ✓/✗ басады.'; };
+          r.onend = () => $('mic').classList.remove('on'); r.start(); } catch (e) { $('spkr').textContent = 'Микрофон қосылмады. Мұғалім ✓ немесе ✗ басады.'; } };
+      $('spok').onclick = () => mark(true); $('spno').onclick = () => mark(false);
+      $('spnx').onclick = () => { si = (si + 1) % SPK.length; show(); };
+      show(); showSc(); }
+
+    if ($('stg')) { let pick = null, done = 0; const draw = () => { const g = $('stg'), svg = $('stl'), Z = zf(), R0 = g.getBoundingClientRect(); svg.setAttribute('viewBox', '0 0 ' + R0.width / Z + ' ' + R0.height / Z); svg.innerHTML = Array.from(g.querySelectorAll('.star.ok[data-sl]')).map((l) => { const r = g.querySelector('.star.ok[data-sr="' + STARS[+l.dataset.sl][1] + '"]'); if (!r) return ''; const a = l.getBoundingClientRect(), b = r.getBoundingClientRect(); return '<line x1="' + (a.right - R0.left) / Z + '" y1="' + (a.top + a.height / 2 - R0.top) / Z + '" x2="' + (b.left - R0.left) / Z + '" y2="' + (b.top + b.height / 2 - R0.top) / Z + '" stroke="#F2B21B" stroke-width="5" stroke-linecap="round"/>'; }).join(''); };
+      app.querySelectorAll('[data-sl]').forEach((b) => b.onclick = () => { if (b.classList.contains('ok')) return; app.querySelectorAll('[data-sl]').forEach((x) => x.classList.remove('sel')); b.classList.add('sel'); pick = +b.dataset.sl; });
+      app.querySelectorAll('[data-sr]').forEach((b) => b.onclick = () => { if (pick === null || b.classList.contains('ok')) return; const l = app.querySelector('[data-sl="' + pick + '"]');
+        if (STARS[pick][1] === b.dataset.sr) { l.classList.remove('sel'); l.classList.add('ok'); b.classList.add('ok'); done++; confetti(30); draw(); if (done === STARS.length) $('stm').innerHTML = 'Жарайсыңдар! Қосымша <b>-ы, -і</b> жалғанғанда түбірдегі <b>ы, і</b> түсіп қалды.'; }
+        else { b.classList.add('shake'); setTimeout(() => b.classList.remove('shake'), 500); } pick = null; });
+      addEventListener('resize', draw); }
+    app.querySelectorAll('[data-fl]').forEach((b) => b.onclick = () => { const f = FILL[+b.dataset.fl]; b.querySelector('u').textContent = f[2]; b.classList.add('ok'); });
+    if ($('mvgo')) { let mi = -1, tm = null; const nxt = () => { mi = (mi + 1) % MOVE.length; const w = MOVE[mi]; ECO.sfx[w[1] ? 'go' : 'pop'](); $('mvw').textContent = w[0]; $('mvw').className = 'mvw ' + (w[1] ? 'up' : 'dn'); $('mvh').textContent = w[1] ? 'Қосымша — ТҰРАМЫЗ! ⬆' : 'Түбір — ОТЫРАМЫЗ! ⬇'; };
+      $('mvgo').onclick = () => { if (tm) { clearInterval(tm); tm = null; $('mvgo').textContent = 'Бастау ▶'; return; } nxt(); tm = setInterval(() => { if (!$('mvw')) { clearInterval(tm); return; } nxt(); }, 3000); $('mvgo').textContent = 'Тоқтату ⏸'; }; }
+    app.querySelectorAll('[data-to]').forEach((el, k) => { const to = +el.dataset.to; const t0 = performance.now() + k * 600;
+      const step = (t) => { const p = Math.min(1, Math.max(0, (t - t0) / 1400)); el.textContent = Math.round(to * (1 - Math.pow(1 - p, 3))); if (p < 1) requestAnimationFrame(step); };
+      requestAnimationFrame(step); });
+  }
+
+  /* ---------- ТАҚТАДАҒЫ ЭСТАФЕТА: әр кезекте 3 топтан бір-бір оқушы бірге шығады ---------- */
+  const GROUPS7 = ['п → б', 'қ → ғ', 'к → г', 'ы, і түседі'];
+  const GIMG = ['pb', 'qgh', 'kg', 'yi'];
+  const RELAY = [
+    { txt: 'кітап + ы', s: 'кітабы', a: 0, img: 'pb' },
+    { txt: 'парақ + ы', s: 'парағы', a: 1, img: 'qgh' },
+    { txt: 'орын + ы', s: 'орны', a: 3, img: 'yi' },
+    { txt: 'жүрек + і', s: 'жүрегі', a: 2, img: 'kg' },
+    { txt: 'доп + ы', s: 'добы', a: 0, img: 'pb' },
+    { txt: 'құлақ + ы', s: 'құлағы', a: 1, img: 'qgh' },
+    { txt: 'ерін + і', s: 'ерні', a: 3, img: 'yi' },
+    { txt: 'жапырақ + ы', s: 'жапырағы', a: 1, img: 'qgh' },
+    { txt: 'етік + і', s: 'етігі', a: 2, img: 'kg' }
+  ];
+  const RROUNDS = RELAY.length / 3, RPTS = 200, RSEC = 40; let rs = null, rtick = null;
+  const ritem = (r, t) => RELAY[r * 3 + t];
+  function relayPush() { be.update(G + '/meta', { relay: { r: rs.r, st: rs.st, u0: rs.u[0] || '', u1: rs.u[1] || '', u2: rs.u[2] || '', res: rs.res.map((x) => x === true ? 1 : x === false ? 0 : -1).join(','), pl: rs.pl.join(',') } }); }
+  function teamIds(t) { const players = game.players || {}, teams = game.teams || {}; return Object.keys(players).filter((u) => teams[u] === t); }
+  function mountRelay() {
+    const m = game.meta || {}, R0 = m.relay || {};
+    rs = { r: typeof R0.r === 'number' ? R0.r : 0, st: 'pick', u: ['', '', ''], res: [null, null, null], used: new Set(Object.keys(m.boardInd || {})), pl: R0.pl ? String(R0.pl).split(',').filter(Boolean) : [] };
+    app.innerHTML = topbar() + '<div class="slide"><div class="rlwrap"><div class="rlside"><div class="glass rlrules"><p class="eyebrow">Тақтадағы эстафета</p><p>Әр кезекте 3 топтан бір-бір оқушы тақтаға бірге шығады. Әркім өз тобының түсіндегі сөзді кластердегі дұрыс топқа сүйреп апарады: түбір қалай өзгерді? Сынып бірге сөз кластерін құрайды.</p><p><b>Дұрыс: топқа +' + RPTS + '</b> · ' + RSEC + ' секунд</p></div>' + [0, 1, 2].map((i) => '<div class="rlteam glass" id="rlt' + i + '" style="--c1:' + T[i].c1 + ';--c2:' + T[i].c2 + '"><span>' + tname(i) + '</span><b id="rlp' + i + '">0</b></div>').join('') + '<p class="muted" id="rlprog" style="font-weight:800;text-align:center"></p></div>' +
+      '<div class="rlmain glass" id="rlmain"></div></div></div>';
+    relayScores(); relayTurn();
+  }
+  function relayScores() { const bp = (game.meta || {}).boardPts || {}; [0, 1, 2].forEach((i) => { const e = $('rlp' + i); if (e) e.textContent = bp[i] || 0; }); const p = $('rlprog'); if (p && rs) p.textContent = Math.min(rs.r + 1, RROUNDS) + ' / ' + RROUNDS + ' кезек'; }
+  function relayTurn() {
+    clearInterval(rtick); const box = $('rlmain'); if (!box) return;
+    relayScores();
+    if (rs.r >= RROUNDS) {
+      const bp = (game.meta || {}).boardPts || {}; const order = [0, 1, 2].sort((a, b) => (bp[b] || 0) - (bp[a] || 0));
+      box.innerHTML = '<div class="rldone"><p class="eyebrow">Эстафета аяқталды · Біз құрған кластер</p><h2>Тақтада ең көп ұпай жинаған: ' + tname(order[0]) + '</h2></div>' + clusterHtml(true) + '<div class="rldone" style="padding:14px 0 0"><p class="muted" style="font-weight:700">Антропогендік факторлар 7 топқа топтастырылып, кластер-сызба түрінде ұсынылды. Ұпайлар топтың жалпы ұпайына қосылды.</p><button class="gloss" id="rln">1-раундқа өту →</button></div>';
+      drawCluster(); confetti(150); rs.st = 'done'; relayPush(); $('rln').onclick = () => goStage(curStage() + 1); return;
+    }
+    const players = game.players || {};
+    rs.u = ['', '', '']; rs.res = [null, null, null]; rs.st = 'pick'; relayPush();
+    box.innerHTML = '<div class="rlpick"><p class="eyebrow">' + (rs.r + 1) + '-кезек · әр топтан бір оқушы</p><div class="pick3">' + [0, 1, 2].map((t) => { const ids = teamIds(t);
+        return '<div class="pcol" style="--c1:' + T[t].c1 + ';--c2:' + T[t].c2 + '"><h3>' + tname(t) + '</h3><div class="roulette sm" id="rou' + t + '">' + (ids.length ? '?' : 'Топта оқушы жоқ') + '</div><div class="rlnames">' + ids.map((u) => '<button class="teamchip" data-pt="' + t + '" data-pu="' + esc(u) + '" style="background:linear-gradient(180deg,' + T[t].c1 + ',' + T[t].c2 + ')' + (rs.used.has(u) ? ';opacity:.45' : '') + '">' + esc(players[u].name) + '</button>').join('') + '</div></div>'; }).join('') + '</div>' +
+      '<div class="row" style="justify-content:center"><button class="gloss" id="rspin">Үш оқушыны кездейсоқ таңдау</button><button class="plain" id="rany">Тапсырманы ашу →</button></div><p class="muted" style="font-weight:700">Атты басып, оқушыны өзіңіз де таңдай аласыз.</p></div>';
+    box.querySelectorAll('[data-pu]').forEach((b) => b.onclick = () => { const t = +b.dataset.pt; rs.u[t] = b.dataset.pu; const r = $('rou' + t); r.textContent = players[rs.u[t]].name; r.classList.add('win'); relayPush(); });
+    $('rany').onclick = () => relayGo();
+    $('rspin').onclick = () => {
+      $('rspin').disabled = true; let pending = 0;
+      [0, 1, 2].forEach((t) => { const ids = teamIds(t); if (!ids.length) return; pending++;
+        const pool = ids.filter((u) => !rs.used.has(u)); const from = pool.length ? pool : ids; const pick = from[Math.floor(Math.random() * from.length)];
+        const r = $('rou' + t); let n = t * 2, delay = 60;
+        const spin = () => { r.textContent = players[ids[n++ % ids.length]].name; delay *= 1.12; if (delay < 380) setTimeout(spin, delay); else { r.textContent = players[pick].name; r.classList.add('win'); rs.u[t] = pick; relayPush(); if (--pending === 0) { confetti(60); setTimeout(relayGo, 1300); } } };
+        setTimeout(spin, t * 150); });
+      if (!pending) relayGo();
+    };
+  }
+  function relayGo() {
+    rs.st = 'go'; rs.u.forEach((u) => { if (u) rs.used.add(u); }); relayPush();
+    const box = $('rlmain'), players = game.players || {};
+    const head = '<div class="rlhead3">' + [0, 1, 2].map((t) => '<span style="--c1:' + T[t].c1 + ';--c2:' + T[t].c2 + '">' + esc(rs.u[t] && players[rs.u[t]] ? players[rs.u[t]].name : tname(t)) + '</span>').join('') + '<span class="rltime" id="rlt">' + RSEC + '</span></div>';
+    box.innerHTML = head + '<p class="rlq">Әркім өз түсіндегі карточканы кластер-сызбадағы орнына сүйреп апарсын.</p><div class="rlcardrow three">' + [0, 1, 2].map((t) => { const it = ritem(rs.r, t);
+        return '<div class="dragcard tcard" data-t="' + t + '" style="--c1:' + T[t].c1 + ';--c2:' + T[t].c2 + '"><span><small>' + tname(t) + '</small><b class="tw">' + esc(it.txt) + ' = ?</b></span></div>'; }).join('') + '</div>' + clusterHtml(false);
+    drawCluster();
+    box.querySelectorAll('.dragcard').forEach(makeDrag);
+    try { box.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (e) {}
+    const t0 = Date.now(); rtick = setInterval(() => { const left = Math.max(0, RSEC - Math.floor((Date.now() - t0) / 1000)); const e = $('rlt'); if (e) { e.textContent = left; e.classList.toggle('low', left <= 5); } if (left <= 0) { [0, 1, 2].forEach((t) => { if (rs.res[t] === null) cardResult(t, false, null); }); } }, 250);
+  }
+  const GSTAT = [['Қатаң п → ұяң б', 'кітап – кітабы, жауап – жауабы', 'Оқулық, 89-бет'], ['Қатаң қ → ұяң ғ', 'парақ – парағы, құлақ – құлағы', 'Оқулық, 89, 91-беттер'], ['Қатаң к → ұяң г', 'жүрек – жүрегі, етік – етігі', 'Оқулық, 90-бет'], ['ы, і түсіп қалады', 'орын – орны, ерін – ерні, халық – халқы', 'Оқулық, 89, 92-беттер']];
+  function clusterHtml(fin) {
+    const by = GROUPS7.map(() => []);
+    rs.pl.forEach((v) => { const i = parseInt(v, 10), it = RELAY[i]; if (it) by[it.a].push('<span class="clit' + (/x$/.test(v) ? ' miss' : '') + '">' + esc(it.s) + '</span>'); });
+    const node = (k) => { const st = GSTAT[k];
+      return '<div class="drop clnode" data-drop="' + k + '"><div class="clh"><img src="' + ECO.IMG(GIMG[k]) + '" alt=""><div><b>' + (k + 1) + '-топ</b><span class="big">' + esc(GROUPS7[k]) + '</span></div></div>' +
+        (fin ? '<div class="clst"><strong>' + esc(st[0]) + '</strong><span>' + esc(st[1]) + '</span><small>' + esc(st[2]) + '</small></div>' : '') +
+        '<div class="clitems">' + by[k].join('') + '</div></div>'; };
+    return '<div class="cluster c4' + (fin ? ' fin' : '') + '" id="clu"><svg class="cllines" id="cll" aria-hidden="true"></svg>' +
+      '<div class="clrow">' + [0, 1].map(node).join('') + '</div>' +
+      '<div class="clcenter" id="clc"><img src="' + ECO.IMG('book') + '" alt=""><div>Қосымша жалғанғанда түбір өзгереді<small>46-сабақ · 89-бет' + (fin ? ' · инфографика' : '') + '</small></div></div>' +
+      '<div class="clrow">' + [2, 3].map(node).join('') + '</div></div>';
+  }
+  function drawCluster() {
+    const go = () => { const c = $('clu'), svg = $('cll'), ce = $('clc'); if (!c || !svg || !ce) return;
+      const Z = zf(), sc = (o) => ({ left: o.left / Z, top: o.top / Z, right: o.right / Z, bottom: o.bottom / Z, width: o.width / Z, height: o.height / Z });
+      const R0 = sc(c.getBoundingClientRect()), r = sc(ce.getBoundingClientRect()), cx = r.left + r.width / 2 - R0.left;
+      svg.setAttribute('viewBox', '0 0 ' + R0.width + ' ' + R0.height); svg.setAttribute('width', R0.width); svg.setAttribute('height', R0.height);
+      svg.innerHTML = Array.from(c.querySelectorAll('.clnode')).map((n) => { const q = sc(n.getBoundingClientRect()), x = q.left + q.width / 2 - R0.left, top = q.top < r.top;
+        const y1 = top ? r.top - R0.top : r.bottom - R0.top, y2 = top ? q.bottom - R0.top : q.top - R0.top, has = n.querySelector('.clit');
+        return '<path d="M' + cx + ',' + y1 + ' C' + cx + ',' + ((y1 + y2) / 2) + ' ' + x + ',' + ((y1 + y2) / 2) + ' ' + x + ',' + y2 + '" fill="none" stroke="' + (has ? '#2E9E62' : '#BFD3CB') + '" stroke-width="' + (has ? 4 : 3) + '" stroke-linecap="round"' + (has ? '' : ' stroke-dasharray="6 7"') + '/>'; }).join('');
+    };
+    requestAnimationFrame(go); setTimeout(go, 300);
+  }
+  window.addEventListener('resize', () => { if ($('clu')) drawCluster(); });
+  function makeDrag(el) {
+    el.addEventListener('pointerdown', (e) => {
+      if (el.classList.contains('used') || el.classList.contains('dragging')) return; e.preventDefault();
+      const r = el.getBoundingClientRect(), dx = e.clientX - r.left, dy = e.clientY - r.top, pid = e.pointerId, Z = zf();
+      const ph = document.createElement('div'); ph.className = 'dragph'; ph.style.width = (r.width / Z) + 'px'; ph.style.height = (r.height / Z) + 'px'; ph.style.flex = 'none';
+      el.before(ph); document.body.appendChild(el); /* сүйреу кезінде карточка масштабтан тыс, саусақтың астында жүреді */
+      el.classList.add('dragging'); el.style.width = (r.width / Z) + 'px'; el.style.left = r.left + 'px'; el.style.top = r.top + 'px';
+      el.style.transformOrigin = '0 0'; el.style.transform = 'scale(' + Z + ') rotate(-2deg)';
+      const over = (x, y) => { el.style.visibility = 'hidden'; const t = document.elementFromPoint(x, y); el.style.visibility = ''; return t && t.closest('[data-drop]'); };
+      const mv = (ev) => { if (ev.pointerId !== pid) return; ev.preventDefault(); el.style.left = (ev.clientX - dx) + 'px'; el.style.top = (ev.clientY - dy) + 'px'; };
+      const up = (ev) => { if (ev.pointerId !== pid) return; document.removeEventListener('pointermove', mv); document.removeEventListener('pointerup', up); document.removeEventListener('pointercancel', up);
+        const d = over(ev.clientX, ev.clientY); el.classList.remove('dragging'); el.style.left = el.style.top = el.style.width = el.style.transform = el.style.transformOrigin = '';
+        if (ph.isConnected) ph.replaceWith(el); else el.remove();
+        if (!d) return; const t = +el.dataset.t; if (rs.res[t] !== null) return;
+        cardResult(t, +d.dataset.drop === ritem(rs.r, t).a, d); };
+      document.addEventListener('pointermove', mv, { passive: false }); document.addEventListener('pointerup', up); document.addEventListener('pointercancel', up);
+    });
+  }
+  function cardResult(t, ok, drop) {
+    if (rs.res[t] !== null) return; rs.res[t] = ok;
+    const it = ritem(rs.r, t), idx = rs.r * 3 + t, box = $('rlmain');
+    const card = box.querySelector('.tcard[data-t="' + t + '"]'); if (card) { card.classList.add('used', ok ? 'okc' : 'noc'); card.insertAdjacentHTML('beforeend', '<i class="mark">' + (ok ? '✓' : '✗') + '</i>'); }
+    rs.pl.push(idx + (ok ? '' : 'x'));
+    const right = box.querySelector('[data-drop="' + it.a + '"]');
+    if (drop && !ok) { drop.classList.add('shake'); setTimeout(() => drop.classList.remove('shake'), 500); }
+    if (right) { const ul = right.querySelector('.clitems'); if (ul) ul.insertAdjacentHTML('beforeend', '<span class="clit new' + (ok ? '' : ' miss') + '" style="border:2px solid ' + T[t].c2 + '">' + esc(it.s) + '</span>'); right.classList.add('good'); setTimeout(() => right.classList.remove('good'), 900); }
+    ECO.sfx[ok ? 'ok' : 'no']();
+    if (ok) { const m = game.meta || {}; const upd = {}; upd['boardPts/' + t] = ((m.boardPts || {})[t] || 0) + RPTS; if (rs.u[t]) upd['boardInd/' + rs.u[t]] = ((m.boardInd || {})[rs.u[t]] || 0) + RPTS; be.update(G + '/meta', upd); confetti(40); }
+    drawCluster(); relayPush();
+    if (rs.res.every((x) => x !== null)) {
+      clearInterval(rtick); rs.st = 'res'; relayPush();
+      box.insertAdjacentHTML('beforeend', '<div class="rlres ok3">' + [0, 1, 2].map((k) => { const i2 = ritem(rs.r, k); return '<span class="r3 ' + (rs.res[k] ? 'y' : 'n') + '" style="--c2:' + T[k].c2 + '"><b>' + tname(k) + ': ' + (rs.res[k] ? '+' + RPTS : '0') + '</b>' + (rs.res[k] ? '' : '<small>Дұрысы: ' + (i2.a + 1) + '. ' + esc(GROUPS7[i2.a]) + '</small>') + '</span>'; }).join('') + '<button class="gloss" id="rlnext">' + (rs.r + 1 < RROUNDS ? 'Келесі кезек →' : 'Кластерді көру →') + '</button></div>');
+      $('rlnext').onclick = () => { rs.r++; relayTurn(); };
+      try { $('rlnext').scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (e) {}
+    }
+  }
+  /* ---------- FEEDBACK STAGE: Білім ағашы ---------- */
+  const LEAFC = ['#3BB273', '#F2B33D', '#F0765F'];
+  const leafPath = 'M0,-17 C12,-12 14,7 0,17 C-14,7 -12,-12 0,-17Z';
+  const SPOTS = (() => { const a = []; for (let k = 0; k < 70; k++) { const r = Math.sqrt((k + .5) / 70), t = k * 2.39996; a.push([300 + Math.cos(t) * r * 225, 205 + Math.sin(t) * r * 150, (k * 47) % 70 - 35]); } return a; })();
+  let leafSeen = new Set(), appleSeen = new Set(), quoteTimer = null, quoteIx = 0;
+  const APPLES = [[150, 260], [450, 250], [230, 120], [380, 110], [300, 70], [110, 190], [500, 180], [200, 320], [410, 330], [340, 200], [255, 215], [470, 300]];
+  function treeSvg() {
+    return '<svg viewBox="0 0 600 560" role="img" aria-label="Білім ағашы"><defs><radialGradient id="crown" cx="50%" cy="45%" r="55%"><stop offset="0" stop-color="#DDF2D6"/><stop offset="1" stop-color="#C6E7BD" stop-opacity=".25"/></radialGradient><radialGradient id="gold" cx="35%" cy="30%"><stop offset="0" stop-color="#FFF1B8"/><stop offset=".55" stop-color="#F6C343"/><stop offset="1" stop-color="#C98A0B"/></radialGradient><linearGradient id="trunk" x1="0" x2="1"><stop offset="0" stop-color="#8A5A32"/><stop offset="1" stop-color="#6B4325"/></linearGradient></defs>' +
+      '<ellipse cx="300" cy="530" rx="230" ry="22" fill="#CFE6C4"/><ellipse cx="300" cy="205" rx="262" ry="185" fill="url(#crown)"/>' +
+      '<path d="M282 530 C286 450 280 400 270 360 C250 330 210 300 170 280 M292 400 C300 360 330 320 390 285 M300 530 C304 460 306 410 300 340 C298 300 300 260 300 200 M300 330 C340 300 380 250 420 210 M300 300 C260 270 230 230 200 190 M300 250 C300 200 290 150 280 110" stroke="url(#trunk)" stroke-width="14" fill="none" stroke-linecap="round"/>' +
+      '<path d="M268 530 C278 470 282 420 280 380 L320 380 C318 420 322 470 332 530 Z" fill="url(#trunk)"/>' +
+      '<g id="leaves"></g></svg>';
+  }
+  function addLeaves(animate) {
+    const g = $('leaves'); if (!g) return;
+    const fb = game.feedback || {};
+    Object.keys(fb).sort((a, b) => (fb[a].t || 0) - (fb[b].t || 0)).forEach((u) => {
+      if (leafSeen.has(u)) return; const k = leafSeen.size; leafSeen.add(u);
+      const p = SPOTS[(k * 29 + 11) % SPOTS.length], off = Math.floor(k / SPOTS.length) * 9;
+      const el = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      el.setAttribute('transform', 'translate(' + (p[0] + off) + ',' + (p[1] + off) + ') rotate(' + p[2] + ') scale(1.9)');
+      el.innerHTML = '<g class="leaf' + (animate ? '' : ' sway') + '" data-lu="' + esc(u) + '"><path d="' + leafPath + '" fill="' + (LEAFC[fb[u].mood] || LEAFC[0]) + '" stroke="rgba(255,255,255,.8)" stroke-width="1.2"/><path d="M0,-13 L0,14" stroke="rgba(255,255,255,.75)" stroke-width="1.6"/></g>';
+      g.appendChild(el);
+      const lf = el.firstChild; lf.addEventListener('click', () => showQuote(u));
+      if (animate) setTimeout(() => lf.classList.add('sway'), 950);
+    });
+    const gs = game.guests || {};
+    Object.keys(gs).sort((a, b) => (gs[a].t || 0) - (gs[b].t || 0)).forEach((u) => {
+      if (appleSeen.has(u)) return; const k = appleSeen.size; appleSeen.add(u);
+      const p = APPLES[k % APPLES.length];
+      const el = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      el.setAttribute('transform', 'translate(' + p[0] + ',' + p[1] + ') scale(1.6)');
+      el.innerHTML = '<g class="apple" data-ga="' + esc(u) + '"><path d="M0,-16 C2,-22 6,-24 9,-25" stroke="#6B4325" stroke-width="2.4" fill="none"/><path d="M2,-18 C8,-24 14,-22 15,-18 C10,-15 6,-15 2,-18Z" fill="#3BB273"/><circle r="15" fill="url(#gold)" stroke="#fff" stroke-width="1.5"/><ellipse cx="-5" cy="-5" rx="4" ry="6" fill="rgba(255,255,255,.55)"/><path d="M0,-6 l2.4,5 5.4,.6 -4,3.7 1.1,5.3 -4.9,-2.7 -4.9,2.7 1.1,-5.3 -4,-3.7 5.4,-.6z" fill="#fff" opacity=".9"/></g>';
+      g.appendChild(el); el.firstChild.addEventListener('click', () => showQuote('g:' + u));
+    });
+    const c = $('lcnt'); if (c) c.textContent = leafSeen.size;
+    const gc = $('gcnt'); if (gc) gc.textContent = appleSeen.size;
+  }
+  function quotes() {
+    const fb = game.feedback || {}, gs = game.guests || {};
+    return Object.keys(fb).filter((u) => fb[u].text).map((u) => [u, fb[u].t || 0]).concat(Object.keys(gs).map((u) => ['g:' + u, gs[u].t || 0])).sort((a, b) => a[1] - b[1]).map((x) => x[0]);
+  }
+  function showQuote(u) {
+    const q = $('qtext'); if (!q) return;
+    let html = '', label = '', leaf = '';
+    if (u.startsWith('g:')) { const g = (game.guests || {})[u.slice(2)]; if (!g) return;
+      const st = '<span style="color:#F6B92B">★</span> '; html = (g.s1 ? st + esc(g.s1) : '') + (g.s2 ? '<br>' + st + esc(g.s2) : '') + (g.wish ? '<small>Тілек: ' + esc(g.wish) + '</small>' : '');
+      label = '<span class="qlabel guest">Ұстаз пікірі' + (g.name ? ' · ' + esc(g.name) : '') + '</span>';
+      leaf = '<svg viewBox="-20 -28 40 46" class="qleaf"><circle r="15" fill="url(#gold2)"/><defs><radialGradient id="gold2" cx="35%" cy="30%"><stop offset="0" stop-color="#FFF1B8"/><stop offset=".55" stop-color="#F6C343"/><stop offset="1" stop-color="#C98A0B"/></radialGradient></defs></svg>';
+    } else { const f = (game.feedback || {})[u]; if (!f) return; html = '«' + esc(f.text) + '»'; label = '<span class="qlabel">Оқушы ойы</span>';
+      leaf = '<svg viewBox="-20 -20 40 40" class="qleaf"><path d="' + leafPath + '" fill="' + (LEAFC[f.mood] || LEAFC[0]) + '"/></svg>'; }
+    q.classList.add('out');
+    setTimeout(() => { q.innerHTML = html; q.classList.toggle('g', u.startsWith('g:')); const l = $('qleaf'); if (l) l.innerHTML = leaf; const lb = $('qlabel'); if (lb) lb.innerHTML = label; q.classList.remove('out'); }, 450);
+  }
+  function miniCounts() {
+    const c = [0, 0, 0]; Object.values(game.feedback || {}).forEach((x) => { if (x.mood >= 0 && x.mood < 3) c[x.mood]++; });
+    return '<div style="background:var(--good-bg);color:#13603A"><b>' + c[0] + '</b>Түсіндім</div><div style="background:#FFF1D6;color:#8A5300"><b>' + c[1] + '</b>Сұрағым бар</div><div style="background:var(--bad-bg);color:#8A2414"><b>' + c[2] + '</b>Көмек керек</div>';
+  }
+  function updateFeedback() {
+    addLeaves(true);
+    const m3 = $('mini3'); if (m3) m3.innerHTML = miniCounts();
+    const qs = quotes(); const last = qs[qs.length - 1];
+    const lt = last ? (last.startsWith('g:') ? ((game.guests || {})[last.slice(2)] || {}).t : ((game.feedback || {})[last] || {}).t) : 0;
+    if (last && lt && be.now() - lt < 4000) { quoteIx = qs.length - 1; showQuote(last); }
+  }
+  function mountFeedback() {
+    leafSeen = new Set(); appleSeen = new Set(); clearInterval(quoteTimer);
+    const n = Object.keys(game.players || {}).length;
+    app.innerHTML = topbar() + '<div class="slide"><div class="shead glass kidhead"><p class="eyebrow">Кері байланыс · рефлексия</p><h1>Білім ағашы</h1><p class="lead">Оқушылар планшеттен бір сөйлем жазады: әр сөйлем — бір жапырақ. Ұстаздардың пікірі — алтын алма.</p>' + progTag('Рефлексия · ЖИ кері байланыс') + '</div>' +
+      '<div class="treewrap"><div class="treecard glass"><p class="cnt"><b id="lcnt">0</b> / ' + n + ' жапырақ</p>' + treeSvg() + '</div>' +
+      '<div class="side3"><div class="quote glass"><p class="eyebrow">Ағаштағы ойлар</p><span id="qlabel"></span><span id="qleaf"></span><p class="qtext" id="qtext">Алғашқы жапырақты күтеміз…</p><p class="muted" style="font-weight:700;font-size:14px">Оқушылар атсыз көрсетіледі. Жапырақты не алманы басып, пікірді ашыңыз.</p></div>' +
+      '<div class="guestqr glass"><div id="gqr"></div><div><p class="eyebrow">Құрметті ұстаздар</p><p>«Екі жұлдыз, бір тілек»: сканерлеп, пікіріңізді жазыңыз. Ол ағашта <b>алтын алма</b> болып шығады.</p><p><b class="n" id="gcnt">0</b> ұстаз пікірі</p></div></div>' +
+      '<div class="glass bleaf"><p class="eyebrow">Тақтада жапырақ қос (планшетсіз)</p><div class="bl3">' + ['Түсіндім', 'Сұрағым бар', 'Көмек керек'].map((x, k) => '<button data-bl="' + k + '" style="--lc:' + LEAFC[k] + '"><svg viewBox="-20 -20 40 40" aria-hidden="true"><path d="M0,-17 C12,-12 14,7 0,17 C-14,7 -12,-12 0,-17Z" fill="' + LEAFC[k] + '"/></svg>' + x + '</button>').join('') + '</div></div>' +
+      '<div class="glass" style="padding:14px"><p class="eyebrow" style="margin-bottom:8px">Жапырақ түстері</p><div class="mini3" id="mini3">' + miniCounts() + '</div></div>' +
+      '<div class="ctrl" style="justify-content:flex-start"><button class="gloss" id="nx">Үй тапсырмасы →</button></div></div></div></div>';
+    makeQR($('gqr'), 256, guestUrl);
+    addLeaves(false);
+    $('nx').onclick = () => goStage(curStage() + 1);
+    app.querySelectorAll('[data-bl]').forEach((b) => b.onclick = () => { const k = +b.dataset.bl, id = Date.now().toString(36) + Math.floor(Math.random() * 99); const upd = {}; upd['bfb/' + id] = { mood: k, st: -1, text: ['Бүгін мен түбір мен қосымшаның жазылуын түсіндім.', 'Менің сұрағым бар.', 'Маған әлі көмек керек.'][k], t: be.TS }; be.update(G + '/meta', upd); });
+    const qs = quotes(); if (qs.length) { quoteIx = qs.length - 1; showQuote(qs[quoteIx]); }
+    quoteTimer = setInterval(() => { if ((game.meta || {}).phase !== 'feedback') return clearInterval(quoteTimer); const q = quotes(); if (q.length < 2) return; quoteIx = (quoteIx + 1) % q.length; showQuote(q[quoteIx]); }, 5000);
+  }
+
+
+  /* жаңа оқушыларды топтарға бөлу */
+  function assignTeams() {
+    const players = game.players || {}, teams = game.teams || {};
+    const counts = [0, 0, 0]; Object.values(teams).forEach((t) => { if (t >= 0 && t < 3) counts[t]++; });
+    const upd = {};
+    Object.keys(players).sort((a, b) => (players[a].joined || 0) - (players[b].joined || 0)).forEach((uid) => {
+      if (teams[uid] !== undefined) return;
+      let t = -1; const nm = String(players[uid].name || '').trim().toLowerCase();
+      if (capsule && capsule.teams) capsule.teams.forEach((tm, i) => { if (tm.some((x) => String(x).trim().toLowerCase() === nm)) t = i; });
+      if (t < 0) { const min = Math.min(...counts); t = counts.indexOf(min); }
+      counts[t]++; upd[uid] = t;
+    });
+    if (Object.keys(upd).length) be.update(G + '/teams', upd);
+  }
+
+  /* ---------- Мұғалім құралдары: жоғарғы панель ---------- */
+  const TOOLS = [['kmzh', '📋', 'ҚМЖ'], ['crit', '✅', 'Критерийлер'], ['goal', '🎯', 'Мақсат'], ['ws', '📄', 'Жұмыс парақтары'], ['prog', '🤖', 'Авторлық бағдарлама'], ['guest', '👥', 'Қонақтарға'], ['set', '⚙️', 'Баптаулар']];
+  function toolsBar() { return '<div class="tools">' + TOOLS.map((t) => '<button class="tool" data-tool="' + t[0] + '" title="' + t[2] + '"><span>' + t[1] + '</span><small>' + t[2] + '</small></button>').join('') + '</div>'; }
+  function toolPanel(k) {
+    const dl = (f, label) => '<a class="gloss dl" href="materialdar/' + f + '?v=1" download>' + label + '</a>';
+    if (k === 'kmzh') return '<h2>Қысқа мерзімді жоспар</h2><p class="muted">Қазақ тілі · 3-сынып · 46-сабақ · «Уақыт» бөлімі · 40 минут</p><table class="kt"><tr><th>Кезең</th><th>Мин</th><th>Не істейміз</th></tr>' +
+      STAGES.map((s, i) => '<tr class="' + (i === curStage() ? 'cur' : '') + '"><td><b>' + (i + 1) + '. ' + esc(s.short) + '</b></td><td>' + s.min + '</td><td>' + esc(s.title) + (s.note ? '<br><small>' + esc(s.note) + '</small>' : '') + '</td></tr>').join('') + '</table><div class="row">' + dl('QMZh-3synyp-46-sabaq.docx', 'ҚМЖ жүктеу (Word)') + '</div>';
+    if (k === 'crit') return '<h2>Бағалау критерийлері мен дескрипторлар</h2><table class="kt"><tr><th>Критерий</th><th>Дескриптор</th><th>Дағды</th></tr>' +
+      [['Мәтінді тыңдап түсінеді', 'тыңдаған мәтін бойынша сұраққа жауап береді; тірек сөздерді атайды', 'Тыңдалым'], ['Мәтіннің тақырыбы мен негізгі ойын анықтайды (3.2.4.1)', 'тақырыпты өз бетінше, негізгі ойды мұғалімнің көмегімен анықтайды', 'Оқылым'], ['Сөзді дұрыс айтады', 'түбірге қосымша жалғанған сөзді анық, дұрыс айтады; паразит сөз қолданбайды', 'Айтылым'], ['Түбірдің өзгерісін сақтап жазады (3.4.1.2)', 'п→б, қ→ғ, к→г өзгерісін және ы, і-нің түсуін сақтап жазады', 'Жазылым'], ['Сөздік қорын қолданады', 'сабақтағы жаңа сөздерді сөйлемде қолданады', 'Жазылым']].map((r) => '<tr><td><b>' + r[0] + '</b></td><td>' + r[1] + '</td><td>' + r[2] + '</td></tr>').join('') +
+      '</table><p><b>Ұпай:</b> дұрыс жауап — 500, жылдамдыққа +500-ге дейін; тақтадағы эстафета — +200; айтылым — +100. <b>Деңгейлер:</b> 85%+ жоғары · 50%+ орта · 50%-дан төмен қолдау қажет.</p>';
+    if (k === 'goal') return '<h2>Оқу мақсаттары</h2><p><b>3.4.1.2</b> түбір сөздегі -ы, -і-нің дауысты дыбыстан басталатын қосымша жалғанған кездегі өзгерісін сақтап жазу</p><p><b>3.2.4.1</b> өз бетінше мәтіннің тақырыбын және мұғалімнің көмегімен негізгі ойды анықтау</p><h3>Сабақтың мақсаты</h3><ul><li><b>Барлығы:</b> қосымша жалғанғанда кейбір түбір сөздердің жазылуы өзгеретінін біледі</li><li><b>Көпшілігі:</b> өзгерістерді сақтап жазады, мәтіннің негізгі ойын анықтайды</li><li><b>Кейбірі:</b> паразит сөздерсіз 3–4 сөйлемді мәтін құрайды</li></ul>';
+    if (k === 'ws') return '<h2>Жұмыс парақтары (жеке жұмыс)</h2><div class="wsl"><div class="lv a"><b>А</b><p>Қолдау деңгейі: таңдау, кесте толтыру, сөйлемді аяқтау</p></div><div class="lv b"><b>В</b><p>Орта деңгей: әріп қою, кесте, 3 сөйлем жазу</p></div><div class="lv c"><b>С</b><p>Жоғары деңгей: сұрақ құрастыру, сөз құрамы, 4–5 сөйлемді мәтін</p></div></div><p>Әр парақта 6 тапсырма: тыңдалым, оқылым, жазылым, сөздік қор, «таза сөйле», шағын шығарма және өзін-өзі бағалау.</p><div class="row"><a class="gloss dl" href="jumys-paraq.html" target="_blank">🎨 Интерактивті нұсқа (дыбыспен)</a>' + dl('Zhumys-paraqtary-ABC.pdf', '🖨 Басып шығаруға (PDF)') + dl('Zhumys-paraqtary-ABC.docx', 'Word') + '</div>';
+    if (k === 'prog') return '<h2>Авторлық бағдарлама</h2><p class="muted">«Тілдік дағдыларын жасанды интеллект көмегімен жетілдіру» элективті курсы · құраст. Молдабекова Г.Ж.</p><table class="kt"><tr><th>Дағды</th><th>ЖИ құралы</th><th>Сабақтағы кезең</th></tr>' +
+      [['Тыңдалым', 'ЖИ дауысы — мәтінді қазақша синтездеп оқиды', '4-кезең'], ['Оқылым', 'Ақылды көмекші — сөз құрамын көрсетеді', '5-кезең'], ['Айтылым', 'Сөйлеуді тану — айтылған сөзді тексереді', '7-кезең'], ['Жазылым', 'ЖИ редактор — қате, паразит сөз, сөздік қор', '10-кезең'], ['Бағалау', 'Автоматты бағалау, Excel — электрондық портфолио', '11–13-кезең']].map((r) => '<tr><td><b>' + r[0] + '</b></td><td>' + r[1] + '</td><td>' + r[2] + '</td></tr>').join('') +
+      '</table><p><b>Шешілетін мәселелер:</b> жазылымның әлсіздігі, сөздік қордың аздығы, орыс және ағылшын тілінен енген паразит сөздер.</p><p class="muted" style="font-size:13px">Ескерту: сайттағы көмекші мен редактор ережеге негізделген тексеру жасайды; дауыс пен сөйлеуді тану браузердің ЖИ қызметтерін пайдаланады (Edge/Chrome, интернет қажет).</p>';
+    if (k === 'guest') return '<h2>Құрметті қонақтар!</h2><p>QR-кодты сканерлеп, сабақ туралы ақпаратты (мақсат, 4 дағды, ЖИ құралдары, ҚМЖ, жұмыс парақтары) қарап, «Екі жұлдыз, бір тілек» әдісімен пікір жаза аласыз. Пікіріңіз «Білім ағашында» алтын алма болып шығады.</p><div class="gqrbig"><div id="gqrt"></div></div><p class="muted" style="text-align:center;font-weight:800">' + esc(guestUrl.replace(/^https?:\/\//, '')) + '</p>';
+    if (k === 'set') return '<h2>Баптаулар</h2><div class="setg"><button class="plain" data-act="snd">' + (ECO.sfx.on() ? '🔊 Дыбыс қосулы' : '🔇 Дыбыс өшірулі') + '</button><button class="plain" data-act="fs">⛶ Толық экран</button><button class="plain" data-act="tm">↺ Таймерді нөлдеу</button><button class="plain" data-act="xl">⬇ Нәтижені Excel-ге жүктеу</button><button class="plain" data-act="qr">QR-кодты көрсету</button><button class="plain" data-act="nw">Жаңа сабақ (жаңа код)</button><button class="plain" data-act="wipe" style="color:var(--bad)">Сынақ деректерін тазалау</button></div><p class="muted">Байланыс: ' + (be.kind === 'firebase' ? '☁ Firebase' : be.kind === 'p2p' ? '⇄ Тікелей' : 'демо') + ' · Код: ' + code + '</p>';
+    return '';
+  }
+  function openTool(k) {
+    const o = $('tov'); if (o) o.remove();
+    document.body.insertAdjacentHTML('beforeend', '<div class="qrov tov" id="tov"><div class="glass tpanel">' + toolPanel(k) + '<button class="plain tclose" id="tox">✕ Жабу</button></div></div>');
+    const close = () => { const x = $('tov'); if (x) x.remove(); };
+    if ($('gqrt')) makeQR($('gqrt'), 360, guestUrl);
+    $('tox').onclick = close; $('tov').onclick = (e) => { if (e.target.id === 'tov') close(); };
+    $('tov').querySelectorAll('[data-act]').forEach((b) => b.onclick = () => { const a = b.dataset.act;
+      if (a === 'fs') { try { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); } catch (e) {} }
+      if (a === 'snd') { ECO.sfx.set(!ECO.sfx.on()); b.textContent = ECO.sfx.on() ? '🔊 Дыбыс қосулы' : '🔇 Дыбыс өшірулі'; ECO.sfx.pop(); }
+      if (a === 'tm') { lsReset(); close(); }
+      if (a === 'xl') downloadExcel(b);
+      if (a === 'qr') { close(); showQR(); }
+      if (a === 'nw') { try { localStorage.removeItem('qaz3live_host_code'); } catch (e) {} location.href = 'host.html'; }
+      if (a === 'wipe') wipeAll(b); });
+  }
+  document.addEventListener('click', (e) => { const t = e.target.closest && e.target.closest('[data-tool]'); if (t) openTool(t.dataset.tool); });
+  function topbar(noNote) {
+    if (curStage() >= 0 && STAGES[curStage()].id !== 'join') noNote = true;
+    const m = game.meta || {}; const n = Object.keys(game.players || {}).length;
+    return '<div class="top glass"><div class="brand"><span class="live">LIVE</span>' + (be.kind === 'firebase' ? '<span class="pill" title="Деректер Firebase-те сақталады" style="font-size:12px;padding:3px 8px">☁ Firebase</span>' : be.kind === 'p2p' ? '<span class="pill" title="Тікелей байланыс (PeerJS)" style="font-size:12px;padding:3px 8px">⇄ Тікелей</span>' : '') + '<b>Сөз шеберлері</b> <span class="muted" style="font-weight:700;font-size:.7em">Қазақ тілі · 3-сынып · 46-сабақ · №77 мектеп-гимназия</span></div>' +
+      toolsBar() + '<span class="pill">Код: <span class="codebox">' + code + '</span></span><span class="pill">Оқушы: ' + n + '</span>' +
+      (['question', 'reveal', 'board'].includes(m.phase) && m.q >= 0 ? '<span class="pill">Сұрақ: ' + (m.q + 1) + ' / ' + Q.length + '</span>' : '') + '</div>' +
+      (noNote ? '' : be.p2p ? '<div class="demo" style="background:#E6F5EC;border-color:#9ED3B2;color:#165C33">Тікелей байланыс: тіркелу керек емес. Сабақ біткенше осы бетті жаппаңыз, оқушылардың телефондары осы бетке қосылған.</div>' : '') +
+      (noNote ? '' : be.demo ? '<div class="demo">Демо режим: Firebase әлі қосылмаған. Оқушы бетін осы компьютердің басқа қойындысында ашып сынап көруге болады. Телефондар үшін config.js-ке Firebase кодын қойыңыз.</div>' : '');
+  }
+
+  /* ---------- LOBBY ---------- */
+  function lobbyCols() {
+    const players = game.players || {}, teams = game.teams || {};
+    return [0, 1, 2].map((i) => { const ids = Object.keys(players).filter((u) => teams[u] === i).sort((a, b) => (players[a].joined || 0) - (players[b].joined || 0));
+      return '<div class="tcol glass"><div class="head" style="background:' + grad(i) + '"><img src="' + ECO.IMG(T[i].key) + '" alt=""><h3>' + tname(i) + '</h3><span>' + ids.length + '</span></div><div class="body">' +
+        ids.map((u) => '<button class="teamchip" data-u="' + esc(u) + '" title="Басқа топқа ауыстыру" style="background:' + grad(i) + (seen.has(u) ? ';animation:none' : '') + '">' + esc(players[u].name) + '</button>').join('') + '</div></div>'; }).join('');
+  }
+  function mountLobby() {
+    app.innerHTML = topbar() + '<div class="lobby"><div class="joincard glass"><p class="eyebrow">Планшет болса · міндетті емес</p><div id="qr"></div><div class="big">' + code + '</div><div class="jsteps"><p><b>1</b>Камерамен QR-кодты сканерле</p><p><b>2</b>Атың мен тегіңді жаз, «Кіру» бас</p><p><b>3</b>Тобың телефоныңда шығады</p></div><p class="url muted">' + esc(joinUrl.replace(/^https?:\/\//, '')) + '</p></div>' +
+      '<div style="display:flex;flex-direction:column;gap:14px;min-width:0"><div class="teams3" id="cols">' + lobbyCols() + '</div>' +
+      '<div class="glass" style="padding:16px;display:flex;flex-direction:column;gap:10px"><h2 style="font-size:clamp(20px,2vw,28px)">Қалай ойнаймыз?</h2><ol class="howto"><li>Сыныпта 3 топ: <b>Түбір</b>, <b>Жұрнақ</b>, <b>Жалғау</b>.</li><li>Сұрақ шыққанда әр топ ақылдасып, жауабын <b>тақтадағы өз панелінен</b> басады.</li><li>Планшет болса, QR-кодпен кіріп, жеке жауап беруге де болады (міндетті емес).</li><li>Дұрыс жауап — 500 ұпай, жылдамдыққа +500-ге дейін бонус.</li></ol>' +
+      '<div class="row"><button class="gloss" id="go">' + (curStage() >= 0 && STAGES[curStage() + 1] ? 'Топтар дайын → ' + STAGES[curStage() + 1].title : 'Бастау') + '</button><button class="plain" id="nw">Жаңа код</button><button class="plain" id="fs">Толық экран</button></div></div></div></div>';
+    makeQR($('qr'), 512);
+    bindChips();
+    $('go').onclick = () => { if (curStage() >= 0) return goStage(curStage() + 1); if (!Object.keys(game.players || {}).length) return; startQ(0); };
+    $('nw').onclick = () => { try { localStorage.removeItem('qaz3live_host_code'); } catch (e) {} location.href = 'host.html'; };
+    $('fs').onclick = () => { try { const r = document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); if (r && r.catch) r.catch(() => {}); } catch (e) {} };
+  }
+  function bindChips() { app.querySelectorAll('[data-u]').forEach((b) => b.onclick = () => { const u = b.dataset.u; const t = (game.teams || {})[u]; const upd = {}; upd[u] = ((t >= 0 ? t : 0) + 1) % 3; be.update(G + '/teams', upd); }); }
+  function updateLobby() {
+    const c = $('cols'); if (c) { c.innerHTML = lobbyCols(); bindChips(); }
+    Object.keys(game.players || {}).forEach((u) => { if ((game.teams || {})[u] !== undefined) seen.add(u); });
+    const tb = document.querySelector('.top'); if (tb) tb.outerHTML = topbar(true);
+  }
+
+  /* ---------- QUESTION ---------- */
+  function startQ(k) { const upd = { phase: 'question', q: k }; upd['starts/' + k] = be.TS; be.update(G + '/meta', upd); }
+  function qBody(q) {
+    if (q.t === 'mc') return '<div class="opts">' + q.o.map((o, j) => '<div class="opt o' + j + '"><b>' + L[j] + '</b><span>' + esc(o) + '</span></div>').join('') + '</div>';
+    if (q.t === 'img') return '<div class="opts">' + q.o.map((o, j) => '<div class="opt img o' + j + '"><b>' + L[j] + '</b><img src="' + ECO.IMG(o) + '" alt=""></div>').join('') + '</div>';
+    if (q.t === 'tf') return '<div class="opts"><div class="opt o3"><b>✓</b><span>Шын</span></div><div class="opt o0"><b>✗</b><span>Жалған</span></div></div>';
+    if (q.t === 'num') return '<div class="numbox glass">Жауапты телефонға жазыңдар · ' + esc(q.unit) + '</div>';
+    if (q.t === 'order') return '<div class="optlist' + (q.g ? ' cmp' : '') + '">' + q.o.map((o, j) => '<div class="opt o' + (j % 4) + '"><b>' + L[j] + '</b>' + (q.ic ? '<em class="oic">' + q.ic[j] + '</em>' : '') + '<span>' + esc(o) + '</span></div>').join('') + '</div>' +
+      (q.g ? '<div class="flowh glass"><p class="eyebrow">' + esc(q.g) + ' · тақтада құрыңдар</p><div class="frow2">' + q.o.map((_, k) => (k ? '<i class="far">→</i>' : '') + '<div class="fbox empty"><b>' + (k + 1) + '</b><span>' + (q.w ? '?' : k === 0 ? 'Себеп' : k === q.o.length - 1 ? 'Салдар' : '?') + '</span></div>').join('') + '</div></div>' : '');
+  }
+  function answeredCards() {
+    const m = game.meta, players = game.players || {}, teams = game.teams || {}, ans = (game.answers || {})[m.q] || {};
+    return [0, 1, 2].map((i) => { const ids = Object.keys(players).filter((u) => teams[u] === i); const done = ids.filter((u) => ans[u]).length;
+      return '<div class="acard glass"><div class="h"><span style="color:' + T[i].ink + '">' + tname(i) + '</span><b>' + done + ' / ' + ids.length + '</b></div><div class="track"><i style="width:' + (ids.length ? done / ids.length * 100 : 0) + '%;background:' + grad(i) + '"></i></div>' +
+        '<div class="dots">' + ids.map((u) => '<i class="' + (ans[u] ? 'on' : '') + '" style="' + (ans[u] ? 'background:' + T[i].c2 : '') + '">' + esc(players[u].name) + '</i>').join('') + '</div></div>'; }).join('');
+  }
+  function mountQuestion() {
+    const m = game.meta, q = Q[m.q]; const len = 2 * Math.PI * 44;
+    app.innerHTML = topbar() + '<div class="qhead glass"><div class="qn">' + (m.q + 1) + '/' + Q.length + '<small>сұрақ</small></div><div class="qt"><h2>' + esc(q.q) + '</h2>' + ((q.hint || q.ins) ? '<p class="hint">' + esc(q.hint || q.ins) + '</p>' : '') + '</div><span class="pg">' + esc(q.src) + '</span>' +
+      '<div class="ring" id="ring"><svg viewBox="0 0 100 100" aria-hidden="true"><defs><linearGradient id="rg" x1="0" x2="1"><stop offset="0" stop-color="#F7B24A"/><stop offset="1" stop-color="#E07A1F"/></linearGradient></defs><circle cx="50" cy="50" r="44" fill="#fff" stroke="rgba(20,43,38,.08)" stroke-width="10"/><circle class="arc" cx="50" cy="50" r="44" fill="none" stroke="url(#rg)" stroke-width="10" stroke-linecap="round" stroke-dasharray="' + len + ' ' + len + '"/></svg><div class="n">' + q.time + '</div></div></div>' +
+      '<div class="qbody" id="qbody">' + qBody(q) + '<div class="getready" id="gr"><p>Дайындалыңдар!</p><b id="cd">3</b></div></div><div class="pads3" id="pads">' + teamPads(q, m.q) + '</div><div class="ctrl"><button class="plain" id="ext">+15 секунд</button><button class="gloss" id="rv">Жауапты ашу</button></div>';
+    $('rv').onclick = reveal; bindPads();
+    $('ext').onclick = () => { const mm = game.meta; const cur = (mm.ext && mm.ext[mm.q]) || 0; const upd = {}; upd['ext/' + mm.q] = cur + 15; be.update(G + '/meta', upd); };
+    clearInterval(tick); revealing = false;
+    tick = setInterval(() => {
+      const mm = game.meta; if (!mm || mm.phase !== 'question') return clearInterval(tick);
+      const s0 = mm.starts && mm.starts[mm.q]; if (!s0 || typeof s0 !== 'number') return;
+      const st = s0 + ECO.LEAD, now = be.now(), gr = $('gr');
+      if (now < st) { const v = String(Math.ceil((st - now) / 1000)); const c = $('cd'); if (c && c.textContent !== v) { c.textContent = v; ECO.sfx.tick(); c.style.animation = 'none'; void c.offsetWidth; c.style.animation = ''; } return; }
+      if (gr && !gr.classList.contains('gone')) { gr.classList.add('gone'); ECO.sfx.go(); $('qbody').classList.add('live'); }
+      const total = ECO.qtime(q, mm, mm.q);
+      const left = Math.max(0, Math.ceil((st + total - now) / 1000));
+      const r = $('ring'); if (r) { r.querySelector('.n').textContent = left; r.querySelector('.arc').setAttribute('stroke-dasharray', (len * Math.min(1, left * 1000 / total)) + ' ' + len); r.classList.toggle('low', left <= 5); }
+      if (left <= 0) { clearInterval(tick); flashThen('Уақыт бітті!', 'time'); }
+    }, 250);
+  }
+  /* топтың тақтадағы жауап панелі */
+  const padDraft = {};
+  function teamPads(q, qi) {
+    const ta = ((game.meta || {}).tans || {})[qi] || {};
+    return [0, 1, 2].map((t) => { const done = ta['team' + t]; const d = padDraft[qi + ':' + t] || [];
+      let b = '';
+      if (done) b = '<div class="pdone">✓ Жауап берді</div>';
+      else if (q.t === 'mc') b = '<div class="pbtns">' + q.o.map((o, j) => '<button data-pt="' + t + '" data-pv="' + j + '">' + L[j] + '</button>').join('') + '</div>';
+      else if (q.t === 'tf') b = '<div class="pbtns"><button data-pt="' + t + '" data-pv="1">Шын</button><button data-pt="' + t + '" data-pv="0">Жалған</button></div>';
+      else if (q.t === 'order') b = '<div class="pword">' + (d.length ? esc(d.map((j) => q.o[j]).join('')) : '…') + '</div><div class="pbtns">' + q.o.map((o, j) => '<button data-pt="' + t + '" data-po="' + j + '"' + (d.includes(j) ? ' disabled' : '') + '>' + esc(o) + '</button>').join('') + '</div><div class="pbtns"><button class="pclr" data-pt="' + t + '" data-pc="1">⌫</button><button class="pok" data-pt="' + t + '" data-ps="1"' + (d.length === q.o.length ? '' : ' disabled') + '>Жіберу ✓</button></div>';
+      return '<div class="pad1" style="--c1:' + T[t].c1 + ';--c2:' + T[t].c2 + '"><h4>' + tname(t) + '</h4>' + b + '</div>'; }).join('');
+  }
+  function bindPads() {
+    const m = game.meta || {}, q = Q[m.q], qi = m.q, box = $('pads'); if (!box) return;
+    const live = () => $('qbody') && $('qbody').classList.contains('live');
+    const send = (t, v) => { ECO.sfx.click(); const upd = {}; upd['tans/' + qi + '/team' + t] = { v: v, t: be.TS }; be.update(G + '/meta', upd); };
+    box.querySelectorAll('[data-pv]').forEach((b) => b.onclick = () => { if (!live()) return; const t = +b.dataset.pt; send(t, q.t === 'tf' ? b.dataset.pv === '1' : +b.dataset.pv); });
+    box.querySelectorAll('[data-po]').forEach((b) => b.onclick = () => { if (!live()) return; const k = qi + ':' + b.dataset.pt; (padDraft[k] = padDraft[k] || []).push(+b.dataset.po); box.innerHTML = teamPads(q, qi); bindPads(); });
+    box.querySelectorAll('[data-pc]').forEach((b) => b.onclick = () => { const k = qi + ':' + b.dataset.pt; (padDraft[k] || []).pop(); box.innerHTML = teamPads(q, qi); bindPads(); });
+    box.querySelectorAll('[data-ps]').forEach((b) => b.onclick = () => { if (!live()) return; const t = +b.dataset.pt; send(t, (padDraft[qi + ':' + t] || []).slice()); });
+  }
+  let revealing = false;
+  function flashThen(text, kind) {
+    if (revealing) return; revealing = true; clearInterval(tick);
+    document.body.insertAdjacentHTML('beforeend', '<div class="flash ' + kind + '" id="flash"><b>' + text + '</b></div>');
+    if (kind === 'all') confetti(90);
+    setTimeout(() => { const f = $('flash'); if (f) f.remove(); reveal(); }, 1500);
+  }
+  function updateQuestion() {
+    const a = $('ans'); if (a) a.innerHTML = answeredCards();
+    const pd = $('pads'); if (pd) { const h = teamPads(Q[game.meta.q], game.meta.q); if (pd.innerHTML !== h) { pd.innerHTML = h; bindPads(); } }
+    const players = game.players || {}; const ans = (game.answers || {})[game.meta.q] || {};
+    const n = Object.keys(players).length; if (n && Object.keys(players).every((u) => ans[u])) flashThen('Барлығы жауап берді!', 'all');
+  }
+  function reveal() { if (game.meta && game.meta.phase === 'question') { clearInterval(tick); be.update(G + '/meta', { phase: 'reveal' }); } }
+
+  /* ---------- REVEAL ---------- */
+  function flowBig(q) {
+    return '<div class="frow2 big">' + q.a.map((j, k) => (k ? '<i class="far">→</i>' : '') + '<div class="fbox" style="animation-delay:' + (k * .25) + 's"><b>' + (k + 1) + '</b><em>' + ((q.ic || [])[j] || '') + '</em><span>' + esc(q.o[j]) + '</span>' + (q.w ? '' : '<small>' + (k === 0 ? 'себеп' : k === q.a.length - 1 ? 'салдар' : 'салдар → себеп') + '</small>') + '</div>').join('') + '</div>' + (q.w ? '<div class="wordres">= ' + esc(q.a.map((j) => q.o[j]).join('')) + '</div>' : '');
+  }
+  function mountReveal() {
+    const m = game.meta, q = Q[m.q], players = game.players || {}, teams = game.teams || {}, ans = (game.answers || {})[m.q] || {}, st = m.starts[m.q];
+    const ids = Object.keys(ans);
+    let dist = '';
+    if (q.t === 'mc' || q.t === 'img' || q.t === 'tf') {
+      const opts = q.t === 'tf' ? [[true, 'Шын'], [false, 'Жалған']] : q.o.map((o, j) => [j, L[j] + ') ' + (q.t === 'img' ? 'сурет' : o)]);
+      const max = Math.max(1, ids.length);
+      dist = opts.map(([v, lbl], j) => { const c = ids.filter((u) => ans[u].v === v).length; const ok = v === q.a;
+        return '<div class="drow"><div style="min-width:0"><p class="lbl">' + (ok ? '✓ ' : '') + esc(lbl) + '</p><div class="bar" data-w="' + (c / max * 100) + '" style="background:' + (ok ? 'linear-gradient(180deg,#43C47A,#1E9A5A)' : 'linear-gradient(180deg,#C9D3D0,#9AA9A4)') + '"></div></div><b>' + c + '</b></div>'; }).join('');
+    } else {
+      const ok = ids.filter((u) => ECO.isRight(q, ans[u].v)).length;
+      dist = '<div class="drow"><div><p class="lbl">✓ Дұрыс</p><div class="bar" data-w="' + (ids.length ? ok / ids.length * 100 : 0) + '" style="background:linear-gradient(180deg,#43C47A,#1E9A5A)"></div></div><b>' + ok + '</b></div>' +
+        '<div class="drow"><div><p class="lbl">✗ Қате</p><div class="bar" data-w="' + (ids.length ? (ids.length - ok) / ids.length * 100 : 0) + '" style="background:linear-gradient(180deg,#F08B7C,#D2452F)"></div></div><b>' + (ids.length - ok) + '</b></div>';
+    }
+    const fast = ids.filter((u) => ECO.isRight(q, ans[u].v) && players[u]).sort((a, b) => ans[a].t - ans[b].t).slice(0, 3);
+    const teamOk = [0, 1, 2].map((i) => { const tm = Object.keys(players).filter((u) => teams[u] === i); const ok = tm.filter((u) => ans[u] && ECO.isRight(q, ans[u].v)).length; return [ok, tm.length]; });
+    app.innerHTML = topbar() + '<div class="qhead glass"><div class="qn">' + (m.q + 1) + '/' + Q.length + '<small>сұрақ</small></div><div class="qt"><h2>' + esc(q.q) + '</h2></div><div></div></div>' +
+      '<div class="reveal"><div style="display:flex;flex-direction:column;gap:14px;min-width:0"><div class="correct glass"><p class="eyebrow" style="color:var(--good)">Дұрыс жауап' + (q.g ? ' · ' + esc(q.g) : '') + '</p>' + (q.g ? flowBig(q) : '<h2' + (ECO.answerText(q).length > 60 ? ' class="long"' : '') + '>' + esc(ECO.answerText(q)) + '</h2>') + (q.why ? '<p class="muted" style="font-weight:700">' + esc(q.why) + '</p>' : '') + '<span class="pg">' + esc(q.src) + '</span></div>' + allRes(q, m) +
+      '<div class="dist glass"><p class="eyebrow">Жауаптар · ' + ids.length + ' оқушы</p>' + dist + '</div></div>' +
+      '<div style="display:flex;flex-direction:column;gap:14px;min-width:0"><div class="fast glass"><p class="eyebrow">Ең жылдам дұрыс жауап</p>' + (fast.length ? fast.map((u, k) => '<div class="frow" style="animation-delay:' + (k * .15) + 's"><span class="medal m' + (k + 1) + '">' + (k + 1) + '</span><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis">' + esc(players[u].name) + '</span><span class="dot" style="background:' + T[teams[u]].c2 + '"></span><span class="pill">' + (Math.max(0, ans[u].t - st - ECO.LEAD) / 1000).toFixed(1) + ' с</span></div>').join('') : '<p class="muted" style="font-weight:700">Дұрыс жауап болмады.</p>') + '</div>' +
+      '<div class="answered">' + [0, 1, 2].map((i) => '<div class="acard glass"><div class="h"><span style="color:' + T[i].ink + '">' + tname(i) + '</span><b>' + teamOk[i][0] + ' / ' + teamOk[i][1] + '</b></div><div class="track"><i style="width:' + (teamOk[i][1] ? teamOk[i][0] / teamOk[i][1] * 100 : 0) + '%;background:' + grad(i) + '"></i></div><p class="muted" style="font-weight:700;font-size:13px">дұрыс жауап берді</p></div>').join('') + '</div></div></div>' +
+      '<div class="ctrl"><button class="plain" id="lbb">Барлық оқушы · рейтинг</button><button class="gloss" id="nx">' + esc(nextLabel(false)) + '</button></div>';
+    requestAnimationFrame(() => setTimeout(() => app.querySelectorAll('.bar').forEach((b) => { b.style.width = b.dataset.w + '%'; }), 80));
+    if (fast.length) confetti(40); ECO.sfx.ok();
+    $('nx').onclick = () => afterReveal(false);
+    $('lbb').onclick = () => be.update(G + '/meta', { phase: 'board' });
+  }
+
+  /* әр оқушының осы сұрақтағы нәтижесі (тек тақтада) */
+  function cellOf(qi, uid) {
+    const m = game.meta || {}, q = Q[qi], a = ((game.answers || {})[qi] || {})[uid], st = (m.starts || {})[qi];
+    if (!a) return { k: 'none', p: 0, sec: null };
+    const p = ECO.points(q, a, st, ECO.qtime(q, m, qi)); const sec = Math.max(0, (a.t - st - ECO.LEAD) / 1000);
+    return { k: p ? 'ok' : 'no', p, sec };
+  }
+  function byTeamName() { const players = game.players || {}, teams = game.teams || {};
+    return Object.keys(players).sort((a, b) => ((teams[a] ?? 9) - (teams[b] ?? 9)) || players[a].name.localeCompare(players[b].name)); }
+  function allRes(q, m) {
+    const players = game.players || {}, teams = game.teams || {}, ids = byTeamName();
+    if (!ids.length) return '';
+    const ok = ids.filter((u) => cellOf(m.q, u).k === 'ok').length;
+    return '<div class="allres glass"><p class="eyebrow">Әр оқушының нәтижесі · ' + ok + ' / ' + ids.length + ' дұрыс</p><div class="argrid">' + ids.map((u) => { const c = cellOf(m.q, u);
+      return '<span class="arc ' + c.k + '" style="--tc:' + (T[teams[u]] ? T[teams[u]].c2 : '#999') + '"><b>' + esc(players[u].name) + '</b><i>' + (c.k === 'ok' ? '✓ +' + c.p + ' · ' + c.sec.toFixed(1) + ' с' : c.k === 'no' ? '✗ ' + c.sec.toFixed(1) + ' с' : '— жауап жоқ') + '</i></span>'; }).join('') + '</div></div>';
+  }
+  function matrixTable(res) {
+    const asked = res.asked, bi = (game.meta || {}).boardInd || {};
+    return '<div class="scroll mx"><table class="tbl"><thead><tr><th>№</th><th>Оқушы</th><th>Топ</th>' + asked.map((qi) => '<th>С' + (qi + 1) + '</th>').join('') + '<th>Тақта</th><th>Дұрыс</th><th>Ұпай</th><th>Деңгей</th></tr></thead><tbody>' +
+      res.rows.map((r) => '<tr><td class="rk">' + r.rank + '</td><td><b>' + esc(r.name) + '</b></td><td>' + (r.team !== undefined ? '<span class="dot" style="background:' + T[r.team].c2 + '"></span>' + tname(r.team) : '—') + '</td>' +
+        asked.map((qi) => { const c = cellOf(qi, r.uid); return '<td class="mc ' + c.k + '">' + (c.k === 'ok' ? '✓<small>' + c.sec.toFixed(1) + 'с</small>' : c.k === 'no' ? '✗<small>' + c.sec.toFixed(1) + 'с</small>' : '—') + '</td>'; }).join('') +
+        '<td class="n">' + (bi[r.uid] || 0) + '</td><td class="n">' + r.correct + '/' + r.total + '</td><td class="n"><b>' + r.score + '</b></td><td>' + ECO.level(r)[0] + '</td></tr>').join('') + '</tbody></table></div>';
+  }
+  /* ---------- Excel-ге жүктеу ---------- */
+  const fmtClock = (t) => { if (!t) return ''; const d = new Date(t); return String(d.getDate()).padStart(2, '0') + '.' + String(d.getMonth() + 1).padStart(2, '0') + '.' + d.getFullYear() + ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0') + ':' + String(d.getSeconds()).padStart(2, '0'); };
+  function exportSheets() {
+    const res = ECO.compute(game), m = game.meta || {}, tn = (i) => ((m.teamNames || teamNames)[i]) || '';
+    const bi = m.boardInd || {}, asked = res.asked;
+    const st = [['№', 'Оқушы', 'Топ'].concat(asked.flatMap((qi) => ['С' + (qi + 1) + ' нәтиже', 'С' + (qi + 1) + ' уақыт (с)', 'С' + (qi + 1) + ' ұпай'])).concat(['Тақтадағы эстафета', 'Дұрыс', 'Барлық сұрақ', 'Орт. уақыт (с)', 'Жалпы ұпай', 'Деңгей'])];
+    res.rows.forEach((r) => st.push([r.rank, r.name, r.team !== undefined ? tn(r.team) : ''].concat(asked.flatMap((qi) => { const c = cellOf(qi, r.uid); return [c.k === 'ok' ? 'дұрыс' : c.k === 'no' ? 'қате' : 'жауап жоқ', c.sec === null ? '' : +c.sec.toFixed(1), c.p]; }))
+      .concat([bi[r.uid] || 0, r.correct, r.total, r.correct ? +r.time.toFixed(1) : '', r.score, ECO.level(r)[0]])));
+    const qs = [['№', 'Сұрақ', 'Дұрыс жауап', 'Жауап бергені', 'Дұрыс', 'Дұрыс %', 'Орт. уақыт (с)', 'Оқулық']];
+    asked.forEach((qi) => { const ids = Object.keys(game.players || {}); const cs = ids.map((u) => cellOf(qi, u)); const ans = cs.filter((c) => c.k !== 'none'), ok = cs.filter((c) => c.k === 'ok');
+      qs.push([qi + 1, Q[qi].q, ECO.answerText(Q[qi]), ans.length, ok.length, ans.length ? Math.round(ok.length / ans.length * 100) : 0, ans.length ? +(ans.reduce((x, c) => x + c.sec, 0) / ans.length).toFixed(1) : '', Q[qi].src]); });
+    const tm = [['Кезең', 'Жоспар (мин)', 'Нақты уақыт (мм:сс)', 'Нақты (с)', 'Айырма (с)']]; const lg = Object.assign({}, m.stlog || {});
+    if (curStage() >= 0) lg[curStage()] = (lg[curStage()] || 0) + stMs(m);
+    STAGES.forEach((x, k) => { const ms = lg[k]; tm.push([(k + 1) + '. ' + x.title, x.min, ms ? mmss(ms) : '', ms ? Math.round(ms / 1000) : '', ms ? Math.round(ms / 1000) - x.min * 60 : '']); });
+    tm.push(['Барлығы', TOTAL, mmss(lsMs(m)), Math.round(lsMs(m) / 1000), Math.round(lsMs(m) / 1000) - TOTAL * 60]);
+    const tr = [['Орын', 'Топ', 'Оқушы саны', 'Орташа ұпай', 'Тақта бонусы', 'Дұрыс жауаптар']].concat(res.teamRows.map((t) => [t.rank, tn(t.i), t.n, t.avg, t.bonus, t.correct]));
+    const info = [['Сабақ', 'Қазақ тілі · 3-сынып · 46-сабақ · Түбір мен қосымшаның жазылуы'], ['Оқу мақсаты', '3.4.1.2 түбір сөздегі -ы, -і-нің дауысты дыбыстан басталатын қосымша жалғанған кездегі өзгерісін сақтап жазу; 3.2.4.1 мәтіннің тақырыбын және негізгі ойды анықтау'], ['Авторлық бағдарлама', 'Тілдік дағдыларын жасанды интеллект көмегімен жетілдіру (Молдабекова Г.Ж.)'], ['Ойын коды', code], ['Басталған уақыты', fmtClock(m.realStart)], ['Нәтиже шыққан уақыты', fmtClock(m.realEnd)], ['Сабақ таймері', mmss(lsMs(m))], ['Жүктелген уақыты', fmtClock(Date.now())], ['Оқушы саны', res.rows.length]];
+    return { 'Оқушылар': st, 'Сұрақтар': qs, 'Топтар': tr, 'Уақыт': tm, 'Ақпарат': info };
+  }
+  function loadXLSX() { return new Promise((ok, no) => { if (window.XLSX) return ok(); const sc = document.createElement('script'); sc.src = 'vendor/xlsx.full.min.js'; sc.onload = ok; sc.onerror = no; setTimeout(() => no(new Error('timeout')), 8000); document.head.appendChild(sc); }); }
+  async function downloadExcel(btn) {
+    const sh = exportSheets(), d = new Date(), stamp = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') + '_' + String(d.getHours()).padStart(2, '0') + '-' + String(d.getMinutes()).padStart(2, '0');
+    const name = 'Soz_sheberleri_3synyp_' + stamp; if (btn) btn.disabled = true;
+    try { await loadXLSX(); const wb = XLSX.utils.book_new();
+      Object.keys(sh).forEach((k) => { const ws = XLSX.utils.aoa_to_sheet(sh[k]); ws['!cols'] = sh[k][0].map((_, c) => ({ wch: Math.min(60, Math.max(8, ...sh[k].map((r) => String(r[c] ?? '').length + 2))) })); XLSX.utils.book_append_sheet(wb, ws, k); });
+      XLSX.writeFile(wb, name + '.xlsx');
+    } catch (e) {
+      const csv = '﻿' + sh['Оқушылар'].map((r) => r.map((v) => '"' + String(v ?? '').replace(/"/g, '""') + '"').join(';')).join('\r\n');
+      const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' })); a.download = name + '.csv'; a.click(); }
+    if (btn) btn.disabled = false;
+  }
+  function wipeAll(btn) {
+    if (!btn.dataset.sure) { btn.dataset.sure = '1'; btn.textContent = 'Сенімдісіз бе? Тағы бір рет басыңыз'; setTimeout(() => { if (btn) { delete btn.dataset.sure; btn.textContent = 'Сынақ деректерін тазалау'; } }, 4000); return; }
+    try { be.set(G, null); } catch (e) {}
+    try { Object.keys(localStorage).filter((k) => /^qaz3live_|^qaz3_teams/.test(k)).forEach((k) => localStorage.removeItem(k)); } catch (e) {}
+    setTimeout(() => { location.href = 'host.html'; }, 400);
+  }
+
+  /* ---------- LEADERBOARD ---------- */
+  function teamBars(res) {
+    const max = Math.max(1, ...res.teamRows.map((t) => t.avg));
+    return res.teamRows.map((t, k) => '<div class="tbar" style="animation-delay:' + (k * .12) + 's"><span class="medal m' + (k + 1) + '">' + (k + 1) + '</span><span class="nm">' + tname(t.i) + ' <span class="muted" style="font-size:.75em">· ' + t.n + ' оқушы</span></span><span class="sc">' + t.avg + '</span><div class="tr"><i data-w="' + (t.avg / max * 100) + '" style="background:' + grad(t.i) + '"></i></div></div>').join('');
+  }
+  function indivTable(rows, limit) {
+    const teams = game.teams || {};
+    return '<div class="scroll"><table class="tbl"><thead><tr><th>№</th><th>Оқушы</th><th>Топ</th><th>Дұрыс</th><th>Орт. уақыт</th><th>Ұпай</th>' + (limit ? '' : '<th>Деңгей</th>') + '</tr></thead><tbody>' +
+      rows.slice(0, limit || rows.length).map((r, k) => { const lv = ECO.level(r); return '<tr style="animation-delay:' + Math.min(k * .05, 1) + 's"><td class="rk">' + r.rank + '</td><td><b>' + esc(r.name) + '</b></td><td>' + (r.team !== undefined ? '<span class="dot" style="background:' + T[r.team].c2 + '"></span>' + tname(r.team) : '—') + '</td><td class="n">' + r.correct + '/' + r.total + '</td><td class="n">' + (r.correct ? r.time.toFixed(1) + ' с' : '—') + '</td><td class="n"><b>' + r.score + '</b></td>' + (limit ? '' : '<td>' + (lv[1] ? '<span class="lvl ' + lv[1] + '">' + lv[0] + '</span>' : '—') + '</td>') + '</tr>'; }).join('') + '</tbody></table></div>';
+  }
+  function mountBoard() {
+    const m = game.meta, res = ECO.compute(game);
+    app.innerHTML = topbar() + '<div class="lb"><div class="lbcard glass"><p class="eyebrow">' + (roundOf(m.q) >= 0 && m.q === STAGES[roundOf(m.q)].to ? esc(STAGES[roundOf(m.q)].title) + ' аяқталды · ' : '') + 'Топтар · орташа ұпай</p>' + teamBars(res) + '</div><div class="lbcard glass"><p class="eyebrow">Барлық оқушы · ' + res.rows.length + '</p>' + matrixTable(res) + '</div></div>' +
+      '<div class="ctrl"><button class="plain" id="xl">Excel-ге жүктеу</button><button class="gloss" id="nx">' + esc(nextLabel(true)) + '</button></div>';
+    requestAnimationFrame(() => setTimeout(() => app.querySelectorAll('.tr i').forEach((b) => { b.style.width = b.dataset.w + '%'; }), 80));
+    $('nx').onclick = () => afterReveal(true);
+    $('xl').onclick = () => downloadExcel($('xl'));
+  }
+
+  /* ---------- END ---------- */
+  function feedbackBox() {
+    const fb = game.feedback || {}; const v = Object.values(fb); const c = [0, 0, 0]; v.forEach((x) => { if (x.mood >= 0 && x.mood < 3) c[x.mood]++; });
+    const texts = v.filter((x) => x.text).map((x) => x.text);
+    return '<div class="lbcard glass"><p class="eyebrow">Оқушылардан кері байланыс · ' + v.length + '</p><div class="fb"><div style="background:var(--good-bg)"><b>' + c[0] + '</b>Түсіндім</div><div style="background:#FFF1D6"><b>' + c[1] + '</b>Сұрағым бар</div><div style="background:var(--bad-bg)"><b>' + c[2] + '</b>Көмек керек</div></div>' +
+      (texts.length ? '<p class="muted" style="font-weight:800">Не қиын болды?</p><div class="cmts">' + texts.map((t) => '<p>' + esc(t) + '</p>').join('') + '</div>' : '') + '</div>';
+  }
+  function levelBox(res) {
+    const c = { hi: 0, mid: 0, low: 0 }; res.rows.forEach((r) => { const l = ECO.level(r)[1]; if (c[l] !== undefined) c[l]++; });
+    return '<div class="lbcard glass"><p class="eyebrow">Бағалау · деңгейлер</p><div class="fb"><div style="background:var(--good-bg)"><b>' + c.hi + '</b>Жоғары</div><div style="background:#FFF1D6"><b>' + c.mid + '</b>Орта</div><div style="background:var(--bad-bg)"><b>' + c.low + '</b>Қолдау қажет</div></div><p class="muted" style="font-weight:700">Әр оқушы өз нәтижесін, қате сұрақтарын және оқулықтың бетін телефоннан көреді.</p></div>';
+  }
+  function mountEnd() {
+    const res = ECO.compute(game); const tr = res.teamRows;
+    const order = [tr[1], tr[0], tr[2]];
+    app.innerHTML = topbar() + '<div class="glass" style="padding:20px;display:flex;flex-direction:column;gap:16px"><p class="eyebrow" style="text-align:center">Жарыс аяқталды</p><h1 style="text-align:center;font-size:clamp(30px,4vw,56px)">Жеңімпаз: ' + tname(tr[0].i) + '!</h1>' +
+      '<div class="podium">' + order.map((t, k) => '<div class="step" style="background:' + grad(t.i) + ';height:' + [190, 260, 140][k] + 'px;animation-delay:' + [.3, .6, 0][k] + 's"><span class="pl">' + t.rank + '</span><span class="wh">' + tname(t.i) + '</span><span class="pt">' + t.avg + ' ұпай</span></div>').join('') + '</div></div>' +
+      '<div class="lb"><div style="display:flex;flex-direction:column;gap:14px;min-width:0"><div class="lbcard glass"><p class="eyebrow">Топтар</p>' + teamBars(res) + '</div>' + (curStage() >= 0 ? levelBox(res) : '<div id="fbk">' + feedbackBox() + '</div>') + '</div>' +
+      '<div class="lbcard glass"><p class="eyebrow">Барлық оқушының жеке нәтижесі</p>' + matrixTable(res) + '<div class="row"><button class="gloss" id="xl">Excel-ге жүктеу (.xlsx)</button><button class="plain" id="csv">Кестені көшіру</button><span class="muted" id="cpn" style="font-weight:700"></span></div></div></div>' +
+      '<div class="ctrl">' + (curStage() >= 0 ? '<button class="gloss" id="nx">Кері байланыс →</button>' : '') + '<button class="plain" id="nw">Жаңа сабақ</button><button class="plain" id="wipe" style="color:var(--bad)">Сынақ деректерін тазалау</button></div>';
+    if ($('nx')) $('nx').onclick = () => goStage(curStage() + 1);
+    requestAnimationFrame(() => setTimeout(() => app.querySelectorAll('.tr i').forEach((b) => { b.style.width = b.dataset.w + '%'; }), 80));
+    confetti(180); ECO.sfx.win();
+    $('csv').onclick = () => { const tsv = ['№\tОқушы\tТоп\tДұрыс\tБарлығы\tОрт. уақыт (с)\tҰпай\tДеңгей'].concat(res.rows.map((r) => [r.rank, r.name, r.team !== undefined ? ((game.meta.teamNames || teamNames)[r.team]) : '', r.correct, r.total, r.correct ? r.time.toFixed(1) : '', r.score, ECO.level(r)[0]].join('\t'))).join('\n');
+      const fbk = () => { const rg = document.createRange(); rg.selectNodeContents(app.querySelector('.tbl')); const s = getSelection(); s.removeAllRanges(); s.addRange(rg); $('cpn').textContent = 'Кесте белгіленді, Ctrl+C басыңыз.'; };
+      try { navigator.clipboard.writeText(tsv).then(() => { $('cpn').textContent = 'Көшірілді! Excel-ге қойыңыз.'; }, fbk); } catch (e) { fbk(); } };
+    $('nw').onclick = () => { try { localStorage.removeItem('qaz3live_host_code'); } catch (e) {} location.href = 'host.html'; };
+    $('xl').onclick = () => downloadExcel($('xl')); $('wipe').onclick = () => wipeAll($('wipe'));
+  }
+
+  /* ---------- router ---------- */
+  be.on(G, (v) => {
+    game = v || {};
+    const m = game.meta || {};
+    if (m.host === be.uid || be.demo) assignTeams();
+    /* Тақта режимі: әр топ тақтада жауап береді (планшетсіз). Топтар виртуалды «оқушы» ретінде есептеледі */
+    { const tn = m.teamNames || teamNames, ta = m.tans || {};
+      game.players = Object.assign({}, game.players); game.teams = Object.assign({}, game.teams); game.answers = Object.assign({}, game.answers);
+      [0, 1, 2].forEach((t) => { game.players['team' + t] = { name: (tn[t] || T[t].name) + ' тобы', board: 1 }; game.teams['team' + t] = t; });
+      Object.keys(ta).forEach((qi) => { game.answers[qi] = Object.assign({}, game.answers[qi], ta[qi]); });
+      const bf = m.bfb || {}; if (Object.keys(bf).length) { game.feedback = Object.assign({}, game.feedback); Object.keys(bf).forEach((k) => { game.feedback['b' + k] = bf[k]; }); } }
+    const key = m.phase + ':' + m.q + ':' + (m.starts && typeof m.starts[m.q] === 'number' ? 1 : 0) + ':' + m.stage;
+    if (key !== mounted) {
+      mounted = key;
+      if (m.phase === 'lobby') mountLobby();
+      else if (m.phase === 'question') mountQuestion();
+      else if (m.phase === 'reveal') mountReveal();
+      else if (m.phase === 'board') mountBoard();
+      else if (m.phase === 'end') mountEnd();
+      else if (m.phase === 'slide') mountSlide();
+      else if (m.phase === 'feedback') mountFeedback();
+      else if (m.phase === 'relay') mountRelay();
+      chrome();
+    } else {
+      if (m.phase === 'lobby') updateLobby();
+      else if (m.phase === 'question') updateQuestion();
+      else if (m.phase === 'end') { const f = $('fbk'); if (f) f.innerHTML = feedbackBox(); }
+      else if (m.phase === 'feedback') updateFeedback();
+      else if (m.phase === 'relay') relayScores();
+    }
+  });
+})();
+</script>
+</body>
+</html>

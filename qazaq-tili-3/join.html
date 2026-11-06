@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Сөз шеберлері · оқушы</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800;900&family=Nunito:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>
+/* Layout: one phone column — a team header strip, then one card per state (join, waiting, question, result, final feedback) */
+#app { max-width: 560px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; gap: 12px; padding: max(12px, env(safe-area-inset-top, 0px)) max(14px, env(safe-area-inset-right, 0px)) max(18px, env(safe-area-inset-bottom, 0px)) max(14px, env(safe-area-inset-left, 0px)); }
+.card { padding: 18px; display: flex; flex-direction: column; gap: 14px; animation: rise .4s ease both; }
+.logo { font-family: var(--display); font-weight: 900; font-size: 30px; background: linear-gradient(90deg, #1F7A45, #1661A3, #C0661A); -webkit-background-clip: text; background-clip: text; color: transparent; }
+label { font-weight: 800; display: flex; flex-direction: column; gap: 6px; }
+input[type=text], input[inputmode] { font: inherit; font-size: 22px; font-weight: 800; padding: 12px 14px; border-radius: 14px; border: 2px solid var(--line); background: #fff; color: var(--ink); width: 100%; }
+#code { letter-spacing: 8px; text-align: center; font-family: var(--display); font-size: 30px; }
+.err { color: var(--bad); font-weight: 800; }
+.teambar { position: relative; border-radius: 18px; color: #fff; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; overflow: hidden; box-shadow: 0 1px 0 rgba(255,255,255,.45) inset, 0 12px 20px -14px rgba(0,0,0,.6); }
+.teambar::after { content: ""; position: absolute; inset: 0 0 50% 0; background: linear-gradient(180deg, rgba(255,255,255,.4), rgba(255,255,255,0)); }
+.teambar b, .teambar span { position: relative; z-index: 1; }
+.teambar b { font-family: var(--display); font-size: 18px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.teambar span { font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.capsule { border-radius: 24px; overflow: hidden; color: #fff; text-align: center; position: relative; animation: pop .7s cubic-bezier(.2,.9,.3,1.3) both; box-shadow: 0 20px 30px -18px rgba(0,0,0,.6); }
+.capsule img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; }
+.capsule div { padding: 14px; display: flex; flex-direction: column; gap: 4px; }
+.capsule h2 { font-size: 26px; }
+.wait { text-align: center; font-weight: 800; color: var(--muted); }
+.dotsload { display: inline-flex; gap: 6px; }
+.dotsload i { width: 10px; height: 10px; border-radius: 50%; background: var(--amber); animation: pulse 1s ease infinite; }
+.dotsload i:nth-child(2) { animation-delay: .15s; } .dotsload i:nth-child(3) { animation-delay: .3s; }
+.timebar { height: 10px; border-radius: 999px; background: rgba(20,43,38,.08); overflow: hidden; }
+.timebar i { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, #F7B24A, #E07A1F); transition: width .25s linear; }
+.q { font-family: var(--display); font-weight: 800; font-size: clamp(18px, 5vw, 22px); line-height: 1.25; }
+.opts { display: grid; gap: 10px; }
+.opt { position: relative; border: none; border-radius: 18px; padding: 16px; font-weight: 800; font-size: 18px; color: #fff; display: flex; gap: 12px; align-items: center; text-align: left; min-height: 64px; overflow: hidden; box-shadow: 0 1px 0 rgba(255,255,255,.45) inset, 0 10px 18px -12px rgba(0,0,0,.6); transition: transform .12s ease; }
+.opt::after { content: ""; position: absolute; inset: 0 0 52% 0; background: linear-gradient(180deg, rgba(255,255,255,.38), rgba(255,255,255,.02)); pointer-events: none; }
+.opt:active { transform: scale(.97); }
+.opt b { font-family: var(--display); font-size: 22px; width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; background: rgba(255,255,255,.25); flex: none; position: relative; z-index: 1; }
+.opt span { position: relative; z-index: 1; }
+.o0 { background: linear-gradient(180deg, #F27C6B, #C8432F); } .o1 { background: linear-gradient(180deg, #5BB1F0, #1E6DB0); } .o2 { background: linear-gradient(180deg, #F6BE4F, #D08A12); } .o3 { background: linear-gradient(180deg, #5FCB8B, #1F8A55); }
+.imgs { grid-template-columns: 1fr 1fr; }
+.opt.img { padding: 6px; flex-direction: column; min-height: 0; }
+.opt.img img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 12px; position: relative; z-index: 1; }
+.opt.img b { position: absolute; top: 10px; left: 10px; z-index: 2; }
+.opt.sel { outline: 4px solid var(--ink); outline-offset: 2px; }
+.flowm { display: flex; flex-direction: column; align-items: stretch; gap: 2px; background: #F4F8F6; border: 2px solid var(--line); border-radius: 18px; padding: 10px; }
+.flowm .fb { display: flex; align-items: center; gap: 8px; background: #fff; border: 2px solid #9ED3B2; border-radius: 12px; padding: 6px 10px; font-weight: 800; font-size: 14px; animation: pop .35s ease both; }
+.flowm .fb.empty { border-style: dashed; border-color: #C9D6D1; color: var(--muted); background: transparent; animation: none; }
+.flowm .fb b { flex: none; width: 24px; height: 24px; border-radius: 8px; display: grid; place-items: center; color: #fff; background: #2E9E62; font-size: 13px; } .flowm .fb.empty b { background: #C9D6D1; }
+.flowm .fb em { font-style: normal; font-size: 22px; }
+.flowm .fa { font-style: normal; text-align: center; font-weight: 900; color: #2E9E62; line-height: 1; }
+.opt .ord { margin-left: auto; width: 34px; height: 34px; border-radius: 50%; background: #fff; color: var(--ink); display: grid; place-items: center; font-family: var(--display); font-weight: 900; position: relative; z-index: 1; flex: none; }
+.display { text-align: center; font-family: var(--display); font-weight: 900; font-size: 40px; background: #fff; border-radius: 16px; border: 2px solid var(--line); padding: 8px; min-height: 66px; font-variant-numeric: tabular-nums; }
+.pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.pad button { border: 1px solid var(--line); background: linear-gradient(180deg, #fff, #EEF3F0); border-radius: 14px; font-family: var(--display); font-weight: 800; font-size: 26px; min-height: 58px; }
+.locked { text-align: center; display: flex; flex-direction: column; gap: 10px; align-items: center; }
+.big-mark { width: 120px; height: 120px; border-radius: 50%; display: grid; place-items: center; font-size: 66px; font-weight: 900; color: #fff; animation: pop .55s cubic-bezier(.2,.9,.3,1.3) both; box-shadow: 0 1px 0 rgba(255,255,255,.5) inset, 0 16px 26px -14px rgba(0,0,0,.6); }
+.ok { background: linear-gradient(180deg, #43C47A, #1E9A5A); } .no { background: linear-gradient(180deg, #F08B7C, #D2452F); } .neutral { background: linear-gradient(180deg, #F7B24A, #E07A1F); }
+.plus { font-family: var(--display); font-weight: 900; font-size: 34px; }
+.stat3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.stat3 div { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 10px 6px; text-align: center; font-weight: 800; font-size: 13px; color: var(--muted); }
+.stat3 b { display: block; font-family: var(--display); font-size: 24px; color: var(--ink); font-variant-numeric: tabular-nums; }
+.miss { display: flex; flex-direction: column; gap: 8px; }
+.miss div { background: #fff; border: 1px solid var(--line); border-left: 5px solid var(--bad); border-radius: 12px; padding: 10px 12px; font-weight: 700; font-size: 15px; display: flex; flex-direction: column; gap: 4px; }
+.miss small { color: var(--muted); font-weight: 700; }
+.leafpick { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.leafpick button { border: 2px solid var(--line); background: #fff; border-radius: 16px; padding: 10px 4px; font-weight: 800; font-size: 13px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.leafpick svg { width: 34px; height: 34px; }
+.leafpick button[aria-pressed="true"] { border-color: var(--ink); background: #FFF6EA; transform: translateY(-2px); box-shadow: 0 8px 16px -10px rgba(20,43,38,.5); }
+.starters { display: flex; flex-wrap: wrap; gap: 6px; }
+.starters button { border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 7px 12px; font-weight: 800; font-size: 13px; }
+.starters button[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+.sentleaf { margin: 4px auto 0; width: 120px; height: 120px; animation: pop .6s cubic-bezier(.2,.9,.3,1.3) both; }
+.ginfo summary { cursor: pointer; font-size: 15px; } .ginfo p, .ginfo li { font-size: 14px; font-weight: 600; } .ginfo a { font-weight: 800; }
+.mood { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.mood button { border: 2px solid var(--line); background: #fff; border-radius: 14px; padding: 12px 6px; font-weight: 800; font-size: 14px; }
+.mood button[aria-pressed="true"] { border-color: var(--ink); background: #FFF1E2; }
+.gstar { display: flex; gap: 8px; align-items: center; font-weight: 800; }
+.gstar svg { width: 22px; height: 22px; flex: none; }
+.apple { width: 110px; height: 120px; margin: 0 auto; display: block; animation: pop .6s cubic-bezier(.2,.9,.3,1.3) both; }
+.ghead { border-radius: 22px; padding: 18px; color: #5A3A00; background: linear-gradient(160deg, #FFF3CF, #FFD877); box-shadow: 0 1px 0 rgba(255,255,255,.6) inset, 0 14px 28px -16px rgba(150,100,0,.6); }
+.ghead h2 { font-size: 24px; }
+.ready { text-align: center; padding: 18px 0; }
+.ready p { font-family: var(--display); font-weight: 800; font-size: 22px; color: var(--muted); }
+.ready b { display: inline-grid; place-items: center; width: 120px; height: 120px; margin-top: 10px; border-radius: 50%; font-family: var(--display); font-weight: 900; font-size: 72px; color: #fff; background: linear-gradient(180deg, var(--amber2), var(--amber)); box-shadow: 0 16px 30px -14px rgba(224,122,31,.8); animation: pop .6s cubic-bezier(.2,.9,.3,1.4) both; }
+#w .opt { animation: optin .5s cubic-bezier(.2,.9,.3,1.25) both; }
+#w .opt:nth-child(2) { animation-delay: .07s; } #w .opt:nth-child(3) { animation-delay: .14s; } #w .opt:nth-child(4) { animation-delay: .21s; }
+.card { animation: rise .45s ease both; }
+@keyframes optin { from { opacity: 0; transform: translateY(18px) scale(.94); } to { opacity: 1; transform: none; } }
+.me-board { border-radius: 22px; padding: 20px; color: #fff; background: linear-gradient(180deg, var(--amber2), var(--amber)); animation: pop .6s cubic-bezier(.2,.9,.3,1.4) both, pulse 1.4s ease 1s infinite; }
+.me-board p { font-family: var(--display); font-weight: 900; font-size: 26px; } .me-board b { font-family: var(--display); font-size: 34px; }
+textarea { font: inherit; font-size: 16px; padding: 10px 12px; border-radius: 14px; border: 2px solid var(--line); width: 100%; min-height: 80px; resize: vertical; }
+.lvl { font-weight: 800; padding: 4px 12px; border-radius: 999px; }
+.lvl.hi { background: var(--good-bg); color: #13603A; } .lvl.mid { background: #FFF1D6; color: #8A5300; } .lvl.low { background: var(--bad-bg); color: #8A2414; }
+</style>
+</head>
+<body>
+<div id="app"><p class="muted" style="padding:20px">Жүктелуде…</p></div>
+<div class="confetti" id="confetti" aria-hidden="true"></div>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js"></script>
+<script src="config.js"></script>
+<script src="core.js"></script>
+<script>
+(async function () {
+  const Q = ECO.QUESTIONS, T = ECO.TEAMS, L = ECO.LETTERS, esc = ECO.esc;
+  const app = document.getElementById('app');
+  const $ = (id) => document.getElementById(id);
+  let be;
+  try { be = await ECO.connect({ role: 'player' }); } catch (e) { app.innerHTML = '<div class="card glass"><h2>Қосылу мүмкін болмады</h2><p class="muted">Интернетті тексеріп, бетті жаңартыңыз.</p></div>'; return; }
+  const params = new URLSearchParams(location.search);
+  let code = params.get('code') || ''; let G = ''; let game = {}; let mounted = ''; let tick = null; let draft = null; let unsub = null;
+  let myName = ''; try { myName = localStorage.getItem('qaz3live_name') || ''; } catch (e) {}
+  const grad = (i) => 'linear-gradient(180deg,' + T[i].c1 + ',' + T[i].c2 + ')';
+
+  /* ---------- ҰСТАЗДАР ПІКІРІ: «Екі жұлдыз, бір тілек» ---------- */
+  const STAR = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3 6.3 6.9.9-5 4.8 1.2 6.8L12 17.6 5.9 20.8l1.2-6.8-5-4.8 6.9-.9z" fill="#F6B92B"/></svg>';
+  const BULB = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z" fill="#FFE9A8" stroke="#C98A0B" stroke-width="1.6"/></svg>';
+  const APPLE = '<svg class="apple" viewBox="-30 -42 60 76" aria-hidden="true"><defs><radialGradient id="ag" cx="35%" cy="30%"><stop offset="0" stop-color="#FFF1B8"/><stop offset=".55" stop-color="#F6C343"/><stop offset="1" stop-color="#C98A0B"/></radialGradient></defs><path d="M0,-24 C3,-32 8,-35 12,-37" stroke="#6B4325" stroke-width="3.5" fill="none"/><path d="M3,-27 C12,-36 21,-33 22,-27 C15,-22 9,-22 3,-27Z" fill="#3BB273"/><circle r="26" fill="url(#ag)"/><ellipse cx="-9" cy="-9" rx="6" ry="10" fill="rgba(255,255,255,.55)"/></svg>';
+  async function vGuest(err) {
+    let saved = {}; try { saved = JSON.parse(localStorage.getItem('qaz3live_guest') || '{}'); } catch (e) {}
+    app.innerHTML = '<div class="ghead"><p class="eyebrow" style="color:#8A5300">Ашық сабақ · ұстаздарға</p><h2>Сабаққа пікіріңізді қалдырыңыз</h2><p style="font-weight:700;margin-top:6px">«Екі жұлдыз, бір тілек» әдісі. Пікіріңіз тақтадағы ағашта алтын алма болып шығады.</p></div>' +
+      '<details class="card glass ginfo"><summary><b>📘 Сабақ туралы</b> · мақсат, 4 дағды, ЖИ, материалдар</summary>' +
+      '<p><b>Қазақ тілі · 3-сынып · 46-сабақ.</b> Тақырып: «Түбір мен қосымшаның жазылуы» (оқулық, 89-бет).</p><p><b>Оқу мақсаттары:</b> 3.4.1.2 түбір сөздегі -ы, -і-нің дауысты дыбыстан басталатын қосымша жалғанған кездегі өзгерісін сақтап жазу; 3.2.4.1 мәтіннің тақырыбын және негізгі ойды анықтау.</p>' +
+      '<p><b>Авторлық бағдарлама:</b> «Тілдік дағдыларын жасанды интеллект көмегімен жетілдіру».</p><ul><li><b>Тыңдалым</b> — ЖИ дауысы мәтінді оқиды</li><li><b>Оқылым</b> — ақылды көмекші сөз құрамын көрсетеді</li><li><b>Айтылым</b> — сөйлеуді тану сөзді тексереді</li><li><b>Жазылым</b> — ЖИ редактор қатені, паразит сөзді табады, сөздік қорды бағалайды</li></ul>' +
+      '<p><b>Шешілетін мәселелер:</b> жазылымның әлсіздігі, сөздік қордың аздығы, паразит сөздер.</p><p><a href="materialdar/QMZh-3synyp-46-sabaq.docx" download>📋 ҚМЖ (Word)</a> · <a href="jumys-paraq.html" target="_blank">📄 Жұмыс парақтары (интерактивті)</a> · <a href="materialdar/Zhumys-paraqtary-ABC.pdf" download>PDF</a></p></details>' +
+      '<div class="card glass">' + (code ? '' : '<label for="code">Ойын коды<input type="text" id="code" inputmode="numeric" maxlength="4" placeholder="0000"></label>') +
+      '<label for="gn">Аты-жөніңіз (міндетті емес)<input type="text" id="gn" maxlength="40" value="' + esc(saved.name || '') + '" placeholder="Мысалы: Г. Сапарова, тарих пәнінің мұғалімі"></label>' +
+      '<label for="s1"><span class="gstar">' + STAR + '1-жұлдыз: сабақтың ұнаған тұсы</span><textarea id="s1" maxlength="140">' + esc(saved.s1 || '') + '</textarea></label>' +
+      '<label for="s2"><span class="gstar">' + STAR + '2-жұлдыз: тағы бір күшті жағы</span><textarea id="s2" maxlength="140">' + esc(saved.s2 || '') + '</textarea></label>' +
+      '<label for="gw"><span class="gstar">' + BULB + 'Бір тілек: не жақсартуға болады?</span><textarea id="gw" maxlength="140">' + esc(saved.wish || '') + '</textarea></label>' +
+      (err ? '<p class="err">' + esc(err) + '</p>' : '') + '<button class="gloss" id="gs">Пікірді ағашқа жіберу</button></div>';
+    $('gs').onclick = async () => {
+      const c = code || ($('code').value || '').replace(/\D/g, ''); const d = { name: $('gn').value.trim(), s1: $('s1').value.trim(), s2: $('s2').value.trim(), wish: $('gw').value.trim() };
+      if (c.length !== 4) return vGuest('Ойын коды 4 цифрдан тұрады.');
+      if (!d.s1 && !d.s2 && !d.wish) return vGuest('Кем дегенде бір жолды толтырыңыз.');
+      $('gs').disabled = true; $('gs').textContent = 'Жіберілуде…';
+      const meta = await be.get('games/' + c + '/meta');
+      if (!meta) { code = ''; return vGuest('Сабақ табылмады. Тақтадағы кодты тексеріңіз.'); }
+      code = c; try { localStorage.setItem('qaz3live_guest', JSON.stringify(d)); } catch (e) {}
+      await be.set('games/' + c + '/guests/' + be.uid, Object.assign({}, d, { t: be.TS }));
+      app.innerHTML = '<div class="card glass" style="text-align:center;margin-top:4vh">' + APPLE + '<h2>Рақмет!</h2><p style="font-weight:700">Пікіріңіз «Білім ағашында» алтын алма болып ілінді. Кері байланыс кезеңінде экранда көрсетіледі.</p><button class="plain" id="ge">Пікірді түзету</button></div>';
+      confetti(70); $('ge').onclick = () => vGuest();
+    };
+  }
+  if (params.get('g') === '1') { vGuest(); return; }
+  function confetti(n) { const box = $('confetti'); const cols = ['#43B36B', '#3FA4E8', '#F2A541', '#FFD86B'];
+    for (let i = 0; i < n; i++) { const p = document.createElement('i'); p.style.left = Math.random() * 100 + 'vw'; p.style.background = cols[i % 4]; p.style.animationDuration = (1.6 + Math.random() * 1.6) + 's'; p.style.animationDelay = Math.random() * .4 + 's'; box.appendChild(p); setTimeout(() => p.remove(), 4000); } }
+
+  function vJoin(err) {
+    app.innerHTML = '<div class="card glass" style="margin-top:6vh"><p class="logo">Сөз шеберлері</p><p class="muted" style="font-weight:700">Қазақ тілі · 3-сынып · Түбір мен қосымшаның жазылуы</p><p class="muted" style="font-weight:800;font-size:13px;margin-top:-4px">Ф. Оңғарсынова атындағы №77 мектеп-гимназия · 3-сынып · 46-сабақ</p>' +
+      (be.demo ? '<div class="demo">Демо режим: тек тақта ашылған компьютерде жұмыс істейді.</div>' : '') +
+      '<label for="code">Ойын коды<input id="code" inputmode="numeric" maxlength="4" autocomplete="off" value="' + esc(code) + '"></label>' +
+      '<label for="nm">Атың мен тегің<input type="text" id="nm" maxlength="24" autocomplete="off" value="' + esc(myName) + '" placeholder="Мысалы: Айгерім С."></label>' +
+      (err ? '<p class="err">' + esc(err) + '</p>' : '') + '<button class="gloss" id="go">Кіру</button></div>';
+    $('go').onclick = () => { $('go').disabled = true; $('go').textContent = 'Қосылуда…'; join(); };
+    $('nm').addEventListener('keydown', (e) => { if (e.key === 'Enter') join(); });
+  }
+  async function join() {
+    const c = $('code').value.replace(/\D/g, ''); const n = $('nm').value.trim().replace(/\s+/g, ' ');
+    if (c.length !== 4) return vJoin('Ойын коды 4 цифрдан тұрады.');
+    if (n.length < 2) return vJoin('Атыңды жаз.');
+    const meta = await be.get('games/' + c + '/meta');
+    if (!meta) return vJoin('Ойын табылмады. Кодты тексер, тақтадағы бет ашық тұрғанына көз жеткіз және интернетке қосылғаныңды тексер.');
+    code = c; myName = n; G = 'games/' + code;
+    try { localStorage.setItem('qaz3live_name', n); } catch (e) {}
+    const me = await be.get(G + '/players/' + be.uid);
+    if (!me) await be.set(G + '/players/' + be.uid, { name: n, joined: be.TS });
+    if (unsub) unsub();
+    unsub = be.on(G, (v) => { game = v || {}; route(); });
+  }
+
+  const myTeam = () => (game.teams || {})[be.uid];
+  function teambar() {
+    const t = myTeam(); if (t === undefined) return '';
+    const res = ECO.compute(game); const me = res.rows.find((r) => r.uid === be.uid);
+    return '<div class="teambar" style="background:' + grad(t) + '"><b>' + esc(((game.meta && game.meta.teamNames) || [])[t] || T[t].name) + '</b><span>' + esc(myName) + ' · ' + (me ? me.score : 0) + ' ұпай</span></div>';
+  }
+
+  function route() {
+    const m = game.meta || {};
+    const t = myTeam();
+    const myAns = m.q >= 0 ? ((game.answers || {})[m.q] || {})[be.uid] : null;
+    const key = [m.phase === 'relay' ? JSON.stringify(m.relay || {}) + JSON.stringify(m.boardPts || {}) : '', m.phase, m.q, t, m.phase === 'question' ? !!myAns : '', m.starts && typeof m.starts[m.q] === 'number', m.stage, m.phase === 'feedback' ? !!(game.feedback || {})[be.uid] : ''].join(':');
+    if (key === mounted) { if (m.phase === 'end') {} return; }
+    mounted = key; clearInterval(tick);
+    if (m.phase === 'lobby' || m.phase === undefined) return vWait();
+    if (m.phase === 'question') return myAns ? vLocked(myAns) : vQuestion();
+    if (m.phase === 'reveal' || m.phase === 'board') return vResult();
+    if (m.phase === 'end') return vEnd();
+    if (m.phase === 'slide') return vSlide();
+    if (m.phase === 'feedback') return vFeedback();
+    if (m.phase === 'relay') return vRelay();
+  }
+  function vRelay() {
+    const m = game.meta || {}, r = m.relay || {}, t = myTeam(), players = game.players || {};
+    const tn = (i) => esc(((m.teamNames || [])[i]) || T[i].name);
+    const us = [r.u0, r.u1, r.u2], mine = typeof t === 'number' ? us[t] : '';
+    const res = String(r.res || '').split(',');
+    let body;
+    if (r.st === 'done') body = '<h2>Эстафета аяқталды</h2><p class="wait">Экранға қара: біз құрған кластер!</p>';
+    else if (mine && mine === be.uid) body = '<div class="me-board"><p>Сен тақтаға шығасың!</p><b>' + esc(myName) + '</b></div><p style="font-weight:800;text-align:center">Тақтаға барып, өз тобыңның түсіндегі карточканы кластер-сызбадағы дұрыс орнына сүйреп апар. 40 секунд бар.</p>';
+    else if (mine && players[mine]) body = '<h2>Тобыңнан тақтада: ' + esc(players[mine].name) + '</h2><p class="wait">Қолдау көрсет!</p>';
+    else body = '<h2>' + ((r.r || 0) + 1) + '-кезек</h2><p class="wait">Әр топтан бір оқушы тақтаға шығады. Экранға қара!</p>';
+    if (typeof t === 'number' && res[t] === '1') body += '<p class="plus" style="color:var(--good);text-align:center">' + tn(t) + ': +200</p>';
+    app.innerHTML = teambar() + '<div class="card glass" style="text-align:center">' + body + '</div>';
+    if (mine === be.uid && r.st === 'go') confetti(80);
+  }
+  function vSlide() {
+    const m = game.meta || {}; const t = myTeam();
+    app.innerHTML = (t === undefined ? '' : teambar()) + '<div class="card glass" style="text-align:center"><p class="eyebrow">' + (typeof m.stage === 'number' ? (m.stage + 1) + '-кезең' : 'Сабақ') + '</p><h2 style="font-size:28px">' + esc(m.stageTitle || 'Сабақ') + '</h2>' +
+      (m.stageNote ? '<p style="font-weight:700;font-size:18px">' + esc(m.stageNote) + '</p>' : '') + '<p class="wait">Экранға қара!</p><div class="dotsload" style="margin:0 auto"><i></i><i></i><i></i></div></div>';
+  }
+  const LEAFC = ['#3BB273', '#F2B33D', '#F0765F'];
+  const STARTERS = ['Бүгін мен білдім, ', 'Маған ең қызығы — ', 'Маған әлі түсініксіз: ', 'Мен үйрендім: '];
+  const leafSvg = (c) => '<svg viewBox="-20 -20 40 40" aria-hidden="true"><path d="M0,-17 C12,-12 14,7 0,17 C-14,7 -12,-12 0,-17Z" fill="' + c + '"/><path d="M0,-13 L0,14" stroke="rgba(255,255,255,.7)" stroke-width="1.6"/></svg>';
+  function fbForm() {
+    return '<p class="eyebrow">Білім ағашы</p><p style="font-weight:800;font-size:18px">Ағашқа өз жапырағыңды қос! Экранда сенің жапырағың өседі.</p>' +
+      '<p style="font-weight:800">1. Жапырағыңның түсін таңда</p><div class="leafpick">' + ['Түсіндім', 'Сұрағым бар', 'Көмек керек'].map((t, i) => '<button data-m="' + i + '" aria-pressed="false">' + leafSvg(LEAFC[i]) + t + '</button>').join('') + '</div>' +
+      '<p style="font-weight:800">2. Сөйлемді бастап, аяқта</p><div class="starters">' + STARTERS.map((t, i) => '<button data-s="' + i + '" aria-pressed="false">' + esc(t.replace(/[,:—]?\s*$/, '…')) + '</button>').join('') + '</div>' +
+      '<label for="fbt">Сенің сөйлемің<textarea id="fbt" maxlength="160" placeholder="Мысалы: Бүгін мен кітап – кітабы деп жазуды білдім."></textarea></label><button class="gloss" id="fbs" disabled>Жапырақты ағашқа жіберу</button>';
+  }
+  function bindFb() {
+    let mood = -1, st = -1;
+    const ok = () => { if ($('fbs')) $('fbs').disabled = !(mood >= 0 && ($('fbt').value || '').trim().length >= 3); };
+    app.querySelectorAll('[data-m]').forEach((b) => b.onclick = () => { mood = +b.dataset.m; app.querySelectorAll('[data-m]').forEach((x) => x.setAttribute('aria-pressed', String(x === b))); ok(); });
+    app.querySelectorAll('[data-s]').forEach((b) => b.onclick = () => { const k = +b.dataset.s; const ta = $('fbt'); let v = ta.value; STARTERS.forEach((x) => { if (v.startsWith(x)) v = v.slice(x.length); });
+      st = k; ta.value = STARTERS[k] + v; app.querySelectorAll('[data-s]').forEach((x) => x.setAttribute('aria-pressed', String(x === b))); ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); ok(); });
+    if ($('fbt')) $('fbt').addEventListener('input', ok);
+    if ($('fbs')) $('fbs').onclick = async () => { $('fbs').disabled = true; const text = ($('fbt').value || '').trim().slice(0, 160);
+      await be.set(G + '/feedback/' + be.uid, { mood, st, text, t: be.TS });
+      $('fbcard').innerHTML = '<div class="sentleaf">' + leafSvg(LEAFC[mood]) + '</div><h2 style="text-align:center">Жапырағың ағашта!</h2><p class="muted" style="text-align:center;font-weight:700">Экранға қара: сенің ойың ағашта өсіп тұр.</p>'; confetti(60); };
+  }
+  function vFeedback() {
+    const done = (game.feedback || {})[be.uid];
+    app.innerHTML = teambar() + '<div class="card glass" id="fbcard">' + (done ? '<div class="sentleaf">' + leafSvg(LEAFC[done.mood] || LEAFC[0]) + '</div><h2 style="text-align:center">Жапырағың ағашта!</h2><p class="muted" style="text-align:center;font-weight:700">Экранға қара.</p>' : fbForm()) + '</div>';
+    bindFb();
+  }
+
+  function vWait() {
+    const t = myTeam();
+    app.innerHTML = (t === undefined
+      ? '<div class="card glass" style="margin-top:6vh;text-align:center"><p class="logo">Сөз шеберлері</p><p class="wait">Тобың анықталуда…</p><div class="dotsload" style="margin:0 auto"><i></i><i></i><i></i></div></div>'
+      : '<div class="capsule" style="background:' + grad(t) + '"><img src="' + ECO.IMG(T[t].key) + '" alt=""><div><p style="font-weight:800;opacity:.9">' + esc(myName) + ', сен —</p><h2>' + esc(((game.meta && game.meta.teamNames) || [])[t] || T[t].name) + '</h2></div></div>' +
+        '<div class="card glass"><p class="wait">Мұғалім жарысты бастағанша күт. Экранға қара!</p><div class="dotsload" style="margin:0 auto"><i></i><i></i><i></i></div><p class="muted" style="font-weight:700;text-align:center">Қосылғандар: ' + Object.keys(game.players || {}).length + '</p></div>');
+    if (t !== undefined) confetti(50);
+  }
+
+  function vQuestion() {
+    const m = game.meta, q = Q[m.q];
+    draft = q.t === 'order' ? [] : q.t === 'num' ? '' : null;
+    app.innerHTML = teambar() + '<div class="card glass"><div class="row" style="justify-content:space-between"><span class="pill">' + (m.q + 1) + ' / ' + Q.length + '</span><span class="pill" id="sec">' + q.time + ' с</span></div><div class="timebar"><i id="tb" style="width:100%"></i></div><p class="q">' + esc(q.q) + '</p>' + (q.hint ? '<p class="muted" style="font-weight:700">' + esc(q.hint) + '</p>' : '') + '<div id="w"></div></div>';
+    const st = m.starts[m.q] + ECO.LEAD; let shown = false;
+    const w0 = $('w'); if (w0 && be.now() < st) w0.innerHTML = '<div class="ready"><p>Дайындал!</p><b id="cd">3</b></div>'; else { drawW(); shown = true; }
+    tick = setInterval(() => { const now = be.now();
+      if (!shown) { if (now < st) { const c = $('cd'); if (c) { const v = String(Math.ceil((st - now) / 1000)); if (c.textContent !== v) { c.textContent = v; c.style.animation = 'none'; void c.offsetWidth; c.style.animation = ''; } } return; } shown = true; drawW(); }
+      const total = ECO.qtime(q, game.meta, game.meta.q); const left = Math.max(0, st + total - now); const s = Math.ceil(left / 1000);
+      const tb = $('tb'); if (tb) tb.style.width = (left / total * 100) + '%'; const sc = $('sec'); if (sc) sc.textContent = s + ' с';
+      if (left <= 0) { clearInterval(tick); const w = $('w'); if (w) w.innerHTML = '<p class="wait">Уақыт бітті!</p>'; } }, 200);
+  }
+  function drawW() {
+    const q = Q[game.meta.q]; const w = $('w'); if (!w) return; let h = '';
+    if (q.t === 'mc') h = '<div class="opts">' + q.o.map((o, j) => '<button class="opt o' + j + '" data-v="' + j + '"><b>' + L[j] + '</b><span>' + esc(o) + '</span></button>').join('') + '</div>';
+    if (q.t === 'img') h = '<div class="opts imgs">' + q.o.map((o, j) => '<button class="opt img o' + j + '" data-v="' + j + '" aria-label="' + L[j] + ' сурет"><b>' + L[j] + '</b><img src="' + ECO.IMG(o) + '" alt=""></button>').join('') + '</div>';
+    if (q.t === 'tf') h = '<div class="opts"><button class="opt o3" data-tf="1"><b>✓</b><span>Шын</span></button><button class="opt o0" data-tf="0"><b>✗</b><span>Жалған</span></button></div>';
+    if (q.t === 'num') h = '<div class="display" id="disp">' + (draft || '&nbsp;') + ' <small style="font-size:.4em;color:var(--muted)">' + esc(q.unit) + '</small></div><div class="pad">' + ['7', '8', '9', '4', '5', '6', '1', '2', '3', ',', '0', '⌫'].map((k) => '<button data-k="' + k + '"' + (k === '⌫' ? ' aria-label="Өшіру"' : '') + '>' + k + '</button>').join('') + '</div><button class="gloss" id="send"' + (draft ? '' : ' disabled') + '>Жіберу</button>';
+    if (q.t === 'order') h = '<p class="muted" style="font-weight:700">' + esc(q.ins || 'Ретімен басыңдар') + '</p><div class="opts">' + q.o.map((o, j) => { const p = draft.indexOf(j); return '<button class="opt o' + (j % 4) + (p >= 0 ? ' sel' : '') + '" data-o="' + j + '">' + (q.ic ? '<b>' + q.ic[j] + '</b>' : '') + '<span>' + esc(o) + '</span>' + (p >= 0 ? '<span class="ord">' + (p + 1) + '</span>' : '') + '</button>'; }).join('') + '</div>' + (q.g ? flowMini(q, draft) : '') + '<div class="row"><button class="plain" id="clr">Тазалау</button><button class="gloss" id="send" style="flex:1"' + (draft.length === q.o.length ? '' : ' disabled') + '>Жіберу</button></div>';
+    w.innerHTML = h;
+    w.querySelectorAll('[data-v]').forEach((b) => b.onclick = () => submit(+b.dataset.v));
+    w.querySelectorAll('[data-tf]').forEach((b) => b.onclick = () => submit(b.dataset.tf === '1'));
+    w.querySelectorAll('[data-k]').forEach((b) => b.onclick = () => { const k = b.dataset.k; if (k === '⌫') draft = draft.slice(0, -1); else if (k === ',') { if (draft && !draft.includes(',')) draft += ','; } else if (draft.length < 7) draft += k; drawW(); });
+    w.querySelectorAll('[data-o]').forEach((b) => b.onclick = () => { const j = +b.dataset.o; const p = draft.indexOf(j); if (p >= 0) draft.splice(p, 1); else draft.push(j); drawW(); });
+    if ($('clr')) $('clr').onclick = () => { draft = []; drawW(); };
+    if ($('send')) $('send').onclick = () => submit(q.t === 'num' ? draft : draft.slice());
+  }
+  function flowMini(q, d) {
+    return '<div class="flowm"><p class="eyebrow">' + (q.w ? 'Сенің сөзің: ' + esc(d.map((j) => q.o[j]).join('')) : 'Сенің сызбаң') + '</p>' + q.o.map((_, k) => { const j = d[k];
+      return (k ? '<i class="fa">↓</i>' : '') + (j === undefined ? '<div class="fb empty"><b>' + (k + 1) + '</b><span>' + (q.w ? '?' : k === 0 ? 'Себеп' : k === q.o.length - 1 ? 'Салдар' : '…') + '</span></div>'
+        : '<div class="fb"><b>' + (k + 1) + '</b><em>' + ((q.ic || [])[j] || '') + '</em><span>' + esc(q.o[j]) + '</span></div>'); }).join('') + '</div>';
+  }
+  async function submit(v) {
+    const m = game.meta; if (m.phase !== 'question') return;
+    const st = m.starts[m.q] + ECO.LEAD; if (be.now() < st || be.now() > st + ECO.qtime(Q[m.q], m, m.q) + 1500) return;
+    clearInterval(tick);
+    app.querySelectorAll('#w button').forEach((b) => { b.disabled = true; });
+    try { await be.set(G + '/answers/' + m.q + '/' + be.uid, { v: v, t: be.TS }); } catch (e) {}
+  }
+  function vLocked(a) {
+    const m = game.meta; const sec = Math.max(0.1, ((a.t || be.now()) - m.starts[m.q] - ECO.LEAD) / 1000).toFixed(1);
+    app.innerHTML = teambar() + '<div class="card glass locked"><div class="big-mark neutral">✓</div><h2>Жауап қабылданды</h2><p class="muted" style="font-weight:800">' + sec + ' секундта · жауабың: ' + esc(ECO.answerText(Q[m.q], a.v)) + '</p><p class="wait">Нәтижені күт…</p><div class="dotsload"><i></i><i></i><i></i></div></div>';
+  }
+  function vResult() {
+    const m = game.meta, q = Q[m.q]; const a = ((game.answers || {})[m.q] || {})[be.uid];
+    const p = ECO.points(q, a, m.starts[m.q], ECO.qtime(q, m, m.q)); const res = ECO.compute(game); const me = res.rows.find((r) => r.uid === be.uid) || { rank: '—', score: 0 };
+    const tr = res.teamRows.find((x) => x.i === myTeam());
+    app.innerHTML = teambar() + '<div class="card glass locked"><div class="big-mark ' + (p ? 'ok' : 'no') + '">' + (p ? '✓' : '✗') + '</div><h2>' + (p ? 'Дұрыс!' : a ? 'Қате' : 'Жауап берілмеді') + '</h2><p class="plus" style="color:' + (p ? 'var(--good)' : 'var(--bad)') + '">+' + p + '</p>' +
+      '<p class="muted" style="font-weight:800">Дұрыс жауап: ' + esc(ECO.answerText(q)) + '</p>' + (q.why ? '<p class="muted" style="font-weight:700">' + esc(q.why) + '</p>' : '') + '<p class="muted" style="font-weight:700;font-size:12px">' + esc(q.src) + '</p></div>' +
+      '<div class="stat3"><div><b>' + me.rank + '</b>орның</div><div><b>' + me.score + '</b>ұпай</div><div><b>' + (tr ? tr.rank : '—') + '</b>топ орны</div></div>';
+    if (p) { confetti(40); ECO.sfx.ok(); } else ECO.sfx.no();
+  }
+  function vEnd() {
+    const res = ECO.compute(game); const me = res.rows.find((r) => r.uid === be.uid);
+    if (!me) { app.innerHTML = '<div class="card glass"><h2>Жарыс аяқталды</h2></div>'; return; }
+    const lv = ECO.level(me); const tr = res.teamRows.find((x) => x.i === me.team);
+    const tip = lv[1] === 'hi' ? 'Тамаша! Сен қосымша жалғанғанда түбірдің өзгерісін жақсы білесің. Үйде С деңгейдегі тапсырманы орында.' : lv[1] === 'mid' ? 'Жақсы нәтиже! Оқулықтың 89-бетіндегі ережені қайта оқы.' : 'Оқулықтың 89-бетіндегі ережені мұғаліммен бірге қайта қара: кітап – кітабы, парақ – парағы, ерін – ерні.';
+    const fbDone = (game.feedback || {})[be.uid];
+    app.innerHTML = teambar() + '<div class="card glass" style="text-align:center"><p class="eyebrow">Сенің нәтижең</p><h2 style="font-size:30px">' + esc(me.name) + '</h2><div class="stat3"><div><b>' + me.rank + '</b>орның (' + res.rows.length + ')</div><div><b>' + me.correct + '/' + me.total + '</b>дұрыс</div><div><b>' + me.score + '</b>ұпай</div></div>' +
+      '<p><span class="lvl ' + lv[1] + '">' + lv[0] + '</span></p><p class="muted" style="font-weight:700">Тобың «' + esc(((game.meta.teamNames || [])[me.team]) || '') + '» ' + (tr ? tr.rank + '-орында' : '') + '.</p><p style="font-weight:700">' + tip + '</p></div>' +
+      (me.wrong.length ? '<div class="card glass"><p class="eyebrow">Қайталауға арналған сұрақтар</p><div class="miss">' + me.wrong.map((qi) => '<div>' + esc(Q[qi].q) + '<small>Дұрыс жауап: ' + esc(ECO.answerText(Q[qi])) + ' · ' + esc(Q[qi].src) + '</small></div>').join('') + '</div></div>' : '') +
+      (typeof game.meta.stage === 'number' ? '' : '<div class="card glass" id="fbcard">' + (fbDone ? '<p class="wait">Рақмет! Пікірің мұғалімге жетті.</p>' : fbForm()) + '</div>');
+    confetti(me.rank <= 3 ? 160 : 60); ECO.sfx.win();
+    bindFb();
+  }
+
+  if (code && myName && params.get('code')) {
+    const me = await be.get('games/' + code + '/players/' + be.uid);
+    if (me) { G = 'games/' + code; myName = me.name; unsub = be.on(G, (v) => { game = v || {}; route(); }); return; }
+  }
+  vJoin();
+})();
+</script>
+</body>
+</html>
