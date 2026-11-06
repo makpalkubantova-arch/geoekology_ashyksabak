@@ -392,6 +392,14 @@
 .rlres.ok3 { background: #F2F7F4; color: var(--ink); }
 .r3 { display: flex; flex-direction: column; padding: 4px 10px; border-left: 4px solid var(--c2); }
 .r3 b { font-family: var(--body) !important; font-size: 18px !important; } .r3.n b { color: var(--bad); } .r3 small { font-size: 12px; }
+.allres { padding: 12px 14px; }
+.argrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 6px; max-height: 30vh; overflow: auto; }
+.arc { display: flex; flex-direction: column; padding: 5px 10px; border-radius: 10px; border-left: 5px solid var(--tc); background: #F4F6F5; font-size: 14px; }
+.arc b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .arc i { font-style: normal; font-weight: 800; font-size: 13px; }
+.arc.ok { background: #E4F6EB; } .arc.ok i { color: #1E7A47; } .arc.no { background: #FDE8E4; } .arc.no i { color: #B23A27; } .arc.none i { color: var(--muted); }
+.mx .tbl td.mc { text-align: center; font-weight: 900; } .mx .tbl td.mc small { display: block; font-size: 10px; font-weight: 700; color: var(--muted); }
+.mx .tbl td.mc.ok { color: #1E7A47; background: #EFFAF3; } .mx .tbl td.mc.no { color: #B23A27; background: #FDF0ED; }
+.mx { max-height: 52vh; }
 .oic { font-style: normal; font-size: 1.3em; position: relative; z-index: 1; }
 .flowh { margin-top: 12px; padding: 12px 14px; }
 .frow2 { display: flex; align-items: stretch; gap: 6px; }
@@ -545,6 +553,8 @@
     if (i < 0 || i >= STAGES.length) return;
     const s = STAGES[i], m = game.meta || {};
     const upd = { stage: i, stageTitle: s.title, stageNote: s.note || '', stageStart: be.TS, stageExtra: 0, stAcc: 0, stRun: typeof m.lsRun === 'number' ? be.TS : null };
+    const prev = curStage(); if (prev >= 0 && prev !== i) upd['stlog/' + prev] = ((m.stlog || {})[prev] || 0) + stMs(m);
+    if (s.kind === 'results' && !m.realEnd) upd.realEnd = Date.now();
     if (s.kind === 'slide') upd.phase = 'slide';
     else if (s.kind === 'join') upd.phase = 'lobby';
     else if (s.kind === 'results') upd.phase = 'end';
@@ -580,8 +590,8 @@
   const lsLabel = (m) => lsRunning(m) ? '⏸ Кідірту' : (m.lsAcc ? '▶ Жалғастыру' : '▶ Сабақты бастау');
   function lsToggle() { const m = game.meta || {};
     if (lsRunning(m)) be.update(G + '/meta', { lsAcc: lsMs(m), lsRun: null, stAcc: stMs(m), stRun: null });
-    else be.update(G + '/meta', { lsRun: be.TS, stRun: be.TS }); }
-  function lsReset() { be.update(G + '/meta', { lsAcc: 0, lsRun: null, stAcc: 0, stRun: null }); }
+    else { const u = { lsRun: be.TS, stRun: be.TS }; if (!m.realStart) u.realStart = Date.now(); be.update(G + '/meta', u); } }
+  function lsReset() { be.update(G + '/meta', { lsAcc: 0, lsRun: null, stAcc: 0, stRun: null, realStart: null, realEnd: null, stlog: null }); }
   const stageTotal = () => { const s = STAGES[curStage()], m = game.meta || {}; return s ? (s.min + (m.stageExtra || 0)) * 60000 : 0; };
   let overFlag = '';
   function lessonBar() {
@@ -675,7 +685,7 @@
   const GQ = ['Ормандардың жойылуы табиғаттың қандай компоненттеріне әсер етеді?', 'Топырақ эрозиясына адамның қандай шаруашылық әрекеттері себеп болады?', 'Шөлейттенуді қандай табиғи және антропогендік факторлар күшейтеді?', 'Ауаның, судың және топырақтың ластану көздерін атаңдар.', 'Жылыжай газдарының мөлшері неліктен артып отыр?', 'Су айналымының бір буынындағы өзгеріс неге бүкіл тізбекке әсер етеді?', 'Табиғи орта неліктен өзін-өзі қалпына келтіре алмай қалады?'];
   function renderG1(k) {
     const box = $('g1'); if (!box) return; const c = SEVEN[k];
-    box.innerHTML = '<div class="g1 glass"><div class="g1m">' + (c[3] ? '<video src="media/' + c[3] + '.mp4?v=20261105b" poster="' + ECO.IMG(c[0]) + '" autoplay muted loop playsinline aria-hidden="true"></video>' : '<img src="' + ECO.IMG(c[0]) + '" alt="">') + '<span class="g1n">' + (k + 1) + '<small>/ 7</small></span></div>' +
+    box.innerHTML = '<div class="g1 glass"><div class="g1m">' + (c[3] ? '<video src="media/' + c[3] + '.mp4?v=20261106a" poster="' + ECO.IMG(c[0]) + '" autoplay muted loop playsinline aria-hidden="true"></video>' : '<img src="' + ECO.IMG(c[0]) + '" alt="">') + '<span class="g1n">' + (k + 1) + '<small>/ 7</small></span></div>' +
       '<div class="g1t"><p class="eyebrow">' + (k + 1) + '-топ · ' + esc(c[4]) + '</p><h2>' + esc(c[1]) + '</h2><p class="g1x">' + esc(c[2]) + '</p><p class="nfbox">Жаңа дерек: ' + esc(c[5]) + '</p><p class="g1q"><b>Сыныпқа сұрақ:</b> ' + esc(GQ[k]) + '</p>' +
       '<div class="row"><button class="plain" id="g1p"' + (k ? '' : ' disabled') + '>← Алдыңғы</button><button class="gloss" id="g1n">' + (k < 6 ? 'Келесі топ →' : 'Барлық 7 топ →') + '</button></div></div></div>' +
       '<div class="g1strip">' + SEVEN.map((x, q) => '<button data-g1="' + q + '" class="' + (q === k ? 'on' : q < k ? 'done' : '') + '"><img src="' + ECO.IMG(x[0]) + '" alt=""><b>' + (q + 1) + '</b></button>').join('') + '</div>';
@@ -720,15 +730,15 @@
     '<g class="gs gs4"><path class="ar" d="M560,382 C575,330 590,300 600,272" stroke="#E8692A" stroke-width="12" stroke-linecap="round" fill="none" marker-end="url(#ao)"/><path class="ar" d="M640,382 C652,330 662,300 670,272" stroke="#E8692A" stroke-width="12" stroke-linecap="round" fill="none" marker-end="url(#ao)"/><rect x="600" y="315" width="190" height="30" rx="10" fill="#fff" opacity=".95"/><text x="695" y="336" text-anchor="middle" font-size="15" font-weight="800" fill="#8A3A00">Инфрақызыл радиация</text></g>' +
     '<g class="gs gs5"><path class="ar dash" d="M600,214 C592,260 585,310 575,368" stroke="#D2452F" stroke-width="9" stroke-linecap="round" fill="none" marker-end="url(#ao)"/><path class="ar" d="M672,210 L742,70" stroke="#E8692A" stroke-width="12" stroke-linecap="round" fill="none" marker-end="url(#ao)"/><rect x="560" y="106" width="232" height="30" rx="10" fill="#fff" opacity=".95"/><text x="676" y="127" text-anchor="middle" font-size="15" font-weight="800" fill="#8A3A00">Ғарышқа кетеді · 240 Вт/м²</text><rect x="370" y="282" width="210" height="30" rx="10" fill="#fff" opacity=".95"/><text x="475" y="303" text-anchor="middle" font-size="15" font-weight="800" fill="#B0301E">Газдар жылуды ұстап қалады</text></g>' +
     '</svg>';
-  function bgv(name) { return '<video class="bgv" src="media/' + name + '.mp4?v=20261105b" autoplay muted loop playsinline aria-hidden="true"></video>'; }
-  function vid(src, cls, attrs) { return '<video class="' + cls + '" src="media/' + src + '.mp4?v=20261105b" playsinline preload="metadata" ' + (attrs || 'controls') + '></video>'; }
+  function bgv(name) { return '<video class="bgv" src="media/' + name + '.mp4?v=20261106a" autoplay muted loop playsinline aria-hidden="true"></video>'; }
+  function vid(src, cls, attrs) { return '<video class="' + cls + '" src="media/' + src + '.mp4?v=20261106a" playsinline preload="metadata" ' + (attrs || 'controls') + '></video>'; }
   function mountSlide() {
     const i = curStage(), s = STAGES[i] || STAGES[0];
     let h = '';
     if (s.id === 'title') {
       const words = ['Ашық', 'сабағымызға', 'қош', 'келдіңіздер!'];
       const MON = ['қаңтар', 'ақпан', 'наурыз', 'сәуір', 'мамыр', 'маусым', 'шілде', 'тамыз', 'қыркүйек', 'қазан', 'қараша', 'желтоқсан']; const today = '13 қараша 2026 ж.';
-      h = '<div class="hero welcome"><video src="media/bg_earth.mp4?v=20261105b" poster="' + ECO.IMG('earth') + '" autoplay muted loop playsinline aria-hidden="true"></video><div class="in">' +
+      h = '<div class="hero welcome"><video src="media/bg_earth.mp4?v=20261106a" poster="' + ECO.IMG('earth') + '" autoplay muted loop playsinline aria-hidden="true"></video><div class="in">' +
         '<div class="schoolbar fadein"><span class="crest">№9<br>IT</span><span><small>Түркістан облысы · Жетісай ауданы</small><b>Дінмұхамед Қонаев атындағы №9 ІТ мектеп-лицей</b></span></div>' +'<span class="authbadge fadein" style="animation-delay:.2s"><i>★</i>Ашық сабақтың авторлық моделі</span>' +'<p class="eyebrow fadein" style="animation-delay:.3s">География · 10 «Б» сынып · №205 кабинет</p>' +
         '<h1 class="wtitle">' + words.map((w, k) => '<span class="go" style="animation-delay:' + (0.25 + k * 0.28) + 's,' + (1.6 + k * 0.1) + 's">' + w + '</span>').join('') + '</h1>' +
         '<p class="guests fadein" style="animation-delay:1.5s">Құрметті қонақтар, әріптестер және оқушылар!</p>' +
@@ -739,7 +749,7 @@
         '<div class="qrmini fadein" style="animation-delay:3.2s"><div id="qr"></div>Телефонды дайында<br>Код: ' + code + '</div></div>';
       setTimeout(() => confetti(70), 1500);
     } else if (s.id === 'video') {
-      h = '<div class="split">' + vid('v_intro', 'vidbig', 'controls poster="media/poster.jpg?v=20261105b"') +
+      h = '<div class="split">' + vid('v_intro', 'vidbig', 'controls poster="media/poster.jpg?v=20261106a"') +
         '<div class="boxp glass"><p class="eyebrow">Проблемалық сұрақ</p><h2>Табиғи ортаның өзгеруіне не себеп болды?</h2><p>Бейнені қарап, талдаңдар:</p><ol><li>Бейнеде табиғи ортаның қандай өзгерістері көрсетілді?</li><li>Олардың себебі табиғи ма, антропогендік пе? Дәлелдеңдер.</li><li>Бұл өзгерістерді азайтуға бола ма?</li></ol><p class="muted">Жауапты сабақтың соңында қайта қарастырамыз.</p><div class="row"><button class="gloss" id="nx">Келесі →</button></div></div></div>';
     } else if (s.id === 'goal') {
       h = '<div class="shead glass vbg">' + bgv('bg_river') + '<p class="eyebrow">Оқу мақсаты · 10.3.2.4</p><h1>Табиғатқа әсер ететін антропогендік факторларды топтастыру және графикалық түрде ұсыну</h1><p class="lead">Оқулық, § 15 «Геоэкологиядағы антропогендік факторлар»</p></div>' +
@@ -755,7 +765,7 @@
     } else if (s.id === 'learn1') {
       h = '<div class="shead glass vbg">' + bgv('bg_earth') + '<span class="pg">Оқулық · 54-б.</span><p class="eyebrow">Оқулық, 20-сурет</p><h1>Адамның табиғатқа ықпалы: 7 топ</h1><p class="lead"><b>Антропогендік фактор</b> — адамның шаруашылық әрекетінің табиғатқа әсері. Оқулықта бұл әсерлер табиғаттың қай бөлігі өзгеретініне қарай 7 топқа жіктелген. Топтарды ретімен қарастырамыз: әрқайсысына сурет, оқулықтағы анықтама, жаңа дерек және сыныпқа сұрақ берілген.</p></div>' +
         '<div id="g1"></div>' +
-        '<div class="ovw" id="ovw" hidden>' + '<div class="g7">' + SEVEN.map((c, k) => '<button class="gc closed" data-g="' + k + '"><img src="' + ECO.IMG(c[0]) + '" alt="">' + (c[3] ? '<video src="media/' + c[3] + '.mp4?v=20261105b" muted loop playsinline preload="none" aria-hidden="true"></video>' : '') + '<span class="num">' + (k + 1) + '</span><span class="sph">' + esc(c[4]) + '</span><span class="t"><b>' + esc(c[1]) + '</b><span>' + esc(c[2]) + '<em class="nf">Жаңа дерек: ' + esc(c[5]) + '</em></span></span></button>').join('') + '<div class="gc key"><p class="eyebrow" style="color:var(--amber)">Неге 7 топ?</p><p style="font-weight:800;font-size:clamp(13px,1.1vw,17px)">Әр топ табиғаттың бір бөлігінің өзгерісін көрсетеді: орман, топырақ, жер, ауа мен су, климат, айналымдар және табиғи ортаның өзін-өзі қалпына келтіру қабілеті.</p></div></div>' + '</div>' +
+        '<div class="ovw" id="ovw" hidden>' + '<div class="g7">' + SEVEN.map((c, k) => '<button class="gc closed" data-g="' + k + '"><img src="' + ECO.IMG(c[0]) + '" alt="">' + (c[3] ? '<video src="media/' + c[3] + '.mp4?v=20261106a" muted loop playsinline preload="none" aria-hidden="true"></video>' : '') + '<span class="num">' + (k + 1) + '</span><span class="sph">' + esc(c[4]) + '</span><span class="t"><b>' + esc(c[1]) + '</b><span>' + esc(c[2]) + '<em class="nf">Жаңа дерек: ' + esc(c[5]) + '</em></span></span></button>').join('') + '<div class="gc key"><p class="eyebrow" style="color:var(--amber)">Неге 7 топ?</p><p style="font-weight:800;font-size:clamp(13px,1.1vw,17px)">Әр топ табиғаттың бір бөлігінің өзгерісін көрсетеді: орман, топырақ, жер, ауа мен су, климат, айналымдар және табиғи ортаның өзін-өзі қалпына келтіру қабілеті.</p></div></div>' + '</div>' +
         '<div class="ctrl"><button class="plain" id="ovb">Барлық 7 топты бір экранда көру</button><button class="gloss" id="nx">Келесі →</button></div>';
     } else if (s.id === 'learn2') {
       h = '<div class="shead glass vbg">' + bgv('bg_heat') + '<span class="pg">Оқулық · 55-б., 21-сурет</span><p class="eyebrow">Сызба бойынша түсіндіру</p><h1>Жылыжай эффектісі қалай пайда болады?</h1><p class="lead"><b>Жылыжай эффектісі</b> — атмосфера күн радиациясын жерге өткізіп, ал жер бетінен шыққан жылуды жылыжай газдары ұстап қалуы. Жылыжайдың шыны шатыры да жылуды осылай сақтайды.</p></div>' +
@@ -763,7 +773,7 @@
         '<div class="row"><button class="plain" id="ghp">← Алдыңғы</button><button class="gloss" id="ghn">Келесі қадам →</button></div><p class="muted" id="ghc" style="font-weight:800"></p>' +
         '<p class="nfbox">Жаңа дерек: 2024 жылы атмосферадағы CO₂ мөлшері 423,9 ppm-ге жетті (WMO). 2024 жыл — бақылау тарихындағы ең ыстық жыл, өнеркәсіпке дейінгі кезеңнен шамамен 1,55°C жылы (WMO).</p><div class="row"><button class="plain" id="nx">Қазақстан мысалдары →</button></div></div></div>';
     } else if (s.id === 'recap') {
-      h = '<div class="split">' + vid('v_film', 'vidbig', 'controls poster="media/poster_film.jpg?v=20261105b"') +
+      h = '<div class="split">' + vid('v_film', 'vidbig', 'controls poster="media/poster_film.jpg?v=20261106a"') +
         '<div class="boxp glass"><span class="pg">Оқулық · 54–56-б.</span><p class="eyebrow">Бекіту · бейне-шолу</p><h2>Өз жауабыңды тексер</h2><p>Сабақ басындағы бейнені енді жазуларымен қайта көреміз.</p><ol><li>Проблемалық сұраққа берген жауабың дұрыс па еді?</li><li>Әр көрініс 20-суреттегі 7 топтың қайсысына жатады?</li><li>Қай ықпал басқа ықпалды күшейтеді? Мысал келтір.</li></ol><p class="muted">Бейнеден кейін 2-раундқа өтеміз: 6 сұрақ телефоннан.</p><div class="row"><button class="gloss" id="nx">2-раунд →</button></div></div></div>';
     } else if (s.id === 'learn3') {
       h = '<div class="shead glass vbg">' + bgv('bg_desert') + '<p class="eyebrow">Өмірмен байланыс · 2025 жылғы деректер</p><h1>Қазақстандағы мысалдар 20-суреттегі қай ықпалға жатады?</h1><p class="lead">Әр мысалды талдап, ықпал тобын анықтаңдар. Содан кейін «Жауабы» батырмасы арқылы тексеріңдер.</p></div>' +
@@ -1110,15 +1120,76 @@
     const fast = ids.filter((u) => ECO.isRight(q, ans[u].v) && players[u]).sort((a, b) => ans[a].t - ans[b].t).slice(0, 3);
     const teamOk = [0, 1, 2].map((i) => { const tm = Object.keys(players).filter((u) => teams[u] === i); const ok = tm.filter((u) => ans[u] && ECO.isRight(q, ans[u].v)).length; return [ok, tm.length]; });
     app.innerHTML = topbar() + '<div class="qhead glass"><div class="qn">' + (m.q + 1) + '/' + Q.length + '<small>сұрақ</small></div><div class="qt"><h2>' + esc(q.q) + '</h2></div><div></div></div>' +
-      '<div class="reveal"><div style="display:flex;flex-direction:column;gap:14px;min-width:0"><div class="correct glass"><p class="eyebrow" style="color:var(--good)">Дұрыс жауап' + (q.g ? ' · ' + esc(q.g) : '') + '</p>' + (q.g ? flowBig(q) : '<h2' + (ECO.answerText(q).length > 60 ? ' class="long"' : '') + '>' + esc(ECO.answerText(q)) + '</h2>') + (q.why ? '<p class="muted" style="font-weight:700">' + esc(q.why) + '</p>' : '') + '<span class="pg">' + esc(q.src) + '</span></div>' +
+      '<div class="reveal"><div style="display:flex;flex-direction:column;gap:14px;min-width:0"><div class="correct glass"><p class="eyebrow" style="color:var(--good)">Дұрыс жауап' + (q.g ? ' · ' + esc(q.g) : '') + '</p>' + (q.g ? flowBig(q) : '<h2' + (ECO.answerText(q).length > 60 ? ' class="long"' : '') + '>' + esc(ECO.answerText(q)) + '</h2>') + (q.why ? '<p class="muted" style="font-weight:700">' + esc(q.why) + '</p>' : '') + '<span class="pg">' + esc(q.src) + '</span></div>' + allRes(q, m) +
       '<div class="dist glass"><p class="eyebrow">Жауаптар · ' + ids.length + ' оқушы</p>' + dist + '</div></div>' +
       '<div style="display:flex;flex-direction:column;gap:14px;min-width:0"><div class="fast glass"><p class="eyebrow">Ең жылдам дұрыс жауап</p>' + (fast.length ? fast.map((u, k) => '<div class="frow" style="animation-delay:' + (k * .15) + 's"><span class="medal m' + (k + 1) + '">' + (k + 1) + '</span><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis">' + esc(players[u].name) + '</span><span class="dot" style="background:' + T[teams[u]].c2 + '"></span><span class="pill">' + (Math.max(0, ans[u].t - st - ECO.LEAD) / 1000).toFixed(1) + ' с</span></div>').join('') : '<p class="muted" style="font-weight:700">Дұрыс жауап болмады.</p>') + '</div>' +
       '<div class="answered">' + [0, 1, 2].map((i) => '<div class="acard glass"><div class="h"><span style="color:' + T[i].ink + '">' + tname(i) + '</span><b>' + teamOk[i][0] + ' / ' + teamOk[i][1] + '</b></div><div class="track"><i style="width:' + (teamOk[i][1] ? teamOk[i][0] / teamOk[i][1] * 100 : 0) + '%;background:' + grad(i) + '"></i></div><p class="muted" style="font-weight:700;font-size:13px">дұрыс жауап берді</p></div>').join('') + '</div></div></div>' +
-      '<div class="ctrl"><button class="plain" id="lbb">Рейтинг</button><button class="gloss" id="nx">' + esc(nextLabel(false)) + '</button></div>';
+      '<div class="ctrl"><button class="plain" id="lbb">Барлық оқушы · рейтинг</button><button class="gloss" id="nx">' + esc(nextLabel(false)) + '</button></div>';
     requestAnimationFrame(() => setTimeout(() => app.querySelectorAll('.bar').forEach((b) => { b.style.width = b.dataset.w + '%'; }), 80));
     if (fast.length) confetti(40);
     $('nx').onclick = () => afterReveal(false);
     $('lbb').onclick = () => be.update(G + '/meta', { phase: 'board' });
+  }
+
+  /* әр оқушының осы сұрақтағы нәтижесі (тек тақтада) */
+  function cellOf(qi, uid) {
+    const m = game.meta || {}, q = Q[qi], a = ((game.answers || {})[qi] || {})[uid], st = (m.starts || {})[qi];
+    if (!a) return { k: 'none', p: 0, sec: null };
+    const p = ECO.points(q, a, st, ECO.qtime(q, m, qi)); const sec = Math.max(0, (a.t - st - ECO.LEAD) / 1000);
+    return { k: p ? 'ok' : 'no', p, sec };
+  }
+  function byTeamName() { const players = game.players || {}, teams = game.teams || {};
+    return Object.keys(players).sort((a, b) => ((teams[a] ?? 9) - (teams[b] ?? 9)) || players[a].name.localeCompare(players[b].name)); }
+  function allRes(q, m) {
+    const players = game.players || {}, teams = game.teams || {}, ids = byTeamName();
+    if (!ids.length) return '';
+    const ok = ids.filter((u) => cellOf(m.q, u).k === 'ok').length;
+    return '<div class="allres glass"><p class="eyebrow">Әр оқушының нәтижесі · ' + ok + ' / ' + ids.length + ' дұрыс</p><div class="argrid">' + ids.map((u) => { const c = cellOf(m.q, u);
+      return '<span class="arc ' + c.k + '" style="--tc:' + (T[teams[u]] ? T[teams[u]].c2 : '#999') + '"><b>' + esc(players[u].name) + '</b><i>' + (c.k === 'ok' ? '✓ +' + c.p + ' · ' + c.sec.toFixed(1) + ' с' : c.k === 'no' ? '✗ ' + c.sec.toFixed(1) + ' с' : '— жауап жоқ') + '</i></span>'; }).join('') + '</div></div>';
+  }
+  function matrixTable(res) {
+    const asked = res.asked, bi = (game.meta || {}).boardInd || {};
+    return '<div class="scroll mx"><table class="tbl"><thead><tr><th>№</th><th>Оқушы</th><th>Топ</th>' + asked.map((qi) => '<th>С' + (qi + 1) + '</th>').join('') + '<th>Тақта</th><th>Дұрыс</th><th>Ұпай</th><th>Деңгей</th></tr></thead><tbody>' +
+      res.rows.map((r) => '<tr><td class="rk">' + r.rank + '</td><td><b>' + esc(r.name) + '</b></td><td>' + (r.team !== undefined ? '<span class="dot" style="background:' + T[r.team].c2 + '"></span>' + tname(r.team) : '—') + '</td>' +
+        asked.map((qi) => { const c = cellOf(qi, r.uid); return '<td class="mc ' + c.k + '">' + (c.k === 'ok' ? '✓<small>' + c.sec.toFixed(1) + 'с</small>' : c.k === 'no' ? '✗<small>' + c.sec.toFixed(1) + 'с</small>' : '—') + '</td>'; }).join('') +
+        '<td class="n">' + (bi[r.uid] || 0) + '</td><td class="n">' + r.correct + '/' + r.total + '</td><td class="n"><b>' + r.score + '</b></td><td>' + ECO.level(r)[0] + '</td></tr>').join('') + '</tbody></table></div>';
+  }
+  /* ---------- Excel-ге жүктеу ---------- */
+  const fmtClock = (t) => { if (!t) return ''; const d = new Date(t); return String(d.getDate()).padStart(2, '0') + '.' + String(d.getMonth() + 1).padStart(2, '0') + '.' + d.getFullYear() + ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0') + ':' + String(d.getSeconds()).padStart(2, '0'); };
+  function exportSheets() {
+    const res = ECO.compute(game), m = game.meta || {}, tn = (i) => ((m.teamNames || teamNames)[i]) || '';
+    const bi = m.boardInd || {}, asked = res.asked;
+    const st = [['№', 'Оқушы', 'Топ'].concat(asked.flatMap((qi) => ['С' + (qi + 1) + ' нәтиже', 'С' + (qi + 1) + ' уақыт (с)', 'С' + (qi + 1) + ' ұпай'])).concat(['Тақтадағы эстафета', 'Дұрыс', 'Барлық сұрақ', 'Орт. уақыт (с)', 'Жалпы ұпай', 'Деңгей'])];
+    res.rows.forEach((r) => st.push([r.rank, r.name, r.team !== undefined ? tn(r.team) : ''].concat(asked.flatMap((qi) => { const c = cellOf(qi, r.uid); return [c.k === 'ok' ? 'дұрыс' : c.k === 'no' ? 'қате' : 'жауап жоқ', c.sec === null ? '' : +c.sec.toFixed(1), c.p]; }))
+      .concat([bi[r.uid] || 0, r.correct, r.total, r.correct ? +r.time.toFixed(1) : '', r.score, ECO.level(r)[0]])));
+    const qs = [['№', 'Сұрақ', 'Дұрыс жауап', 'Жауап бергені', 'Дұрыс', 'Дұрыс %', 'Орт. уақыт (с)', 'Оқулық']];
+    asked.forEach((qi) => { const ids = Object.keys(game.players || {}); const cs = ids.map((u) => cellOf(qi, u)); const ans = cs.filter((c) => c.k !== 'none'), ok = cs.filter((c) => c.k === 'ok');
+      qs.push([qi + 1, Q[qi].q, ECO.answerText(Q[qi]), ans.length, ok.length, ans.length ? Math.round(ok.length / ans.length * 100) : 0, ans.length ? +(ans.reduce((x, c) => x + c.sec, 0) / ans.length).toFixed(1) : '', Q[qi].src]); });
+    const tm = [['Кезең', 'Жоспар (мин)', 'Нақты уақыт (мм:сс)', 'Нақты (с)', 'Айырма (с)']]; const lg = Object.assign({}, m.stlog || {});
+    if (curStage() >= 0) lg[curStage()] = (lg[curStage()] || 0) + stMs(m);
+    STAGES.forEach((x, k) => { const ms = lg[k]; tm.push([(k + 1) + '. ' + x.title, x.min, ms ? mmss(ms) : '', ms ? Math.round(ms / 1000) : '', ms ? Math.round(ms / 1000) - x.min * 60 : '']); });
+    tm.push(['Барлығы', TOTAL, mmss(lsMs(m)), Math.round(lsMs(m) / 1000), Math.round(lsMs(m) / 1000) - TOTAL * 60]);
+    const tr = [['Орын', 'Топ', 'Оқушы саны', 'Орташа ұпай', 'Тақта бонусы', 'Дұрыс жауаптар']].concat(res.teamRows.map((t) => [t.rank, tn(t.i), t.n, t.avg, t.bonus, t.correct]));
+    const info = [['Сабақ', '§ 15 · 10 «Б» · Антропогендік факторлар'], ['Оқу мақсаты', '10.3.2.4 Табиғатқа әсер ететін антропогендік факторларды топтастыру және графикалық түрде ұсыну'], ['Ойын коды', code], ['Басталған уақыты', fmtClock(m.realStart)], ['Нәтиже шыққан уақыты', fmtClock(m.realEnd)], ['Сабақ таймері', mmss(lsMs(m))], ['Жүктелген уақыты', fmtClock(Date.now())], ['Оқушы саны', res.rows.length]];
+    return { 'Оқушылар': st, 'Сұрақтар': qs, 'Топтар': tr, 'Уақыт': tm, 'Ақпарат': info };
+  }
+  function loadXLSX() { return new Promise((ok, no) => { if (window.XLSX) return ok(); const sc = document.createElement('script'); sc.src = 'vendor/xlsx.full.min.js'; sc.onload = ok; sc.onerror = no; setTimeout(() => no(new Error('timeout')), 8000); document.head.appendChild(sc); }); }
+  async function downloadExcel(btn) {
+    const sh = exportSheets(), d = new Date(), stamp = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') + '_' + String(d.getHours()).padStart(2, '0') + '-' + String(d.getMinutes()).padStart(2, '0');
+    const name = 'Ekozharys_10B_' + stamp; if (btn) btn.disabled = true;
+    try { await loadXLSX(); const wb = XLSX.utils.book_new();
+      Object.keys(sh).forEach((k) => { const ws = XLSX.utils.aoa_to_sheet(sh[k]); ws['!cols'] = sh[k][0].map((_, c) => ({ wch: Math.min(60, Math.max(8, ...sh[k].map((r) => String(r[c] ?? '').length + 2))) })); XLSX.utils.book_append_sheet(wb, ws, k); });
+      XLSX.writeFile(wb, name + '.xlsx');
+    } catch (e) {
+      const csv = '﻿' + sh['Оқушылар'].map((r) => r.map((v) => '"' + String(v ?? '').replace(/"/g, '""') + '"').join(';')).join('\r\n');
+      const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' })); a.download = name + '.csv'; a.click(); }
+    if (btn) btn.disabled = false;
+  }
+  function wipeAll(btn) {
+    if (!btn.dataset.sure) { btn.dataset.sure = '1'; btn.textContent = 'Сенімдісіз бе? Тағы бір рет басыңыз'; setTimeout(() => { if (btn) { delete btn.dataset.sure; btn.textContent = 'Сынақ деректерін тазалау'; } }, 4000); return; }
+    try { be.set(G, null); } catch (e) {}
+    try { Object.keys(localStorage).filter((k) => /^ecolive_|^eco_teams/.test(k)).forEach((k) => localStorage.removeItem(k)); } catch (e) {}
+    setTimeout(() => { location.href = 'host.html'; }, 400);
   }
 
   /* ---------- LEADERBOARD ---------- */
@@ -1133,10 +1204,11 @@
   }
   function mountBoard() {
     const m = game.meta, res = ECO.compute(game);
-    app.innerHTML = topbar() + '<div class="lb"><div class="lbcard glass"><p class="eyebrow">' + (roundOf(m.q) >= 0 && m.q === STAGES[roundOf(m.q)].to ? esc(STAGES[roundOf(m.q)].title) + ' аяқталды · ' : '') + 'Топтар · орташа ұпай</p>' + teamBars(res) + '</div><div class="lbcard glass"><p class="eyebrow">Үздік 10 оқушы</p>' + indivTable(res.rows, 10) + '</div></div>' +
-      '<div class="ctrl"><button class="gloss" id="nx">' + esc(nextLabel(true)) + '</button></div>';
+    app.innerHTML = topbar() + '<div class="lb"><div class="lbcard glass"><p class="eyebrow">' + (roundOf(m.q) >= 0 && m.q === STAGES[roundOf(m.q)].to ? esc(STAGES[roundOf(m.q)].title) + ' аяқталды · ' : '') + 'Топтар · орташа ұпай</p>' + teamBars(res) + '</div><div class="lbcard glass"><p class="eyebrow">Барлық оқушы · ' + res.rows.length + '</p>' + matrixTable(res) + '</div></div>' +
+      '<div class="ctrl"><button class="plain" id="xl">Excel-ге жүктеу</button><button class="gloss" id="nx">' + esc(nextLabel(true)) + '</button></div>';
     requestAnimationFrame(() => setTimeout(() => app.querySelectorAll('.tr i').forEach((b) => { b.style.width = b.dataset.w + '%'; }), 80));
     $('nx').onclick = () => afterReveal(true);
+    $('xl').onclick = () => downloadExcel($('xl'));
   }
 
   /* ---------- END ---------- */
@@ -1156,8 +1228,8 @@
     app.innerHTML = topbar() + '<div class="glass" style="padding:20px;display:flex;flex-direction:column;gap:16px"><p class="eyebrow" style="text-align:center">Жарыс аяқталды</p><h1 style="text-align:center;font-size:clamp(30px,4vw,56px)">Жеңімпаз: ' + tname(tr[0].i) + '!</h1>' +
       '<div class="podium">' + order.map((t, k) => '<div class="step" style="background:' + grad(t.i) + ';height:' + [190, 260, 140][k] + 'px;animation-delay:' + [.3, .6, 0][k] + 's"><span class="pl">' + t.rank + '</span><span class="wh">' + tname(t.i) + '</span><span class="pt">' + t.avg + ' ұпай</span></div>').join('') + '</div></div>' +
       '<div class="lb"><div style="display:flex;flex-direction:column;gap:14px;min-width:0"><div class="lbcard glass"><p class="eyebrow">Топтар</p>' + teamBars(res) + '</div>' + (curStage() >= 0 ? levelBox(res) : '<div id="fbk">' + feedbackBox() + '</div>') + '</div>' +
-      '<div class="lbcard glass"><p class="eyebrow">Барлық оқушының жеке нәтижесі</p>' + indivTable(res.rows) + '<div class="row"><button class="gloss" id="csv">Кестені көшіру (Excel)</button><span class="muted" id="cpn" style="font-weight:700"></span></div></div></div>' +
-      '<div class="ctrl">' + (curStage() >= 0 ? '<button class="gloss" id="nx">Кері байланыс →</button>' : '') + '<button class="plain" id="nw">Жаңа сабақ</button></div>';
+      '<div class="lbcard glass"><p class="eyebrow">Барлық оқушының жеке нәтижесі</p>' + matrixTable(res) + '<div class="row"><button class="gloss" id="xl">Excel-ге жүктеу (.xlsx)</button><button class="plain" id="csv">Кестені көшіру</button><span class="muted" id="cpn" style="font-weight:700"></span></div></div></div>' +
+      '<div class="ctrl">' + (curStage() >= 0 ? '<button class="gloss" id="nx">Кері байланыс →</button>' : '') + '<button class="plain" id="nw">Жаңа сабақ</button><button class="plain" id="wipe" style="color:var(--bad)">Сынақ деректерін тазалау</button></div>';
     if ($('nx')) $('nx').onclick = () => goStage(curStage() + 1);
     requestAnimationFrame(() => setTimeout(() => app.querySelectorAll('.tr i').forEach((b) => { b.style.width = b.dataset.w + '%'; }), 80));
     confetti(180);
@@ -1165,6 +1237,7 @@
       const fbk = () => { const rg = document.createRange(); rg.selectNodeContents(app.querySelector('.tbl')); const s = getSelection(); s.removeAllRanges(); s.addRange(rg); $('cpn').textContent = 'Кесте белгіленді, Ctrl+C басыңыз.'; };
       try { navigator.clipboard.writeText(tsv).then(() => { $('cpn').textContent = 'Көшірілді! Excel-ге қойыңыз.'; }, fbk); } catch (e) { fbk(); } };
     $('nw').onclick = () => { try { localStorage.removeItem('ecolive_host_code'); } catch (e) {} location.href = 'host.html'; };
+    $('xl').onclick = () => downloadExcel($('xl')); $('wipe').onclick = () => wipeAll($('wipe'));
   }
 
   /* ---------- router ---------- */
