@@ -228,8 +228,17 @@
   ECO.connect = async function (opts) {
     opts = opts || {};
     const cfg = window.ECO_FIREBASE;
-    if (cfg && cfg.apiKey && window.firebase) return firebaseBackend(cfg);
-    if (window.Peer && !window.ECO_DEMO) return opts.role === 'host' ? p2pHost(opts.code) : p2pPlayer();
+    if (cfg && cfg.apiKey && window.firebase) {
+      /* Firebase дайын болмаса (кіру өшірулі, ережелер қойылмаған, желі бөгеп тұр), тікелей байланысқа ауысамыз */
+      try {
+        const fb = await Promise.race([
+          (async () => { const b = await firebaseBackend(cfg); await b.get('games/_probe'); return b; })(),
+          new Promise((_, no) => setTimeout(() => no(new Error('Firebase timeout')), 10000))
+        ]);
+        fb.kind = 'firebase'; return fb;
+      } catch (e) { try { console.warn('Firebase қосылмады, тікелей байланыс қолданылады:', e && e.message); } catch (x) {} }
+    }
+    if (window.Peer && !window.ECO_DEMO) { const b = await (opts.role === 'host' ? p2pHost(opts.code) : p2pPlayer()); try { b.kind = 'p2p'; } catch (x) {} return b; }
     return localBackend();
   };
 })();
