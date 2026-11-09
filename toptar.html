@@ -99,8 +99,22 @@ textarea { width: 100%; min-height: 170px; font: inherit; font-size: 17px; paddi
     { key: 'steppe', name: 'Дала сақшылары', color: 'var(--t2)', bg: 'var(--t2-bg)', hex: '#B5651D', motto: 'Шөлейттенуге жол бермейміз!' }
   ];
   const KEY = 'eco_teams_v1';
-  const SAMPLE = Array.from({ length: 18 }, (_, i) => (i + 1) + '-оқушы').join('\n');
-  const st = { roster: SAMPLE, names: TEAMS.map((t) => t.name), queue: [], slots: [], opened: {}, teams: [[], [], []], k: 0 };
+  const SAMPLE = 'Аты озат\nАты екпінді\nАты қанағат';
+  const st = { roster: SAMPLE, names: TEAMS.map((t) => t.name), queue: [], slots: [], opened: {}, teams: [[], [], []], k: 0, assign: {}, lvl: {}, roles: {} };
+  /* деңгей: озат (A) · екпінді (B) · қанағат (C) — әр топқа тең бөлінеді */
+  const nrm = (n) => String(n || '').toLowerCase().trim().replace(/\s+/g, ' ').replace(/[әғқңөұүһі]/g, (c) => ({ 'ә': 'а', 'ғ': 'г', 'қ': 'к', 'ң': 'н', 'ө': 'о', 'ұ': 'у', 'ү': 'у', 'һ': 'х', 'і': 'и' }[c]));
+  const lvlOf = (w) => { w = nrm(w).replace(/[.,;]/g, ''); if (/^(a|а|озат|жогары)$/.test(w)) return 'A'; if (/^(b|в|б|екпинди|орта)$/.test(w)) return 'B'; if (/^(c|с|канагат|канагаттанарлык|томен)$/.test(w)) return 'C'; return null; };
+  const LN = { A: 'озат', B: 'екпінді', C: 'қанағат' }, LC = { A: '#2E7D4F', B: '#1F6FA8', C: '#C98A12' };
+  const ROLE = { sp1: '🎤 1-спикер', sp2: '🎤 2-спикер', hs: '📒 хатшы', po: '🖼️ постер қорғаушы' };
+  function parseRoster(txt) { return txt.split('\n').map((l) => l.trim()).filter(Boolean).map((l) => { const t = l.split(/[\s,;\t]+/).filter(Boolean); const i = t.findIndex((w, j) => j > 0 && lvlOf(w)); return { name: (i > 0 ? t.slice(0, i) : t).join(' '), lvl: i > 0 ? lvlOf(t[i]) : 'B' }; }).filter((x) => x.name); }
+  function balance(list) { const W = { A: 3, B: 2, C: 1 }, gs = [0, 1, 2].map((g) => ({ g, n: 0, w: 0 }));
+    ['A', 'B', 'C'].forEach((L) => shuffle(list.filter((x) => x.lvl === L)).forEach((x) => { const mn = Math.min(...gs.map((g) => g.n)); let c = shuffle(gs.filter((g) => g.n === mn));
+      const t = L === 'C' ? Math.max(...c.map((g) => g.w)) : Math.min(...c.map((g) => g.w)); const g = c.find((g) => g.w === t); x.g = g.g; g.n++; g.w += W[L]; }));
+    /* рөлдер: 2 спикер (жаңа сабақты түсіндіреді; озат пен екпінді), хатшы, постер қорғаушы */
+    [0, 1, 2].forEach((g) => { const m = list.filter((x) => x.g === g); m.forEach((x) => { x.role = ''; });
+      const pick = (pred, r) => { const c = m.find((x) => !x.role && pred(x)) || m.find((x) => !x.role); if (c) c.role = r; };
+      pick((x) => x.lvl === 'A', 'sp1'); pick((x) => x.lvl === 'B', 'sp2'); pick((x) => x.lvl === 'B', 'hs'); pick((x) => x.lvl !== 'A', 'po'); });
+    return list; }
   const app = document.getElementById('app');
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -113,7 +127,7 @@ textarea { width: 100%; min-height: 170px; font: inherit; font-size: 17px; paddi
     app.innerHTML = '<p class="eyebrow">1-қадам · топқа бөлу · § 15. Геоэкологиядағы антропогендік факторлар</p><h1 style="font-size:clamp(32px,4.6vw,58px)">Экожүйе капсулалары</h1>' +
       '<p class="lead">Әр оқушы тақтаға шығып, жабық капсулалардың бірін өзі ашады. Капсуланың ішінде оның тобы жасырынған: орман, су немесе дала. Топтар автоматты түрде тең бөлінеді.</p>' +
       '<div class="eco3">' + TEAMS.map((t, i) => '<div class="eco" style="border-color:' + t.color + '"><img src="' + IMG[t.key] + '" alt=""><div class="b"><input id="tn' + i + '" value="' + esc(st.names[i]) + '" maxlength="22" aria-label="' + (i + 1) + '-топтың атауы"><small>' + t.motto + '</small></div></div>').join('') + '</div>' +
-      '<label for="roster" style="font-weight:800">Сынып тізімі (әр жолға бір оқушы, төмендегісі — үлгі)</label><textarea id="roster">' + esc(st.roster) + '</textarea>' +
+      '<label for="roster" style="font-weight:800">Сынып тізімі: әр жолға «Аты деңгейі» (озат / екпінді / қанағат) — топтар деңгейі бойынша тең бөлінеді</label><textarea id="roster">' + esc(st.roster) + '</textarea>' +
       '<div class="row"><button class="big" id="play">Капсулаларды ашу →</button><button class="ghost" id="quick">Бірден бөлу</button><span class="note">Оқушылар кезегі кездейсоқ болады</span></div>';
     TEAMS.forEach((t, i) => $('tn' + i).addEventListener('input', (e) => { st.names[i] = e.target.value.trim() || t.name; }));
     $('play').addEventListener('click', () => start(false));
@@ -121,11 +135,12 @@ textarea { width: 100%; min-height: 170px; font: inherit; font-size: 17px; paddi
   }
   function start(quick) {
     st.roster = $('roster').value;
-    const names = st.roster.split('\n').map((x) => x.trim()).filter(Boolean);
+    const list = balance(parseRoster(st.roster)); const names = list.map((x) => x.name);
     if (names.length < 3) { $('roster').focus(); return; }
+    st.assign = {}; st.lvl = {}; st.roles = {}; list.forEach((x) => { st.assign[x.name] = x.g; st.lvl[x.name] = x.lvl; st.roles[x.name] = x.role; });
     st.queue = shuffle(names); st.k = 0; st.teams = [[], [], []]; st.opened = {};
-    st.slots = shuffle(names.map((_, i) => i % 3));
-    if (quick) { st.queue.forEach((n, i) => { st.teams[st.slots[i]].push(n); }); return vFinal(); }
+    st.slots = shuffle(names.map((n) => st.assign[n]));
+    if (quick) { st.queue.forEach((n) => { st.teams[st.assign[n]].push(n); }); return vFinal(); }
     vReveal();
   }
 
@@ -140,12 +155,14 @@ textarea { width: 100%; min-height: 170px; font: inherit; font-size: 17px; paddi
       '<div class="row">' + (cur ? '<button class="ghost" id="skip">Келесі оқушы</button><button class="ghost" id="auto">Қалғандарын бірден бөлу</button>' : '<button class="big" id="done">Топтар дайын →</button>') + '</div></div></div>';
     app.querySelectorAll('.cap:not([disabled])').forEach((b) => b.addEventListener('click', () => openCap(+b.dataset.i, b)));
     if ($('skip')) $('skip').addEventListener('click', () => { st.queue.push(st.queue.splice(st.k, 1)[0]); vReveal(); });
-    if ($('auto')) $('auto').addEventListener('click', () => { const free = st.slots.map((t, i) => i).filter((i) => !st.opened[i]); for (; st.k < st.queue.length; st.k++) { const i = free.shift(); st.opened[i] = st.queue[st.k]; st.teams[st.slots[i]].push(st.queue[st.k]); } vFinal(); });
+    if ($('auto')) $('auto').addEventListener('click', () => { const free = st.slots.map((t, i) => i).filter((i) => !st.opened[i]); for (; st.k < st.queue.length; st.k++) { const n = st.queue[st.k], t = st.assign[n]; const i = free.find((j) => st.slots[j] === t) ?? free[0]; free.splice(free.indexOf(i), 1); st.opened[i] = n; st.slots[i] = t; st.teams[t].push(n); } vFinal(); });
     if ($('done')) $('done').addEventListener('click', vFinal);
   }
   function openCap(i, btn) {
     const cur = st.queue[st.k]; if (!cur || st.opened[i]) return;
-    const t = st.slots[i]; st.opened[i] = cur; st.teams[t].push(cur); st.k++;
+    const t = st.assign[cur] ?? st.slots[i];
+    if (st.slots[i] !== t) { const j = st.slots.findIndex((x, q) => x === t && !st.opened[q] && q !== i); if (j >= 0) { st.slots[j] = st.slots[i]; } st.slots[i] = t; }
+    st.opened[i] = cur; st.teams[t].push(cur); st.k++;
     btn.classList.add('open');
     app.querySelectorAll('.cap').forEach((b) => { b.disabled = true; });
     setTimeout(() => {
@@ -158,13 +175,13 @@ textarea { width: 100%; min-height: 170px; font: inherit; font-size: 17px; paddi
     }, 650);
   }
   function save() {
-    try { localStorage.setItem(KEY, JSON.stringify({ roster: st.roster, names: st.names, teams: st.teams, ts: Date.now() })); return true; } catch (e) { return false; }
+    try { localStorage.setItem(KEY, JSON.stringify({ roster: st.roster, names: st.names, teams: st.teams, lvl: st.lvl, roles: st.roles, ts: Date.now() })); return true; } catch (e) { return false; }
   }
   function vFinal() {
     const ok = save();
     app.innerHTML = '<p class="eyebrow">Топтар дайын</p><h1 style="font-size:clamp(30px,4.2vw,54px)">Үш экожүйе — үш команда</h1>' +
-      '<div class="final3">' + TEAMS.map((t, i) => '<div class="fcol" style="border-color:' + t.color + ';animation-delay:' + (i * .15) + 's"><img src="' + IMG[t.key] + '" alt=""><div class="b"><h2 style="color:' + t.color + '">' + esc(st.names[i]) + '</h2><p class="note">' + t.motto + '</p><ol>' + st.teams[i].map((n) => '<li>' + esc(n) + '</li>').join('') + '</ol></div></div>').join('') + '</div>' +
-      '<div class="mission"><b>Топтың рөлдері (1 минут):</b> тергеуші — тапсырманы оқиды; тексеруші — оқулықтан тексереді; хатшы — цифрларды жазады; спикер — жауапты айтады.</div>' +
+      '<div class="final3">' + TEAMS.map((t, i) => '<div class="fcol" style="border-color:' + t.color + ';animation-delay:' + (i * .15) + 's"><img src="' + IMG[t.key] + '" alt=""><div class="b"><h2 style="color:' + t.color + '">' + esc(st.names[i]) + '</h2><p class="note">' + t.motto + '</p><ol>' + st.teams[i].map((n) => '<li>' + esc(n) + (st.roles[n] ? ' <b style="font-size:.8em;color:' + t.hex + '">' + ROLE[st.roles[n]] + '</b>' : '') + (st.lvl[n] ? ' <span style="font-size:.7em;font-weight:800;color:#fff;background:' + LC[st.lvl[n]] + ';border-radius:99px;padding:1px 8px">' + LN[st.lvl[n]] + '</span>' : '') + '</li>').join('') + '</ol></div></div>').join('') + '</div>' +
+      '<div class="mission"><b>Рөлдер:</b> 🎤 1- және 2-спикер — алдын ала дайындалған инфографикамен жаңа сабақты түсіндіреді; 📒 хатшы — жұмыс парақтарына қарап балл қояды (бір телефон); 🖼️ постер қорғаушы — «Экозертхана» постерін қорғайды. Деңгейлер: озат · екпінді · қанағат — әр топта тең.</div>' +
       '<div class="row"><a class="big" href="live/host.html" style="text-decoration:none">Сабақты тақтада бастау →</a><button class="ghost" id="again">Қайта бөлу</button><button class="ghost" id="copy">Тізімді көшіру</button><span class="note" id="cpn" role="status">' + (ok ? 'Топтар келесі ойынға сақталды.' : 'Топтар сақталмады: келесі ойында тізімді қайта енгізіңіз.') + '</span></div>';
     confetti(150);
     $('again').addEventListener('click', vSetup);

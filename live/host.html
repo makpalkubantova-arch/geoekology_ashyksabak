@@ -476,6 +476,17 @@ body.fitmode { overflow-x: hidden; }
 .bigfb .fb div { font-size: clamp(16px, 1.5vw, 22px); padding: 18px; }
 .bigfb .cmts { max-height: 40vh; }
 .bigfb .cmts p { font-size: clamp(15px, 1.3vw, 19px); animation: rise .4s ease both; }
+
+/* --- жаңа кезеңдер: бағалау кестесі, топтар, 6 спикер, баға --- */
+.crt{padding:14px 18px;overflow:auto}.crt table{width:100%;border-collapse:collapse;font-size:clamp(14px,1.15vw,18px)}.crt th{text-align:left;font-size:.8em;color:#4b6159;padding:6px 8px;border-bottom:2px solid rgba(20,43,38,.12)}.crt td{padding:7px 8px;border-bottom:1px solid rgba(20,43,38,.08);vertical-align:top}.crt td.pt{font-weight:900;font-size:1.2em;text-align:center}
+.crt th small{font-weight:600;opacity:.7}.b10{display:inline-block;min-width:44px;text-align:center;color:#fff;border-radius:99px;padding:3px 10px;font-weight:900}
+.grp3{display:grid;grid-template-columns:1fr 1fr 1fr 300px;gap:14px;margin-top:12px}.gcol{padding:14px 18px}.gcol h3{font-size:clamp(20px,1.8vw,28px);margin-bottom:6px}.gcol ol{margin:0;padding-left:22px;font-size:clamp(15px,1.25vw,19px);line-height:1.6}.secq{text-align:center}
+.spk7{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-top:12px}.spk{position:relative;display:flex;flex-direction:column;gap:4px;padding:0 0 10px;overflow:hidden;cursor:pointer;text-align:left;border:0}
+.spk img{width:100%;height:92px;object-fit:cover}.spk .n{position:absolute;left:8px;top:8px;background:#fff;border-radius:99px;width:30px;height:30px;display:grid;place-items:center;font-weight:900}
+.spk b{font-size:clamp(12px,1vw,15px);padding:0 10px;line-height:1.2}.spk small{padding:0 10px;font-weight:800;color:#2e4a42;font-size:clamp(11px,.9vw,14px)}.spk.on{outline:4px solid #F7B24A}
+.ghall .gs{opacity:1!important}.ghall svg{width:100%;max-height:420px}
+.capov{position:fixed;inset:0;z-index:300;background:rgba(10,30,24,.6);display:flex;flex-direction:column;align-items:center;gap:10px;padding:14px}.capov iframe{flex:1;width:100%;border:0;border-radius:20px;background:#fff}
+.crit1{border-left:6px solid #F7B24A}
 </style>
 </head>
 <body>
@@ -545,6 +556,7 @@ body.fitmode { overflow-x: hidden; }
     if (ex && (typeof ex.lsRun === 'number' || typeof ex.stRun === 'number')) { const n = be.now();
       await be.update(G + '/meta', { lsAcc: (ex.lsAcc || 0) + (typeof ex.lsRun === 'number' ? n - ex.lsRun : 0), lsRun: null, stAcc: (ex.stAcc || 0) + (typeof ex.stRun === 'number' ? n - ex.stRun : 0), stRun: null }); } }
   const joinUrl = new URL('join.html?code=' + code, location.href).href;
+  const secUrl = new URL('hatshy.html?code=' + code, location.href).href;
   const guestUrl = joinUrl + '&g=1';
   let game = {}; let mounted = ''; let seen = new Set(); let tick = null;
 
@@ -556,22 +568,41 @@ body.fitmode { overflow-x: hidden; }
   /* ---------- 45 минуттық сабақтың кезеңдері ---------- */
   const PHASES = ['Ұйымдастыру', 'Жаңа сабақ', 'Тапсырмалар', 'Бекіту', 'Кері байланыс'];
   const STAGES = [
-    { ph: 0, id: 'title', kind: 'slide', min: 1, short: 'Сәлем', title: 'Сәлемдесу', note: 'Телефоныңды дайында. Келесі кезеңде QR-код шығады.' },
-    { ph: 0, id: 'goal', kind: 'slide', min: 2, short: 'Мақсат', title: 'Мақсат пен міндеттер', note: 'Оқу мақсаты 10.3.2.4: табиғатқа әсер ететін антропогендік факторларды топтастыру және графикалық түрде ұсыну.' },
-    { ph: 0, id: 'join', kind: 'join', min: 3, short: 'Ереже', title: 'Топқа бөлу және қолдану ережесі', note: '' },
-    { ph: 0, id: 'assess', kind: 'slide', min: 1, short: 'Бағалау', title: 'Бағалау критерийлері', note: 'Әркім жеке ұпай жинайды. Топ ұпайы — мүшелерінің орташа ұпайы және тақтадағы эстафета ұпайы.' },
-    { ph: 1, id: 'video', kind: 'slide', min: 2, short: 'Бейне', title: 'Проблемалық бейне', note: 'Экрандағы бейнені мұқият қара: Жерге не болды?' },
-    { ph: 1, id: 'learn1', kind: 'slide', min: 4, short: '7 топ', title: 'Адамның табиғатқа ықпалы: 7 топ', note: 'Адамның шаруашылық әрекеті табиғатқа қалай әсер етеді? Оқулықта (20-сурет) бұл ықпал 7 топқа жіктелген.' },
-    { ph: 1, id: 'learn2', kind: 'slide', min: 3, short: 'Жылыжай', title: 'Жылыжай эффектісі қалай пайда болады', note: 'Экрандағы сызбаны қадам бойынша бақыла: 343, 103, 168 және 240 Вт/м² мәндерін есте сақта.' },
-    { ph: 1, id: 'learn3', kind: 'slide', min: 3, short: 'Қазақстан', title: 'Қазақстандағы мысалдар', note: 'Әр мысал 7 топтың қайсысына жатады? Талда.' },
-    { ph: 2, id: 'relay', kind: 'relay', min: 5, short: 'Тақтада', title: 'Тақтадағы эстафета: кластер құрамыз', note: 'Әр топтан кезекпен бір оқушы тақтаға шығып, мысалды кластер-сызбаға орналастырады. Экранға қара!' },
-    { ph: 2, id: 'r1', kind: 'round', min: 7, short: '1-раунд', title: '1-раунд: Ұғымдар мен деректер', from: 0, to: 5 },
-    { ph: 3, id: 'recap', kind: 'slide', min: 2, short: 'Шолу', title: 'Бекіту: бейне-шолу', note: 'Бейнені қарап, өз жауабыңды тексер: әр көрініс 20-суреттегі қай топқа жатады?' },
-    { ph: 3, id: 'r2', kind: 'round', min: 6, short: '2-раунд', title: '2-раунд: себеп-салдар және өмірмен байланыс', from: 6, to: Q.length - 1 },
-    { ph: 3, id: 'results', kind: 'results', min: 1, short: 'Нәтиже', title: 'Қорытынды және бағалау', note: 'Өз нәтижеңді телефоннан қара.' },
-    { ph: 4, id: 'feedback', kind: 'feedback', min: 3, short: 'Пікір', title: 'Кері байланыс', note: '' },
-    { ph: 4, id: 'home', kind: 'slide', min: 2, short: 'Үйге', title: 'Үй тапсырмасы', note: 'Жылыжай эффектісінің климаттың өзгеруіне әсері туралы шағын эссе жаз (оқулық, 56-б.). Бір жаңа дерек қос: WMO бойынша 2024 жыл — бақылау тарихындағы ең ыстық жыл (~+1,55°C).' }
+    { ph: 0, id: 'title', kind: 'slide', min: 1, short: 'Сәлем', title: 'Сәлемдесу', method: '«Жерге бір сөз» — психологиялық ахуал', note: 'Адам табиғатқа қалай әсер етеді? Бір сөзбен айт.' },
+    { ph: 0, id: 'hw', kind: 'slide', min: 2, short: 'Үй т.', title: 'Үй тапсырмасын тексеру', method: '«Фото-жұмбақ: деңгейін тап» (§ 14 қайталау)', note: 'Аймақтың геоэкологиялық деңгейін атап, дәлел айт.' },
+    { ph: 0, id: 'groups', kind: 'slide', min: 2, short: 'Топ', title: 'Топқа бөлу және рөлдер', method: '«Экожүйе капсулалары» — деңгейі тең топтар', note: 'Тобыңа отыр, рөліңді біл: спикер, хатшы, постер қорғаушы.' },
+    { ph: 0, id: 'goal', kind: 'slide', min: 1, short: 'Мақсат', title: 'Мақсат пен міндеттер', method: '«Мақсатты бірге құрамыз»', note: 'Оқу мақсаты 10.3.2.4: табиғатқа әсер ететін антропогендік факторларды топтастыру және графикалық түрде ұсыну.' },
+    { ph: 0, id: 'assess', kind: 'slide', min: 1, short: 'Бағалау', title: 'Бағалау: критерий, дескриптор, балл', method: '«Критерий → дескриптор → балл»', note: '7 критерий, 16 ұпай → 10 балдық баға.' },
+    { ph: 1, id: 'video', kind: 'slide', min: 2, short: 'Бейне', title: 'Проблемалық бейне', method: '«Миға шабуыл: Табиғатқа не болды?»', note: 'Экрандағы бейнені мұқият қара: Жерге не болды?' },
+    { ph: 1, id: 'self', kind: 'slide', min: 8, short: '6 спикер', title: 'Өзін-өзі басқару: 6 спикер жаңа сабақты түсіндіреді', method: '«Өзін-өзі басқару» + «Кластер» (тыңдаушылар)', note: 'Спикерлерді тыңдап, кластер парағына 7 ықпалды жаз.' },
+    { ph: 2, id: 'relay', kind: 'relay', min: 4, short: 'Тақтада', title: 'Тақтадағы эстафета: кластер құрамыз', method: '«Тақтадағы эстафета»', note: 'Әр топтан кезекпен бір оқушы тақтаға шығып, мысалды кластердегі дұрыс топқа орналастырады.' },
+    { ph: 2, id: 'pair', kind: 'slide', min: 5, short: 'Жұп', title: 'Жұптық жұмыс: «Ықпалды сөйлет»', method: '«Ықпалды сөйлет» — салыстыру кестесі', note: 'Жұбыңмен жұмыс парағындағы кестені толтыр.' },
+    { ph: 2, id: 'poster', kind: 'slide', min: 7, short: 'Постер', title: 'Топтық жұмыс: «Экозертхана» постері', method: '«Экозертхана» + «Галереяда қорғау»', note: 'Топпен постер жаса, постер қорғаушы 1 минутта қорғайды.' },
+    { ph: 2, id: 'fs', kind: 'slide', min: 2, short: 'ФС', title: 'Функционалдық сауаттылық: «Алматының ауасы»', method: '«Жағдаяттық есеп»', note: 'Жұмыс парағындағы жағдаятты оқып, есепте.' },
+    { ph: 3, id: 'join', kind: 'join', min: 1, short: 'Қосылу', title: 'Телефонмен қосылу (квиз)', method: 'QR арқылы қосылу', note: '' },
+    { ph: 3, id: 'quiz', kind: 'round', min: 6, short: 'Квиз', title: 'Бекіту: «Экожарыс» квизі (телефон)', method: '«Экожарыс» — ЖИ-квиз', from: 0, to: Q.length - 1 },
+    { ph: 3, id: 'ball', kind: 'slide', min: 1, short: 'Баға', title: 'Қорытынды баға: 16 ұпай → 10 балл', method: 'Критериалды бағалау', note: 'Өз балыңды тақтадан көр.' },
+    { ph: 4, id: 'feedback', kind: 'feedback', min: 1, short: 'Пікір', title: 'Кері байланыс', method: '«Экоуәде ағашы» + «2 жұлдыз, 1 тілек»', note: '' },
+    { ph: 4, id: 'home', kind: 'slide', min: 1, short: 'Үйге', title: 'Үй тапсырмасы', method: 'Деңгейлік үй тапсырмасы', note: 'Жылыжай эффектісінің климаттың өзгеруіне әсері туралы шағын эссе жаз (оқулық, 56-б.).' }
   ];
+  /* критерий — дескриптор — балл (хатшы K1–K6 енгізеді, K7 квизден) */
+  const CR = [
+    { k: 'K1', n: 'Үй тапсырмасы', w: 'топ', p: 1, d: 'Аймақтың геоэкологиялық деңгейін (1–5) дәлелмен атайды — 1' },
+    { k: 'K2', n: 'Өзін-өзі басқару', w: 'жеке', p: 2, d: 'Спикер: ықпалды сурет, дерек, Қазақстан мысалымен түсіндіреді — 2. Тыңдаушы: кластерге 4–6 ықпал — 1, 7 ықпал — 2' },
+    { k: 'K3', n: 'Тақтадағы эстафета', w: 'топ', p: 1, d: 'Қазақстан мысалын кластердің дұрыс тобына орналастырады — 1' },
+    { k: 'K4', n: '«Ықпалды сөйлет» кестесі', w: 'жұп', p: 2, d: 'Себебі мен салдарын жазады — 1; Қазақстан мысалы мен азайту жолын ұсынады — 1' },
+    { k: 'K5', n: '«Экозертхана» постері', w: 'топ', p: 3, d: 'Себеп → салдар байланысы — 1; Қазақстан мысалы — 1; қорғау шарасы және 1 минуттық қорғау — 1' },
+    { k: 'K6', n: '«Алматының ауасы» (ФС)', w: 'жеке', p: 2, d: 'Ықпал тобын анықтап, 37,1 : 2,7 ≈ 14 есе есептейді — 1; тізбек құрып, 2 шара ұсынады — 1' },
+    { k: 'K7', n: '«Экожарыс» квизі', w: 'телефон', p: 5, d: '8 сұрақ: дұрыс жауап саны × 5 ÷ 8 (дөңгелектеніп) — жүйе өзі есептейді' }
+  ];
+  const MAXC = CR.reduce((a, c) => a + c.p, 0); /* 16 */
+  const ball10 = (p) => Math.max(1, Math.min(10, Math.floor(p * 10 / MAXC + 0.5)));
+  const band10 = (b) => b >= 8 ? ['жоғары', '#1F7A45'] : b >= 4 ? ['орта', '#C0661A'] : ['төмен', '#B3261E'];
+  /* өзін-өзі басқару: әр топтың 2 спикері → 7 ықпалдың біреуі; 7-ін мұғалім қорытады */
+  const SPK = [{ t: 0, r: 'sp1', g: 0 }, { t: 0, r: 'sp2', g: 1 }, { t: 2, r: 'sp1', g: 2 }, { t: 1, r: 'sp1', g: 3 }, { t: 2, r: 'sp2', g: 4 }, { t: 1, r: 'sp2', g: 5 }, { t: -1, r: 'teacher', g: 6 }];
+  const capNow = () => { try { return JSON.parse(localStorage.getItem('eco_teams_v1') || 'null'); } catch (e) { return null; } };
+  const nrmN = (n) => String(n || '').toLowerCase().trim().replace(/\s+/g, ' ').replace(/[әғқңөұүһі]/g, (c) => ({ 'ә': 'а', 'ғ': 'г', 'қ': 'к', 'ң': 'н', 'ө': 'о', 'ұ': 'у', 'ү': 'у', 'һ': 'х', 'і': 'и' }[c]));
+  const speakerOf = (t, r) => { const c = capNow(); if (!c || !c.teams || !c.roles) return ''; return (c.teams[t] || []).find((n) => c.roles[n] === r) || ''; };
   const TOTAL = STAGES.reduce((s, x) => s + x.min, 0); /* 45 */
   const curStage = () => { const s = (game.meta || {}).stage; return typeof s === 'number' ? s : -1; };
   const roundOf = (qi) => STAGES.findIndex((s) => s.kind === 'round' && qi >= s.from && qi <= s.to);
@@ -627,7 +658,7 @@ body.fitmode { overflow-x: hidden; }
     const before = STAGES.slice(0, i).reduce((a, x) => a + x.min, 0);
     const L2 = 2 * Math.PI * 20;
     return '<div class="lbar glass"><div class="cdown" id="cdw"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="20" fill="none" stroke="rgba(20,43,38,.1)" stroke-width="5"/><circle id="cdr" cx="24" cy="24" r="20" fill="none" stroke="url(#cdg)" stroke-width="5" stroke-linecap="round" stroke-dasharray="' + L2 + ' ' + L2 + '" transform="rotate(-90 24 24)"/><defs><linearGradient id="cdg"><stop offset="0" stop-color="#5FCB8B"/><stop offset="1" stop-color="#1F8A55"/></linearGradient></defs></svg><div><small>Тапсырма уақыты</small><b id="cdn">00:00</b></div><button class="plain" id="addm" title="Кезеңге 1 минут қосу">+1 мин</button></div>' +
-      '<span class="phpill">' + PHASES[s.ph] + ' кезеңі</span><span class="stg">' + (i + 1) + '. ' + esc(s.title) + '</span><span class="pill">Кезеңде: <span class="clock" id="stc">00:00</span></span><span class="pill">Сабақ: <span class="clock" id="lsc">00:00</span> / ' + TOTAL + ':00</span><button class="gloss tbtn" id="lsgo">' + lsLabel(game.meta || {}) + '</button><button class="plain tbtn" id="lsrs" title="Таймерді нөлге қайтару">↺ Нөлдеу</button>' +
+      '<span class="phpill">' + PHASES[s.ph] + ' кезеңі</span><span class="stg">' + (i + 1) + '. ' + esc(s.title) + '</span>' + (s.method ? '<span class="pill" style="background:#FFF1D6;color:#7A4A00;font-weight:800">🧭 Әдіс: ' + esc(s.method) + '</span>' : '') + '<span class="pill">Кезеңде: <span class="clock" id="stc">00:00</span></span><span class="pill">Сабақ: <span class="clock" id="lsc">00:00</span> / ' + TOTAL + ':00</span><button class="gloss tbtn" id="lsgo">' + lsLabel(game.meta || {}) + '</button><button class="plain tbtn" id="lsrs" title="Таймерді нөлге қайтару">↺ Нөлдеу</button>' +
       '<div class="lprog">' + STAGES.map((x, k) => '<i style="width:' + (x.min / TOTAL * 100) + '%;background:' + (k < i ? '#43B36B' : k === i ? 'linear-gradient(90deg,#F7B24A,#E07A1F)' : 'transparent') + ';' + (k ? 'border-left:2px solid rgba(255,255,255,.9)' : '') + '"></i>').join('') + '</div>' +
       '<span class="muted" style="font-weight:700;font-size:13px;flex-basis:100%">Жоспар бойынша бұл кезең ' + before + '–' + (before + s.min) + '-минуттарда.</span></div>';
   }
@@ -714,7 +745,7 @@ body.fitmode { overflow-x: hidden; }
   const GQ = ['Ормандардың жойылуы табиғаттың қандай компоненттеріне әсер етеді?', 'Топырақ эрозиясына адамның қандай шаруашылық әрекеттері себеп болады?', 'Шөлейттенуді қандай табиғи және антропогендік факторлар күшейтеді?', 'Ауаның, судың және топырақтың ластану көздерін атаңдар.', 'Жылыжай газдарының мөлшері неліктен артып отыр?', 'Су айналымының бір буынындағы өзгеріс неге бүкіл тізбекке әсер етеді?', 'Табиғи орта неліктен өзін-өзі қалпына келтіре алмай қалады?'];
   function renderG1(k) {
     const box = $('g1'); if (!box) return; const c = SEVEN[k];
-    box.innerHTML = '<div class="g1 glass"><div class="g1m">' + (c[3] ? '<video src="media/' + c[3] + '.mp4?v=20261106d" poster="' + ECO.IMG(c[0]) + '" autoplay muted loop playsinline aria-hidden="true"></video>' : '<img src="' + ECO.IMG(c[0]) + '" alt="">') + '<span class="g1n">' + (k + 1) + '<small>/ 7</small></span></div>' +
+    box.innerHTML = '<div class="g1 glass"><div class="g1m">' + (c[3] ? '<video src="media/' + c[3] + '.mp4?v=20261109" poster="' + ECO.IMG(c[0]) + '" autoplay muted loop playsinline aria-hidden="true"></video>' : '<img src="' + ECO.IMG(c[0]) + '" alt="">') + '<span class="g1n">' + (k + 1) + '<small>/ 7</small></span></div>' +
       '<div class="g1t"><p class="eyebrow">' + (k + 1) + '-топ · ' + esc(c[4]) + '</p><h2>' + esc(c[1]) + '</h2><p class="g1x">' + esc(c[2]) + '</p><p class="nfbox">Жаңа дерек: ' + esc(c[5]) + '</p><p class="g1q"><b>Сыныпқа сұрақ:</b> ' + esc(GQ[k]) + '</p>' +
       '<div class="row"><button class="plain" id="g1p"' + (k ? '' : ' disabled') + '>← Алдыңғы</button><button class="gloss" id="g1n">' + (k < 6 ? 'Келесі топ →' : 'Барлық 7 топ →') + '</button></div></div></div>' +
       '<div class="g1strip">' + SEVEN.map((x, q) => '<button data-g1="' + q + '" class="' + (q === k ? 'on' : q < k ? 'done' : '') + '"><img src="' + ECO.IMG(x[0]) + '" alt=""><b>' + (q + 1) + '</b></button>').join('') + '</div>';
@@ -759,15 +790,15 @@ body.fitmode { overflow-x: hidden; }
     '<g class="gs gs4"><path class="ar" d="M560,382 C575,330 590,300 600,272" stroke="#E8692A" stroke-width="12" stroke-linecap="round" fill="none" marker-end="url(#ao)"/><path class="ar" d="M640,382 C652,330 662,300 670,272" stroke="#E8692A" stroke-width="12" stroke-linecap="round" fill="none" marker-end="url(#ao)"/><rect x="600" y="315" width="190" height="30" rx="10" fill="#fff" opacity=".95"/><text x="695" y="336" text-anchor="middle" font-size="15" font-weight="800" fill="#8A3A00">Инфрақызыл радиация</text></g>' +
     '<g class="gs gs5"><path class="ar dash" d="M600,214 C592,260 585,310 575,368" stroke="#D2452F" stroke-width="9" stroke-linecap="round" fill="none" marker-end="url(#ao)"/><path class="ar" d="M672,210 L742,70" stroke="#E8692A" stroke-width="12" stroke-linecap="round" fill="none" marker-end="url(#ao)"/><rect x="560" y="106" width="232" height="30" rx="10" fill="#fff" opacity=".95"/><text x="676" y="127" text-anchor="middle" font-size="15" font-weight="800" fill="#8A3A00">Ғарышқа кетеді · 240 Вт/м²</text><rect x="370" y="282" width="210" height="30" rx="10" fill="#fff" opacity=".95"/><text x="475" y="303" text-anchor="middle" font-size="15" font-weight="800" fill="#B0301E">Газдар жылуды ұстап қалады</text></g>' +
     '</svg>';
-  function bgv(name) { return '<video class="bgv" src="media/' + name + '.mp4?v=20261106d" autoplay muted loop playsinline aria-hidden="true"></video>'; }
-  function vid(src, cls, attrs) { return '<video class="' + cls + '" src="media/' + src + '.mp4?v=20261106d" playsinline preload="metadata" ' + (attrs || 'controls') + '></video>'; }
+  function bgv(name) { return '<video class="bgv" src="media/' + name + '.mp4?v=20261109" autoplay muted loop playsinline aria-hidden="true"></video>'; }
+  function vid(src, cls, attrs) { return '<video class="' + cls + '" src="media/' + src + '.mp4?v=20261109" playsinline preload="metadata" ' + (attrs || 'controls') + '></video>'; }
   function mountSlide() {
     const i = curStage(), s = STAGES[i] || STAGES[0];
     let h = '';
     if (s.id === 'title') {
       const words = ['Ашық', 'сабағымызға', 'қош', 'келдіңіздер!'];
       const MON = ['қаңтар', 'ақпан', 'наурыз', 'сәуір', 'мамыр', 'маусым', 'шілде', 'тамыз', 'қыркүйек', 'қазан', 'қараша', 'желтоқсан']; const today = '13 қараша 2026 ж.';
-      h = '<div class="hero welcome"><video src="media/bg_earth.mp4?v=20261106d" poster="' + ECO.IMG('earth') + '" autoplay muted loop playsinline aria-hidden="true"></video><div class="in">' +
+      h = '<div class="hero welcome"><video src="media/bg_earth.mp4?v=20261109" poster="' + ECO.IMG('earth') + '" autoplay muted loop playsinline aria-hidden="true"></video><div class="in">' +
         '<div class="schoolbar fadein"><span class="crest">№9<br>IT</span><span><small>Түркістан облысы · Жетісай ауданы</small><b>Дінмұхамед Қонаев атындағы №9 ІТ мектеп-лицей</b></span></div>' +'<span class="authbadge fadein" style="animation-delay:.2s"><i>★</i>Ашық сабақтың авторлық моделі</span>' +'<p class="eyebrow fadein" style="animation-delay:.3s">География · 10 «Б» сынып · №205 кабинет</p>' +
         '<h1 class="wtitle">' + words.map((w, k) => '<span class="go" style="animation-delay:' + (0.25 + k * 0.28) + 's,' + (1.6 + k * 0.1) + 's">' + w + '</span>').join('') + '</h1>' +
         '<p class="guests fadein" style="animation-delay:1.5s">Құрметті қонақтар, әріптестер және оқушылар!</p>' +
@@ -778,7 +809,7 @@ body.fitmode { overflow-x: hidden; }
         '<div class="qrmini fadein" style="animation-delay:3.2s"><div id="qr"></div>Телефонды дайында<br>Код: ' + code + '</div></div>';
       setTimeout(() => confetti(70), 1500);
     } else if (s.id === 'video') {
-      h = '<div class="split">' + vid('v_intro', 'vidbig', 'controls poster="media/poster.jpg?v=20261106d"') +
+      h = '<div class="split">' + vid('v_intro', 'vidbig', 'controls poster="media/poster.jpg?v=20261109"') +
         '<div class="boxp glass"><p class="eyebrow">Проблемалық сұрақ</p><h2>Табиғи ортаның өзгеруіне не себеп болды?</h2><p>Бейнені қарап, талдаңдар:</p><ol><li>Бейнеде табиғи ортаның қандай өзгерістері көрсетілді?</li><li>Олардың себебі табиғи ма, антропогендік пе? Дәлелдеңдер.</li><li>Бұл өзгерістерді азайтуға бола ма?</li></ol><p class="muted">Жауапты сабақтың соңында қайта қарастырамыз.</p><div class="row"><button class="gloss" id="nx">Келесі →</button></div></div></div>';
     } else if (s.id === 'goal') {
       h = '<div class="shead glass vbg">' + bgv('bg_river') + '<p class="eyebrow">Оқу мақсаты · 10.3.2.4</p><h1>Табиғатқа әсер ететін антропогендік факторларды топтастыру және графикалық түрде ұсыну</h1><p class="lead">Оқулық, § 15 «Геоэкологиядағы антропогендік факторлар»</p></div>' +
@@ -786,15 +817,13 @@ body.fitmode { overflow-x: hidden; }
         ['«Антропогендік фактор» ұғымының мәнін түсіндіру', 'Антропогендік ықпалды 7 топқа топтастырып, кластер-сызба түрінде графикалық ұсыну (20-сурет)', 'Жылыжай эффектісінің пайда болуын сызба бойынша түсіндіру (21-сурет)', 'Қазақстандағы мысалдарды ықпал топтарымен сәйкестендіріп, қорғау шараларын ұсыну'].map((t, k) => '<li><b>' + (k + 1) + '</b><span>' + t + '</span></li>').join('') + '</ol></div>' +
         '<div class="ctrl"><button class="gloss" id="nx">Келесі →</button></div>';
     } else if (s.id === 'assess') {
-      h = '<div class="shead glass vbg">' + bgv('bg_river') + '<p class="eyebrow">Бағалау</p><h1>Сабақта қалай бағаланамыз?</h1><p class="lead">Әр оқушы жеке бағаланады, топтың ұпайы да есептеледі. Нәтиже сабақ соңында тақтада және әркімнің телефонында шығады.</p></div>' +
-        '<div class="cols3"><div class="boxp glass"><p class="eyebrow">Бағалау критерийлері</p><ul><li>Антропогендік факторларды 20-сурет бойынша 7 топқа топтастырады және кластер-сызба түрінде графикалық ұсынады</li><li>Жылыжай эффектісінің пайда болуын 21-сурет бойынша түсіндіреді</li><li>Табиғи айналымдардың бұзылуын себеп-салдар тізбегімен дәлелдейді</li><li>Қазақстан мысалдарын ықпал түрлерімен сәйкестендіреді</li></ul></div>' +
-        '<div class="boxp glass"><p class="eyebrow">Ұпай қалай есептеледі</p><ul><li>Дұрыс жауап — <b>500</b> ұпай</li><li>Жылдамдыққа — <b>+500-ге дейін</b> бонус</li><li>Қате немесе уақыт бітсе — 0</li><li>Топ ұпайы — мүшелерінің <b>орташа</b> ұпайы</li><li>Тақтадағы кластерде дұрыс орналастыру — топқа <b>+200</b></li></ul></div>' +
-        '<div class="boxp glass"><p class="eyebrow">Деңгейлер</p><div class="lvlrow"><div style="background:var(--good-bg);color:#13603A"><b>85%+</b>Жоғары</div><div style="background:#FFF1D6;color:#8A5300"><b>50%+</b>Орта</div><div style="background:var(--bad-bg);color:#8A2414"><b>&lt;50%</b>Қолдау қажет</div></div><p class="muted">Деңгей дұрыс жауаптардың үлесі бойынша. Әркім өз нәтижесін телефоннан көреді.</p></div></div>' +
+      h = '<div class="shead glass vbg">' + bgv('bg_river') + '<p class="eyebrow">Бағалау · критерий → дескриптор → балл</p><h1>Сабақта қалай бағаланамыз?</h1><p class="lead">Әр оқушы жеке бағаланады. Топтық тапсырманың балы топтың әр мүшесіне қойылады. Жұмыс парағындағы балды топ <b>хатшысы</b> телефонға енгізеді, квиз балын жүйе өзі есептейді. Жиыны <b>' + MAXC + ' ұпай → 10 балл</b>.</p></div>' +
+        '<div class="glass crt"><table><tr><th>#</th><th>Критерий (тапсырма)</th><th>Жұмыс түрі</th><th>Дескриптор</th><th>Балл</th></tr>' + CR.map((c) => '<tr><td><b>' + c.k + '</b></td><td><b>' + esc(c.n) + '</b></td><td>' + c.w + '</td><td>' + esc(c.d) + '</td><td class="pt">' + c.p + '</td></tr>').join('') + '<tr><td></td><td colspan="3"><b>Барлығы</b> · 8–10 балл — жоғары · 4–7 — орта · 1–3 — төмен</td><td class="pt">' + MAXC + '</td></tr></table></div>' +
         '<div class="ctrl"><button class="gloss" id="nx">Келесі →</button></div>';
     } else if (s.id === 'learn1') {
       h = '<div class="shead glass vbg">' + bgv('bg_earth') + '<span class="pg">Оқулық · 54-б.</span><p class="eyebrow">Оқулық, 20-сурет</p><h1>Адамның табиғатқа ықпалы: 7 топ</h1><p class="lead"><b>Антропогендік фактор</b> — адамның шаруашылық әрекетінің табиғатқа әсері. Оқулықта бұл әсерлер табиғаттың қай бөлігі өзгеретініне қарай 7 топқа жіктелген. Топтарды ретімен қарастырамыз: әрқайсысына сурет, оқулықтағы анықтама, жаңа дерек және сыныпқа сұрақ берілген.</p></div>' +
         '<div id="g1"></div>' +
-        '<div class="ovw" id="ovw" hidden>' + '<div class="g7">' + SEVEN.map((c, k) => '<button class="gc closed" data-g="' + k + '"><img src="' + ECO.IMG(c[0]) + '" alt="">' + (c[3] ? '<video src="media/' + c[3] + '.mp4?v=20261106d" muted loop playsinline preload="none" aria-hidden="true"></video>' : '') + '<span class="num">' + (k + 1) + '</span><span class="sph">' + esc(c[4]) + '</span><span class="t"><b>' + esc(c[1]) + '</b><span>' + esc(c[2]) + '<em class="nf">Жаңа дерек: ' + esc(c[5]) + '</em></span></span></button>').join('') + '<div class="gc key"><p class="eyebrow" style="color:var(--amber)">Неге 7 топ?</p><p style="font-weight:800;font-size:clamp(13px,1.1vw,17px)">Әр топ табиғаттың бір бөлігінің өзгерісін көрсетеді: орман, топырақ, жер, ауа мен су, климат, айналымдар және табиғи ортаның өзін-өзі қалпына келтіру қабілеті.</p></div></div>' + '</div>' +
+        '<div class="ovw" id="ovw" hidden>' + '<div class="g7">' + SEVEN.map((c, k) => '<button class="gc closed" data-g="' + k + '"><img src="' + ECO.IMG(c[0]) + '" alt="">' + (c[3] ? '<video src="media/' + c[3] + '.mp4?v=20261109" muted loop playsinline preload="none" aria-hidden="true"></video>' : '') + '<span class="num">' + (k + 1) + '</span><span class="sph">' + esc(c[4]) + '</span><span class="t"><b>' + esc(c[1]) + '</b><span>' + esc(c[2]) + '<em class="nf">Жаңа дерек: ' + esc(c[5]) + '</em></span></span></button>').join('') + '<div class="gc key"><p class="eyebrow" style="color:var(--amber)">Неге 7 топ?</p><p style="font-weight:800;font-size:clamp(13px,1.1vw,17px)">Әр топ табиғаттың бір бөлігінің өзгерісін көрсетеді: орман, топырақ, жер, ауа мен су, климат, айналымдар және табиғи ортаның өзін-өзі қалпына келтіру қабілеті.</p></div></div>' + '</div>' +
         '<div class="ctrl"><button class="plain" id="ovb">Барлық 7 топты бір экранда көру</button><button class="gloss" id="nx">Келесі →</button></div>';
     } else if (s.id === 'learn2') {
       h = '<div class="shead glass vbg">' + bgv('bg_heat') + '<span class="pg">Оқулық · 55-б., 21-сурет</span><p class="eyebrow">Сызба бойынша түсіндіру</p><h1>Жылыжай эффектісі қалай пайда болады?</h1><p class="lead"><b>Жылыжай эффектісі</b> — атмосфера күн радиациясын жерге өткізіп, ал жер бетінен шыққан жылуды жылыжай газдары ұстап қалуы. Жылыжайдың шыны шатыры да жылуды осылай сақтайды.</p></div>' +
@@ -802,12 +831,51 @@ body.fitmode { overflow-x: hidden; }
         '<div class="row"><button class="plain" id="ghp">← Алдыңғы</button><button class="gloss" id="ghn">Келесі қадам →</button></div><p class="muted" id="ghc" style="font-weight:800"></p>' +
         '<p class="nfbox">Жаңа дерек: 2024 жылы атмосферадағы CO₂ мөлшері 423,9 ppm-ге жетті (WMO). 2024 жыл — бақылау тарихындағы ең ыстық жыл, өнеркәсіпке дейінгі кезеңнен шамамен 1,55°C жылы (WMO).</p><div class="row"><button class="plain" id="nx">Қазақстан мысалдары →</button></div></div></div>';
     } else if (s.id === 'recap') {
-      h = '<div class="split">' + vid('v_film', 'vidbig', 'controls poster="media/poster_film.jpg?v=20261106d"') +
+      h = '<div class="split">' + vid('v_film', 'vidbig', 'controls poster="media/poster_film.jpg?v=20261109"') +
         '<div class="boxp glass"><span class="pg">Оқулық · 54–56-б.</span><p class="eyebrow">Бекіту · бейне-шолу</p><h2>Өз жауабыңды тексер</h2><p>Сабақ басындағы бейнені енді жазуларымен қайта көреміз.</p><ol><li>Проблемалық сұраққа берген жауабың дұрыс па еді?</li><li>Әр көрініс 20-суреттегі 7 топтың қайсысына жатады?</li><li>Қай ықпал басқа ықпалды күшейтеді? Мысал келтір.</li></ol><p class="muted">Бейнеден кейін 2-раундқа өтеміз: 6 сұрақ телефоннан.</p><div class="row"><button class="gloss" id="nx">2-раунд →</button></div></div></div>';
     } else if (s.id === 'learn3') {
       h = '<div class="shead glass vbg">' + bgv('bg_desert') + '<p class="eyebrow">Өмірмен байланыс · 2025 жылғы деректер</p><h1>Қазақстандағы мысалдар 20-суреттегі қай ықпалға жатады?</h1><p class="lead">Әр мысалды талдап, ықпал тобын анықтаңдар. Содан кейін «Жауабы» батырмасы арқылы тексеріңдер.</p></div>' +
         '<div class="kz">' + KZ.map((c, k) => '<div class="kzc glass">' + vid(c.v, '', 'controls muted loop autoplay') + '<div class="b"><h3>' + esc(c.h) + '</h3><p>' + esc(c.p) + '</p><p class="src">' + esc(c.s) + '</p><div id="ka' + k + '"><button class="plain" data-ka="' + k + '">Жауабы</button></div></div></div>').join('') + '</div>' +
         '<div class="ctrl"><button class="gloss" id="nx">Тақтадағы кластер →</button></div>';
+    } else if (s.id === 'hw') {
+      const HW = [{ v: 'bg_aral', h: 'Арал теңізі', a: '1-деңгей · апатты: теңіз тартылып, табаны шөлге айналды (геожүйе 81–100% бұзылған)' }, { v: 'v_temir', h: 'Теміртау', a: '2-деңгей · қауіпті: металлургия түтіні ауаны, Нұра өзенін ластайды' }, { v: 'v_balk', h: 'Балқаш көлі', a: '2-деңгей · қауіпті: Іле суы суаруға алынып, көл деңгейі мен суы өзгереді' }];
+      h = '<div class="shead glass vbg">' + bgv('bg_desert') + '<p class="eyebrow">Үй тапсырмасын тексеру · § 14 «Геоэкологиялық аудандастыру»</p><h1>Фото-жұмбақ: аймақтың деңгейін тап</h1><p class="lead">Әр топ бір аймақты таңдап, <b>30 секундта</b> оның геоэкологиялық деңгейін (1–5) және бір дәлелін айтады. Хатшы K1 балын қояды.</p></div>' +
+        '<div class="kz">' + HW.map((c, k) => '<div class="kzc glass">' + vid(c.v, '', 'controls muted loop autoplay') + '<div class="b"><h3>' + (k + 1) + '. ' + esc(c.h) + '</h3><p>Қай деңгей? Неге?</p><div id="hwa' + k + '"><button class="plain" data-hw="' + k + '">Жауабы</button></div></div></div>').join('') + '</div>' +
+        '<div class="ctrl"><button class="gloss" id="nx">Келесі →</button></div>';
+      window.__HW = HW;
+    } else if (s.id === 'groups') {
+      const c = capNow(); const RL = { sp1: '🎤 1-спикер', sp2: '🎤 2-спикер', hs: '📒 хатшы', po: '🖼️ постер' };
+      h = '<div class="shead glass vbg">' + bgv('bg_river') + '<p class="eyebrow">Топқа бөлу · «Экожүйе капсулалары»</p><h1>Үш экожүйе — үш команда</h1><p class="lead">Әр оқушы тақтаға шығып, капсуланы ашады. Топтар <b>деңгейі бойынша тең</b>: озат, екпінді, қанағат оқушылар әр топта бар. Әр топта рөлдер: <b>2 спикер</b> (жаңа сабақты түсіндіреді), <b>хатшы</b> (балл қояды), <b>постер қорғаушы</b>.</p></div>' +
+        '<div class="grp3">' + [0, 1, 2].map((t) => '<div class="glass gcol" style="border-top:8px solid ' + T[t].c2 + '"><h3 style="color:' + T[t].ink + '">' + tname(t) + '</h3>' + (c && c.teams ? '<ol>' + (c.teams[t] || []).map((n) => '<li>' + esc(n) + (c.roles && c.roles[n] ? ' <b style="color:' + T[t].ink + '">' + RL[c.roles[n]] + '</b>' : '') + '</li>').join('') + '</ol>' : '<p class="muted">Капсулалар әлі ашылмаған.</p>') + '</div>').join('') +
+        '<div class="glass gcol secq"><p class="eyebrow">📒 Хатшы телефоны</p><div id="sqr"></div><p class="muted" style="font-weight:700">Әр топтың хатшысы осы QR-ды сканерлеп, тобын таңдайды да, жұмыс парағына қарап балл қояды.</p></div></div>' +
+        '<div class="ctrl"><button class="plain" id="capbtn">🫧 Капсулаларды ашу (топқа бөлу)</button><button class="gloss" id="nx">Келесі →</button></div>';
+    } else if (s.id === 'self') {
+      h = '<div class="shead glass vbg">' + bgv('bg_earth') + '<span class="pg">Оқулық · 54–56-б., 20, 21-сурет</span><p class="eyebrow">Өзін-өзі басқару · алдын ала дайындалған инфографикамен</p><h1>6 спикер — 7 ықпал</h1><p class="lead">Әр топтың 2 спикері өз ықпалын <b>1 минутта</b> түсіндіреді: не болады → себебі → жаңа дерек → Қазақстан мысалы. Қалғандары <b>кластер парағына</b> жазып отырады. 7-ықпалды мұғалім қорытады.</p></div>' +
+        '<div class="spk7">' + SPK.map((x, k) => { const c = SEVEN[x.g]; const nm = x.t < 0 ? 'Мұғалім' : (speakerOf(x.t, x.r) || (x.r === 'sp1' ? '1-спикер' : '2-спикер'));
+          return '<button class="spk glass" data-spk="' + k + '" style="border-top:7px solid ' + (x.t < 0 ? '#5B6B66' : T[x.t].c2) + '"><img src="' + ECO.IMG(c[0]) + '" alt=""><span class="n">' + (x.g + 1) + '</span><b>' + esc(c[1]) + '</b><small>' + (x.t < 0 ? '👩‍🏫 ' : '🎤 ') + esc(nm) + (x.t < 0 ? '' : ' · ' + tname(x.t)) + '</small></button>'; }).join('') + '</div>' +
+        '<div id="spkv"></div><div id="g1"></div>' +
+        '<div class="ctrl"><span class="pill" id="spkt" style="font-size:20px;font-weight:900"></span><button class="gloss" id="nx">Келесі →</button></div>';
+    } else if (s.id === 'pair') {
+      h = '<div class="shead glass vbg">' + bgv('bg_erosion') + '<p class="eyebrow">Жұптық жұмыс · жұмыс парағы</p><h1>«Ықпалды сөйлет»: салыстыру кестесі</h1><p class="lead">Жұптар 4 ықпал бойынша кестені толтырады: <b>себебі → табиғатқа салдары → Қазақстандағы мысал → азайту жолы</b>. Соңында: «Неліктен бір ықпал басқасын күшейтеді?» — 2–3 сөйлем.</p></div>' +
+        '<div class="cols3"><div class="boxp glass"><p class="eyebrow">Кесте бағандары</p><ul><li>Ормандардың жойылуы</li><li>Антропогендік шөлейттену</li><li>Табиғи ортаның ластануы</li><li>Жылыжай эффектісі</li></ul></div>' +
+        '<div class="boxp glass"><p class="eyebrow">Мысал тізбек</p><p style="font-size:22px;font-weight:800">орман жойылуы → эрозия → шөлейттену</p><p class="muted">Жұбыңның жауабын тексеріп, толықтыр.</p></div>' +
+        '<div class="boxp glass crit1"><p class="eyebrow">K4 · дескриптор · 2 балл</p><ul><li>Себебі мен салдарын жазады — <b>1</b></li><li>Қазақстан мысалы мен азайту жолын ұсынады — <b>1</b></li></ul><p class="muted">📒 Хатшы балды телефонға қояды.</p></div></div>' +
+        '<div class="ctrl"><button class="gloss" id="nx">Келесі →</button></div>';
+    } else if (s.id === 'poster') {
+      const RQ = ['Ормандардың жойылуы мен шөлейттену қалай байланысады? (Ертіс ормандары, Арал табанындағы сексеуіл)', 'Су айналымы неліктен бұзылады және судың ластануы неге басты мәселе? (Балқаш, Арал)', 'Топырақ эрозиясы мен жылыжай эффектісі климатқа қалай әсер етеді? (Тың жерлер, 21-сурет)'];
+      h = '<div class="shead glass vbg">' + bgv('bg_factory') + '<p class="eyebrow">Топтық жұмыс · постер · галереяда қорғау</p><h1>«Экозертхана»: себеп → салдар → Қазақстан → қорғау шарасы</h1><p class="lead"><b>4 мин</b> — постер жасау · <b>3 × 1 мин</b> — 🖼️ постер қорғаушы қорғайды · басқа топтар «2 жұлдыз, 1 тілек» береді.</p></div>' +
+        '<div class="cols3">' + [0, 1, 2].map((t) => '<div class="boxp glass" style="border-top:8px solid ' + T[t].c2 + '"><p class="eyebrow" style="color:' + T[t].ink + '">' + tname(t) + ' · 🖼️ ' + esc(speakerOf(t, 'po') || 'постер қорғаушы') + '</p><p style="font-size:19px;font-weight:700">' + esc(RQ[t]) + '</p></div>').join('') + '</div>' +
+        '<div class="glass crt" style="margin-top:12px"><table><tr><th>K5 · дескриптор</th><th>Балл</th></tr><tr><td>Себеп → салдар байланысын көрсетеді</td><td class="pt">1</td></tr><tr><td>Қазақстандағы мысал келтіреді</td><td class="pt">1</td></tr><tr><td>Қорғау шарасын ұсынып, 1 минутта қорғайды</td><td class="pt">1</td></tr></table></div>' +
+        '<div class="ctrl"><button class="plain" id="pt4">⏱ 4 мин постер</button>' + [0, 1, 2].map((t) => '<button class="plain" data-pd="' + t + '" style="border:2px solid ' + T[t].c2 + '">🖼️ ' + tname(t) + ' · 1 мин</button>').join('') + '<span class="pill" id="spkt" style="font-size:20px;font-weight:900"></span><button class="gloss" id="nx">Келесі →</button></div>';
+    } else if (s.id === 'fs') {
+      h = '<div class="shead glass vbg">' + bgv('bg_factory') + '<p class="eyebrow">Функционалдық сауаттылық · жеке · жұмыс парағы</p><h1>«Алматының ауасы»</h1><p class="lead">Қыстың желсіз күндері Алматы үстінде смог тұрады. ЖЭО-2 көмірден газға көшірілуде: зиянды шығарынды жылына <b>37,1</b> мың тоннадан <b>2,7</b> мың тоннаға дейін азаяды (Informburo.kz, 2025).</p></div>' +
+        '<div class="cols3"><div class="boxp glass"><p class="eyebrow">Сұрақтар</p><ol><li>Смог 20-суреттегі қай ықпал топтарына жатады?</li><li>Шығарынды неше есе азаяды? Есепте.</li><li>«Көмір → түтін → ауа → денсаулық → климат» тізбегін құр.</li><li>Отбасың не істей алады? 2 шара.</li></ol></div>' +
+        '<div class="boxp glass crit1"><p class="eyebrow">K6 · дескриптор · 2 балл</p><ul><li>Ықпал тобын анықтап, 37,1 : 2,7 ≈ 14 есе есептейді — <b>1</b></li><li>Тізбек құрып, 2 шара ұсынады — <b>1</b></li></ul><p class="muted">📒 Хатшы балды телефонға қояды.</p></div></div>' +
+        '<div class="ctrl"><button class="gloss" id="nx">Квизге қосылу →</button></div>';
+    } else if (s.id === 'ball') {
+      h = '<div class="shead glass vbg">' + bgv('bg_sprout') + '<p class="eyebrow">Қорытынды баға · хатшылардың балы + квиз</p><h1>16 ұпай → 10 балл</h1><p class="lead">8–10 — жоғары · 4–7 — орта · 1–3 — төмен. Кесте хатшылар балл қойған сайын өзі жаңарады.</p></div>' +
+        '<div class="glass crt ball"><div id="balltb"></div></div>' +
+        '<div class="ctrl"><button class="plain" id="ballcsv">📋 Кестені көшіру (Excel)</button><span class="muted" id="ballcp" style="font-weight:800"></span><button class="gloss" id="nx">Келесі →</button></div>';
     } else if (s.id === 'home') {
       h = '<div class="split">' + vid('bg_sprout', 'vidbig', 'muted loop autoplay') +
         '<div class="boxp glass"><span class="pg">Оқулық · 56-б.</span><p class="eyebrow">Үй тапсырмасы</p><h2>Шағын эссе</h2><p>Жылыжай эффектісінің климаттың өзгеруіне әсері туралы шағын эссе жазыңдар.</p><p>Табиғатқа әсер ететін антропогендік факторларды азайту үшін қандай ұсыныс беруге болады? Эссенің соңында екі ұсыныс жазыңдар.</p><p>Эссеге бір жаңа дерек қосыңдар: WMO мәліметінше, 2024 жыл бақылау тарихындағы ең ыстық жыл болды (өнеркәсіпке дейінгі деңгейден ~1,55°C жоғары).</p>' +
@@ -823,11 +891,48 @@ body.fitmode { overflow-x: hidden; }
     if ($('ghl')) { let gs = 0; const show = (n) => { gs = Math.max(0, Math.min(GH.length, n)); app.querySelectorAll('.gs').forEach((g, k) => g.classList.toggle('on', k < gs)); app.querySelectorAll('[data-gs]').forEach((li, k) => { li.classList.toggle('on', k < gs); li.classList.toggle('cur', k === gs - 1); });
         $('ghc').textContent = gs >= GH.length ? 'Қорытынды: жылыжай газдары көбейген сайын ғарышқа кететін жылу азайып, жер беті көбірек жылиды.' : gs + ' / ' + GH.length + ' қадам'; $('ghn').textContent = gs >= GH.length ? 'Басынан' : 'Келесі қадам →'; };
       $('ghn').onclick = () => show(gs >= GH.length ? 0 : gs + 1); $('ghp').onclick = () => show(gs - 1); app.querySelectorAll('[data-gs]').forEach((li) => li.onclick = () => show(+li.dataset.gs)); show(0); }
-    if ($('g1')) { renderG1(0); $('ovb').onclick = () => ($('ovw').hidden ? showOverview() : renderG1(0)); }
+    if ($('g1') && $('ovb')) { renderG1(0); $('ovb').onclick = () => ($('ovw').hidden ? showOverview() : renderG1(0)); }
     app.querySelectorAll('[data-ka]').forEach((b) => b.onclick = () => { const k = +b.dataset.ka; $('ka' + k).innerHTML = '<p class="ans">' + esc(KZ[k].a) + '</p>'; });
+    bindNewSlides();
     app.querySelectorAll('[data-to]').forEach((el, k) => { const to = +el.dataset.to; const t0 = performance.now() + k * 600;
       const step = (t) => { const p = Math.min(1, Math.max(0, (t - t0) / 1400)); el.textContent = Math.round(to * (1 - Math.pow(1 - p, 3))); if (p < 1) requestAnimationFrame(step); };
       requestAnimationFrame(step); });
+  }
+
+
+  /* ---------- жаңа слайдтардың әрекеттері ---------- */
+  let spkT = null;
+  function miniTimer(sec, label) { clearInterval(spkT); const el = $('spkt'); let left = sec; const draw = () => { const e = $('spkt'); if (!e) { clearInterval(spkT); return; } e.textContent = '⏱ ' + label + ' · ' + mmss(left * 1000 + 999); e.style.color = left <= 10 ? '#B3261E' : ''; };
+    draw(); spkT = setInterval(() => { left--; if (left === 10) beep(988, .12); if (left < 10 && left > 0) beep(988, .08); if (left <= 0) { clearInterval(spkT); beep(659, .4); beep(988, .6); flashMsg('Уақыт бітті!', 'time'); } draw(); }, 1000); }
+  let actx = null; function beep(f, d) { try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); const o = actx.createOscillator(), g = actx.createGain(); o.frequency.value = f; g.gain.value = .15; o.connect(g).connect(actx.destination); o.start(); g.gain.exponentialRampToValueAtTime(.0001, actx.currentTime + d); o.stop(actx.currentTime + d + .05); } catch (e) {} }
+  function quizCorrect() { try { const r = ECO.compute(game); const out = {}; r.rows.forEach((x) => { out[nrmN(x.name)] = { c: x.correct, t: x.team, name: x.name }; }); return out; } catch (e) { return {}; } }
+  function ballRows() {
+    const c = capNow() || {}; const sec = game.sec || {}; const people = {};
+    (c.teams || []).forEach((tm, t) => tm.forEach((n) => { people[nrmN(n)] = { name: n, t, s: {} }; }));
+    Object.values(sec).forEach((byS) => Object.values(byS || {}).forEach((r) => { if (!r || !r.name) return; const k = nrmN(r.name); const p = people[k] || (people[k] = { name: r.name, t: r.team, s: {} });
+      Object.entries(r.s || {}).forEach(([kk, v]) => { p.s[kk] = Math.max(p.s[kk] || 0, +v || 0); }); }));
+    const qc = quizCorrect(), nq = Q.length; Object.entries(qc).forEach(([k, v]) => { const p = people[k] || (people[k] = { name: v.name, t: v.t, s: {} }); p.s.K7 = Math.round(v.c * 5 / nq); });
+    return Object.values(people).map((p) => { p.tot = CR.reduce((a, cr) => a + (p.s[cr.k] || 0), 0); p.b = ball10(p.tot); return p; }).sort((a, b) => b.tot - a.tot || a.name.localeCompare(b.name));
+  }
+  function ballRender() { const tb = $('balltb'); if (!tb) return; const rows = ballRows();
+    tb.innerHTML = rows.length ? '<table><tr><th>#</th><th>Оқушы</th><th>Топ</th>' + CR.map((c) => '<th title="' + esc(c.n) + '">' + c.k + '<small>/' + c.p + '</small></th>').join('') + '<th>Ұпай</th><th>Балл</th></tr>' +
+      rows.map((p, i) => { const d = band10(p.b); return '<tr><td>' + (i + 1) + '</td><td><b>' + esc(p.name) + '</b></td><td>' + (p.t >= 0 && T[p.t] ? tname(p.t) : '—') + '</td>' + CR.map((c) => '<td>' + (p.s[c.k] ?? '·') + '</td>').join('') + '<td><b>' + p.tot + '/' + MAXC + '</b></td><td><span class="b10" style="background:' + d[1] + '">' + p.b + '</span></td></tr>'; }).join('') + '</table>'
+      : '<p class="muted" style="font-weight:800;padding:20px">Әзірге балл жоқ. Хатшылар телефоннан балл қойғанда кесте толады.</p>';
+    window.__ballCsv = () => ['Оқушы\tТоп\t' + CR.map((c) => c.k).join('\t') + '\tҰпай\tБалл (1–10)'].concat(rows.map((p) => [p.name, p.t >= 0 && T[p.t] ? T[p.t].name : ''].concat(CR.map((c) => p.s[c.k] ?? ''), [p.tot, p.b]).join('\t'))).join('\n'); }
+  window.__ballUpd = ballRender;
+  function pushRoster() { const c = capNow(); if (!c || !c.teams) return; try { be.update(G + '/meta', { roster: { teams: c.teams, roles: c.roles || {}, names: c.names || [] } }); } catch (e) {} }
+  function bindNewSlides() {
+    if (curStage() >= 0 && STAGES[curStage()].id === 'groups') pushRoster();
+    app.querySelectorAll('[data-hw]').forEach((b) => b.onclick = () => { const k = +b.dataset.hw; $('hwa' + k).innerHTML = '<p class="ans">' + esc(window.__HW[k].a) + '</p>'; });
+    if ($('sqr')) makeQR($('sqr'), 220, secUrl);
+    if ($('capbtn')) $('capbtn').onclick = () => { document.body.insertAdjacentHTML('beforeend', '<div class="capov" id="capov"><iframe src="../toptar.html?embed=1"></iframe><button class="gloss" id="capx">Топтар дайын ✓ — тақтаға оралу</button></div>'); $('capx').onclick = () => { $('capov').remove(); mounted = ''; mountSlide(); chrome(); }; };
+    app.querySelectorAll('[data-spk]').forEach((b) => b.onclick = () => { const x = SPK[+b.dataset.spk]; app.querySelectorAll('[data-spk]').forEach((q) => q.classList.toggle('on', q === b));
+      renderG1(x.g); const g1 = $('g1'); g1.querySelectorAll('.g1strip,#g1p,#g1n').forEach((e) => e.remove());
+      if (x.g === 4) g1.insertAdjacentHTML('beforeend', '<div class="glass ghd ghall" style="margin-top:10px">' + GHSVG + '</div>');
+      miniTimer(x.t < 0 ? 30 : 60, (x.t < 0 ? 'Мұғалім' : '🎤 ' + (speakerOf(x.t, x.r) || 'спикер'))); g1.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+    if ($('pt4')) $('pt4').onclick = () => miniTimer(240, 'Постер жасау');
+    app.querySelectorAll('[data-pd]').forEach((b) => b.onclick = () => { const t = +b.dataset.pd; miniTimer(60, '🖼️ ' + T[t].name + (speakerOf(t, 'po') ? ' · ' + speakerOf(t, 'po') : '')); });
+    if ($('balltb')) { ballRender(); $('ballcsv').onclick = () => { try { navigator.clipboard.writeText(window.__ballCsv()).then(() => { $('ballcp').textContent = 'Көшірілді! Excel-ге қойыңыз.'; }); } catch (e) {} }; }
   }
 
   /* ---------- ТАҚТАДАҒЫ ЭСТАФЕТА: әр кезекте 3 топтан бір-бір оқушы бірге шығады ---------- */
@@ -1041,7 +1146,7 @@ body.fitmode { overflow-x: hidden; }
     Object.keys(players).sort((a, b) => (players[a].joined || 0) - (players[b].joined || 0)).forEach((uid) => {
       if (teams[uid] !== undefined) return;
       let t = -1; const nm = String(players[uid].name || '').trim().toLowerCase();
-      if (capsule && capsule.teams) capsule.teams.forEach((tm, i) => { if (tm.some((x) => String(x).trim().toLowerCase() === nm)) t = i; });
+      const cap = capNow() || capsule; if (cap && cap.teams) cap.teams.forEach((tm, i) => { if (tm.some((x) => nrmN(x) === nrmN(nm))) t = i; });
       if (t < 0) { const min = Math.min(...counts); t = counts.indexOf(min); }
       counts[t]++; upd[uid] = t;
     });
@@ -1297,6 +1402,7 @@ body.fitmode { overflow-x: hidden; }
       else if (m.phase === 'end') { const f = $('fbk'); if (f) f.innerHTML = feedbackBox(); }
       else if (m.phase === 'feedback') updateFeedback();
       else if (m.phase === 'relay') relayScores();
+      else if (m.phase === 'slide' && $('balltb')) ballRender();
     }
   });
 })();

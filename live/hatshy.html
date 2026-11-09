@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>📒 Хатшы · Геоэкология</title>
+<link rel="stylesheet" href="style.css?v=20261109">
+<style>
+body{margin:0;background:#F1F7F3;font-family:'Golos Text',Inter,system-ui,sans-serif;color:#142B26}
+#app{max-width:520px;margin:0 auto;padding:14px 14px 40px}
+h1{font-size:24px;margin:0}.st{font-size:12px;color:#4b6159;font-weight:700;margin-top:2px}
+.gs{display:flex;gap:8px;margin:12px 0}.gs button{flex:1;border:0;border-radius:14px;padding:10px 6px;font-weight:900;font-size:13px;color:#fff;opacity:.45}.gs button.on{opacity:1;outline:3px solid #FFD86B}
+.tabs{display:flex;gap:6px;overflow:auto;padding-bottom:6px}.tabs button{flex:none;border:0;border-radius:99px;padding:8px 12px;background:#fff;font-weight:800;font-size:13px;color:#142B26;box-shadow:0 2px 6px rgba(0,0,0,.06)}.tabs button.on{background:#142B26;color:#fff}
+.desc{background:#FFF6E0;border-radius:12px;padding:8px 12px;font-size:13px;font-weight:600;margin-top:8px}
+.allb{margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-weight:800;font-size:13px}
+.m{background:#fff;border-radius:16px;padding:10px 12px;margin-top:10px;box-shadow:0 4px 12px rgba(0,40,30,.07)}
+.m .top{display:flex;justify-content:space-between;align-items:center;font-weight:800}
+.ch{display:flex;gap:6px;margin-top:8px}.ch button,.allb button{width:46px;height:44px;border-radius:12px;border:2px solid #CFE0D8;background:#fff;font-weight:900;font-size:18px;color:#142B26}.ch button.on{background:#1F7A45;border-color:#1F7A45;color:#fff}
+.add{display:flex;gap:6px;margin-top:14px}.add input{flex:1;border-radius:12px;border:1.5px solid #CFE0D8;padding:10px;font-size:15px}.add button{border:0;border-radius:12px;background:#F7B24A;font-weight:900;padding:0 16px}
+.ok{margin-top:10px;font-weight:800;font-size:14px}
+</style>
+</head>
+<body>
+<div id="app"><h1>📒 Хатшы</h1><p class="st">Қосылып жатыр…</p></div>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js"></script>
+<script src="config.js"></script>
+<script src="core.js"></script>
+<script>
+/* Хатшы: бір топқа бір телефон. Жұмыс парағына қарап әр мүшеге критерий бойынша балл қояды → тақтадағы «Қорытынды баға» */
+(async () => {
+  const app = document.getElementById('app'), T = ECO.TEAMS;
+  const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const nrm = (n) => String(n || '').toLowerCase().trim().replace(/\s+/g, ' ').replace(/[әғқңөұүһі]/g, (c) => ({ 'ә': 'а', 'ғ': 'г', 'қ': 'к', 'ң': 'н', 'ө': 'о', 'ұ': 'у', 'ү': 'у', 'һ': 'х', 'і': 'и' }[c]));
+  const key = (n) => 'n' + Array.from(nrm(n)).map((c) => c.charCodeAt(0).toString(36)).join('').slice(0, 60);
+  /* тақтадағы критерийлермен бірдей (host.html → CR) */
+  const CR = [
+    { k: 'K1', n: 'Үй тапсырмасы', w: 'топ', p: 1, d: 'Аймақтың деңгейін (1–5) дәлелмен атайды — 1' },
+    { k: 'K2', n: 'Өзін-өзі басқару', w: 'жеке', p: 2, d: 'Спикер: ықпалды сурет, дерек, мысалмен түсіндіреді — 2. Тыңдаушы: кластерге 4–6 ықпал — 1, 7 ықпал — 2' },
+    { k: 'K3', n: 'Эстафета', w: 'топ', p: 1, d: 'Мысалды кластердің дұрыс тобына орналастырады — 1' },
+    { k: 'K4', n: 'Ықпалды сөйлет', w: 'жұп', p: 2, d: 'Себебі мен салдары — 1; Қазақстан мысалы мен азайту жолы — 1' },
+    { k: 'K5', n: 'Экозертхана постері', w: 'топ', p: 3, d: 'Себеп → салдар — 1; Қазақстан мысалы — 1; қорғау шарасы және қорғау — 1' },
+    { k: 'K6', n: 'Алматының ауасы', w: 'жеке', p: 2, d: 'Ықпал тобы + 14 есе — 1; тізбек + 2 шара — 1' }
+  ];
+  const code = (new URLSearchParams(location.search).get('code') || '').toUpperCase();
+  if (!code) { app.innerHTML = '<h1>📒 Хатшы</h1><p>Тақтадағы QR-ды сканерле.</p>'; return; }
+  let be; try { be = await ECO.connect({ role: 'player' }); } catch (e) { app.innerHTML = '<h1>📒 Хатшы</h1><p>Қосылу мүмкін болмады. Интернетті тексер.</p>'; return; }
+  const G = 'games/' + code;
+  let game = {}, team = +(localStorage.getItem('hs_team_' + code) ?? -1), tab = 'K1', msg = '';
+  let mine = {}; try { mine = JSON.parse(localStorage.getItem('hs_sc_' + code) || '{}'); } catch (e) {}
+  const extra = () => { try { return JSON.parse(localStorage.getItem('hs_extra_' + code) || '[]'); } catch (e) { return []; } };
+  const RL = { sp1: '🎤', sp2: '🎤', hs: '📒', po: '🖼️' };
+  function members() {
+    const r = (game.meta || {}).roster || {}; const out = ((r.teams || [])[team] || []).map((n) => ({ name: n, role: (r.roles || {})[n] }));
+    const pl = game.players || {}, tm = game.teams || {}; Object.keys(pl).forEach((u) => { if (tm[u] === team && !out.find((x) => nrm(x.name) === nrm(pl[u].name))) out.push({ name: pl[u].name }); });
+    extra().filter((x) => x.t === team).forEach((x) => { if (!out.find((y) => nrm(y.name) === nrm(x.name))) out.push({ name: x.name }); });
+    return out;
+  }
+  function save(name) { const k = key(name); const rec = { name, team, s: mine[nrm(name)] || {}, t: be.TS };
+    Promise.resolve(be.set(G + '/sec/' + be.uid + '/' + k, rec)).then(() => { msg = '✅ ' + name + ' — тақтаға жіберілді'; draw(); }).catch(() => { msg = '⚠️ Жіберілмеді. Мұғалімге айт (Firebase ережесі).'; draw(); }); }
+  function setP(name, v) { const k = nrm(name); mine[k] = Object.assign({}, mine[k], { [tab]: v }); localStorage.setItem('hs_sc_' + code, JSON.stringify(mine)); save(name); draw(); }
+  function draw() {
+    const names = ((game.meta || {}).teamNames) || T.map((t) => t.name);
+    let h = '<h1>📒 Хатшы</h1><p class="st">' + (be.kind === 'firebase' ? '☁ Тақтамен байланыс бар' : be.kind === 'p2p' ? '🔗 Тікелей байланыс' : 'Демо') + ' · код ' + code + '</p><div class="gs">' +
+      T.map((t, i) => '<button data-t="' + i + '" class="' + (team === i ? 'on' : '') + '" style="background:linear-gradient(180deg,' + t.c1 + ',' + t.c2 + ')">' + esc(names[i]) + '</button>').join('') + '</div>';
+    if (team < 0) { app.innerHTML = h + '<p style="font-weight:800">Тобыңды таңда 👆</p>'; bind(); return; }
+    const c = CR.find((x) => x.k === tab);
+    h += '<div class="tabs">' + CR.map((x) => '<button data-k="' + x.k + '" class="' + (x.k === tab ? 'on' : '') + '">' + x.k + ' · ' + esc(x.n) + '</button>').join('') + '</div>' +
+      '<div class="desc"><b>' + c.k + ' · ' + c.w + ' · ' + c.p + ' балл.</b> ' + esc(c.d) + '</div>';
+    const mem = members();
+    if (c.w === 'топ' && mem.length) h += '<div class="allb">Бүкіл топқа: ' + Array.from({ length: c.p + 1 }, (_, v) => '<button data-all="' + v + '">' + v + '</button>').join('') + '</div>';
+    if (!mem.length) h += '<div class="m">Тізім әлі жоқ: мұғалім тақтада топқа бөлгенде шығады. Немесе төменнен оқушыны қос.</div>';
+    mem.forEach((p, i) => { const s = mine[nrm(p.name)] || {}; const tot = CR.reduce((a, x) => a + (s[x.k] || 0), 0);
+      h += '<div class="m"><div class="top"><span>' + (RL[p.role] || '') + ' ' + esc(p.name) + '</span><span>' + tot + ' / 11</span></div><div class="ch">' +
+        Array.from({ length: c.p + 1 }, (_, v) => '<button data-i="' + i + '" data-v="' + v + '" class="' + (s[tab] === v ? 'on' : '') + '">' + v + '</button>').join('') + '</div></div>'; });
+    h += '<div class="add"><input id="nn" placeholder="Оқушы қосу (аты)"><button id="nb">+</button></div>' + (msg ? '<div class="ok">' + esc(msg) + '</div>' : '');
+    app.innerHTML = h; bind();
+    app.querySelectorAll('[data-i]').forEach((b) => b.onclick = () => setP(mem[+b.dataset.i].name, +b.dataset.v));
+    app.querySelectorAll('[data-all]').forEach((b) => b.onclick = () => { const v = +b.dataset.all; mem.forEach((p) => { const k = nrm(p.name); mine[k] = Object.assign({}, mine[k], { [tab]: v }); save(p.name); }); localStorage.setItem('hs_sc_' + code, JSON.stringify(mine)); draw(); });
+    const nb = document.getElementById('nb'); if (nb) nb.onclick = () => { const n = document.getElementById('nn').value.trim(); if (n.length < 2) return; const e = extra(); e.push({ name: n, t: team }); localStorage.setItem('hs_extra_' + code, JSON.stringify(e)); draw(); };
+  }
+  function bind() {
+    app.querySelectorAll('[data-t]').forEach((b) => b.onclick = () => { team = +b.dataset.t; localStorage.setItem('hs_team_' + code, team); draw(); });
+    app.querySelectorAll('[data-k]').forEach((b) => b.onclick = () => { tab = b.dataset.k; draw(); });
+  }
+  let last = '';
+  be.on(G, (v) => { game = v || {}; const sig = JSON.stringify([(game.meta || {}).roster, Object.keys(game.players || {}).length, game.teams]); if (sig !== last) { last = sig; draw(); } });
+  draw();
+})();
+</script>
+</body>
+</html>
