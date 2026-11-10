@@ -9,6 +9,7 @@
   const S = { i: Math.min(ST.length - 1, Math.max(0, LS.get('ge_stage', 0))), code: '', db: null, game: {}, roster: LS.get('ge_roster', []), manual: LS.get('ge_manual', {}),
     bsc: LS.get('ge_bsc', {}), poster: LS.get('ge_poster', [[0, 0, 0], [0, 0, 0], [0, 0, 0]]), det: LS.get('ge_det', { pos: -1, queue: null, log: [], stars: [0, 0, 0] }),
     mood: {}, hw: { q: 0, pick: null, key: false }, spk: 0, spkDone: {}, gal: -1, posterMode: 'work', grouped: false, endTab: 'rate', quizShow: true };
+  if (!S.roster.length && LD.defaultRoster) { const list = GT.parseRoster(LD.defaultRoster); const out = []; LD.groups.forEach((_, gi) => GT.assignRoles(list.filter((p) => p.fixG === gi)).forEach((p) => out.push(Object.assign(p, { g: gi })))); S.roster = out; LS.set('ge_roster', out); }
   const grp = (i) => LD.groups[i] || LD.groups[0];
   const role = (k) => LD.roles.find((r) => r.key === k);
   const task = (k) => LD.tasks.find((t) => t.k === k);
