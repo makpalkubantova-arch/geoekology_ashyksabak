@@ -9,4 +9,19 @@
 - **Өзін-өзі басқару:** 6 спикер (әр топтан 2) 7 ықпалдың 6-ын алдын ала дайындалған инфографикамен түсіндіреді, әрқайсысына 1 минут таймер. Тыңдаушылар 1-парақтағы кластерді толтырады.
 - **📒 Хатшы телефоны** (`live/hatshy.html`, QR — «Топқа бөлу» кезеңінде): әр топқа бір телефон, жұмыс парағына қарап K1–K6 балл қояды. K7 — квиздің нәтижесі. «Қорытынды баға» кезеңінде 16 ұпай → 10 балл.
 - **Firebase ережесі:** хатшы жазуы үшін `live/database.rules.json` жаңартылды (`sec` бөлімі). Firebase Console → Realtime Database → Rules бетіне осы файлдың мазмұнын қойып, Publish басыңыз.
-- **ЕБҚ тапсырмасы алынды.** Жұмыс парақтары: `materialdar/zhumys-paraktary.docx`.
+- **ЕБҚ тапсырмасы алынды.** Жұмыс парақтары: `materialdar/3-Zhumys-paraqtary.docx` (барлық материал — `materialdar.html`).
+
+## 📁 Материалдар (тақтамен байланысқан)
+
+Тақтаның жоғарғы жолағындағы **📁 Материалдар** немесе `materialdar.html` беті. Әр құжаттағы «Тақта: N» — `live/host.html` төменгі жолағындағы N-батырма.
+
+| № | Материал | Файл |
+|---|---|---|
+| 1 | ҚМЖ (16 кезең, тақта скриншоттары, K1–K7) | `materialdar/1-QMZh-Antropogendik-faktorlar.docx / .pdf` |
+| 2 | Презентация, 17 слайд | `materialdar/2-Prezentaciya-Antropogendik-faktorlar.pptx / .pdf` |
+| 3 | Жұмыс парақтары №1–№6 + кілт | `materialdar/3-Zhumys-paraqtary.docx / .pdf` |
+| 4 | Наклейкалар | `materialdar/4-Naklejkalar.pdf`, `print/naklejka.html` |
+| 5 | Постерге дайындық инфографикасы | `materialdar/5-Poster-infografikalar.pdf`, `print/poster.html` |
+| 6 | 🎛 Тақта пульті (мұғалімге 1 бет) | `materialdar/6-Taqta-pulti.pdf`, `print/pult.html` |
+
+Бастапқы ҚМЖ сақталған: `materialdar/KMZh-10B-p15-Espenbetova.docx`.

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="kk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Материалдар · Антропогендік факторлар · 10 «Б»</title>
+<link rel="stylesheet" href="vendor/golos.css">
+<script src="print/lesson-data.js"></script><script src="vendor/qrcode.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:linear-gradient(#165C33,#165C33) top/100% 380px no-repeat,#eef6fc;min-height:100%}
+body{font-family:'Golos Text',sans-serif;color:#13233a;max-width:1180px;margin:0 auto;padding:28px 20px 60px}
+a{color:#0077A8}
+.hero{display:grid;grid-template-columns:1fr 190px;gap:28px;align-items:center;color:#fff;padding:12px 0 34px}
+.hero .k{color:#C0661A;font-weight:800;letter-spacing:.12em;font-size:13px}
+.hero h1{font-size:40px;line-height:1.08;margin:8px 0 10px;font-weight:800}
+.hero p{color:#cfe6f5;font-size:16px;line-height:1.5}
+.hero .acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.btn{display:inline-flex;gap:8px;align-items:center;padding:11px 18px;border-radius:999px;font-weight:700;text-decoration:none;font-size:15px}
+.btn.p{background:#1F7A45;color:#fff}.btn.g{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.3)}
+.qrbox{background:#fff;border-radius:18px;padding:12px;text-align:center;color:#165C33;font-weight:700;font-size:13px}
+.qrbox svg{width:100%;display:block}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px}
+.card{background:#fff;border-radius:18px;box-shadow:0 8px 24px rgba(11,37,69,.10);overflow:hidden;display:flex;flex-direction:column}
+.card .pv{height:190px;background:#dfeaf5 top center/cover no-repeat;border-bottom:1px solid #e3ebf3}
+.card .bd{padding:16px 18px 18px;display:flex;flex-direction:column;gap:8px;flex:1}
+.card .n{font-size:12px;font-weight:800;color:#fff;background:var(--c);border-radius:999px;padding:3px 10px;align-self:flex-start}
+.card h3{font-size:19px;color:#165C33}
+.card p{font-size:14px;line-height:1.45;color:#46566b;flex:1}
+.card .dl{display:flex;gap:8px;flex-wrap:wrap}
+.card .dl a{font-size:13.5px;font-weight:700;text-decoration:none;padding:8px 12px;border-radius:10px;background:#eef6fc;color:#165C33}
+.card .dl a.m{background:var(--c);color:#fff}
+h2{font-size:24px;color:#165C33;margin:40px 0 14px}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 8px 24px rgba(11,37,69,.08);font-size:14px}
+th{background:#165C33;color:#fff;text-align:left;padding:10px 12px;font-weight:700}
+td{padding:9px 12px;border-top:1px solid #e6edf4;vertical-align:top;line-height:1.4}
+tr.ph td{background:var(--c);color:#fff;font-weight:800;font-size:13px;letter-spacing:.06em}
+td a{font-weight:700;text-decoration:none}
+.tip{margin-top:14px;font-size:13.5px;color:#46566b;line-height:1.5}
+@media(max-width:760px){.hero{grid-template-columns:1fr}.hero h1{font-size:30px}.qrbox{max-width:200px}th:nth-child(5),td:nth-child(5){display:none}}
+</style></head><body>
+<section class="hero">
+ <div>
+  <div class="k">📁 АШЫҚ САБАҚ МАТЕРИАЛДАРЫ · ГЕОГРАФИЯ · 10 «Б» · ИНТЕРАКТИВТІ ТАҚТАМЕН</div>
+  <h1>Геоэкологиядағы антропогендік факторлар</h1>
+  <p>§ 15 · оқулық 54–56-беттер, 20–21-сурет<br>Еспенбетова Айжан Сатыбалдиевна · Д. Қонаев атындағы №9 ІТ мектеп-лицейі, Жетісай ауданы · 13.11.2026, №205 кабинет</p>
+  <div class="acts"><a class="btn p" href="live/host.html">▶ Тақтаны ашу</a><a class="btn g" href="toptar.html">🫧 Капсулалар</a><a class="btn g" href="print/pult.html" target="_blank">🎛 Тақта пульті</a><a class="btn g" href="index.html">🏠 Басты бет</a></div>
+ </div>
+ <div class="qrbox"><div id="qr"></div>Тақта</div>
+</section>
+<div class="cards" id="cards"></div>
+<h2>🗺️ Сабақ картасы</h2>
+<table id="map"></table>
+<p class="tip">💡 Наклейкаларды A4 жабысқақ қағазға түрлі түсті басыңыз. Постер инфографикасы мен №3 парақты әр топқа бір данадан беріңіз; тақта пультін өзіңізге басып алыңыз. Әр құжаттағы «Тақта: N» белгісі host.html төменгі жолағындағы N-батырмаға сәйкес келеді.</p>
+<script>
+const SITE = location.href.replace(/materialdar\.html.*$/, "") + "live/host.html";
+const q = qrcode(0, "H"); q.addData(SITE); q.make(); const n = q.getModuleCount(), m = 2, S = n + 2 * m; let p = "";
+for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (q.isDark(r, c)) p += `<rect x="${c + m}" y="${r + m}" width="1.02" height="1.02" rx=".3"/>`;
+document.getElementById("qr").innerHTML = `<svg viewBox="0 0 ${S} ${S}"><g fill="#165C33">${p}</g></svg>`;
+const F = "materialdar/";
+const M = [
+ ["1", "#0077A8", "ҚМЖ — қысқа мерзімді жоспар", "Альбомдық кесте: әр кезеңде әдіс, мұғалім мен оқушы әрекеті, дескрипторлар, тақта скриншоты және «Тақта: N-кезең» батырмасы. Бағалау кестесі K1–K7, 16 ұпай → 10 балл, тақта мен материалдардың QR-ы.", "1-QMZh-Antropogendik-faktorlar", [["docx", "⬇️ Word"], ["pdf", "📄 PDF"]]],
+ ["2", "#1F7A45", "Презентация · 17 слайд", "Фото-жұмбақ, үш команда, мақсат, бағалау, 6 спикер — 7 ықпал, жаңа деректер, жылыжай эффектісі, эстафета, «Ықпалды сөйлет», «Экозертхана», «Алматының ауасы» диаграммасы, квиз, баға. Әр слайдта «тақта: N-кезең», жазбаларда не басу керегі мен кілт.", "2-Prezentaciya-Antropogendik-faktorlar", [["pptx", "⬇️ PowerPoint"], ["pdf", "📄 PDF"]]],
+ ["3", "#5B5BD6", "Жұмыс парақтары №1–№6", "№1 кластер (7 ықпал), №2 «Ықпалды сөйлет», №3 әр топқа «Экозертхана» + галерея, №4 «Алматының ауасы», №5 квиздің қағаз нұсқасы (тақтадағы 8 сұрақпен бірдей), №6 хатшы парағы және кілт.", "3-Zhumys-paraqtary", [["docx", "⬇️ Word"], ["pdf", "📄 PDF"]]],
+ ["4", "#C0661A", "Наклейкалар · 6 парақ", "Рөл белгілері, Орман / Су / Дала сақшыларының тақтайшалары, «Экожүйе капсулалары», «2 жұлдыз, 1 тілек», «Экоуәде ағашының» алмалары, медальдар.", "4-Naklejkalar", [["pdf", "📄 PDF"]], "print/naklejka.html"],
+ ["5", "#E23A24", "Постерге дайындық инфографикасы", "«Экозертхана» (тақта: 10-кезең): әр топқа A4 — постердің сызбасы, 7 минуттық жоспар, «себеп → салдар → ҚР → шара» тізбегінің үлгісі, тексерілген деректер, рөлдер, K5 дескрипторы, 1 минуттық қорғау сөзі. Постерді оқушылар өздері салады.", "5-Poster-infografikalar", [["pdf", "📄 PDF"]], "print/poster.html"],
+ ["6", "#1661A3", "🎛 Тақта пульті · 1 бет", "Мұғалімнің шпаргалкасы: тақтаның 16 батырмасы ретімен — уақыты, әдісі, тақтада не басу керек, оқушылар не істейді, қай K балл, қай парақ пен наклейка. Тақта мен материалдардың QR-ы.", "6-Taqta-pulti", [["pdf", "📄 PDF"]], "print/pult.html"]
+];
+document.getElementById("cards").innerHTML = M.map(x => `<div class="card" style="--c:${x[1]}"><div class="pv" style="background-image:url(${F}prev/${x[4]}.png)"></div><div class="bd"><span class="n">${x[0]}-материал</span><h3>${x[2]}</h3><p>${x[3]}</p><div class="dl">${x[5].map((d, i) => `<a class="${i ? "" : "m"}" href="${F}${x[4]}.${d[0]}" ${d[0] === "pdf" ? 'target="_blank"' : "download"}>${d[1]}</a>`).join("")}${x[6] ? `<a href="${x[6]}" target="_blank">🖨 Браузерден басу</a>` : ""}</div></div></div>`).join("");
+const D = window.LD, PC = ["#2E7D4F", "#1F7A45", "#C0661A", "#1661A3", "#5B6B66"];
+const STK = { groups: "наклейка: капсулалар, рөлдер, тақтайшалар", poster: "постер инфографикасы", feedback: "наклейка: алмалар", ball: "наклейка: медальдар" };
+let h = `<tr><th>Кезең</th><th>Мин</th><th>Тақтада</th><th>Парақ / наклейка</th><th>Бағалау</th></tr>`, ph = -1, tm = 0;
+D.STAGES.forEach((s, i) => {
+  if (s.ph !== ph) { ph = s.ph; h += `<tr class="ph" style="--c:${PC[ph]}"><td colspan="5">${D.PHASES[ph].toUpperCase()}</td></tr>`; }
+  const kk = D.KK[s.id], cr = kk ? D.CR.find(c => c.k === kk) : null;
+  h += `<tr><td><b>${s.title}</b><br><small>${s.method}</small></td><td>${tm}–${tm + s.min}</td><td><b>${i + 1}-батырма</b><br><small>«${s.short}»</small></td><td>${[D.SHEET[s.id] ? "парақ " + D.SHEET[s.id] : "", STK[s.id] || ""].filter(Boolean).join(" · ") || "—"}</td><td>${cr ? `<b>${cr.k} · ${cr.p} балл</b><br><small>${cr.d}</small>` : "—"}</td></tr>`; tm += s.min; });
+document.getElementById("map").innerHTML = h;
+</script>
+</body></html>

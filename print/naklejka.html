@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="kk"><head><meta charset="utf-8">
+<title>Наклейкалар · Антропогендік факторлар</title>
+<link rel="stylesheet" href="../vendor/golos.css">
+<script src="lesson-data.js"></script><script src="icons.js"></script>
+<style>
+@page{size:A4;margin:0}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Golos Text',sans-serif;color:#13233a;background:#d9e3ee;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.page{width:210mm;height:297mm;background:#fff;margin:0 auto 8mm;padding:10mm 12mm 12mm;position:relative;overflow:hidden;page-break-after:always}
+@media print{body{background:#fff}.page{margin:0}}
+.pt{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5mm}
+.pt h2{font-size:15pt;font-weight:800;color:#0B2545}.pt small{font-size:8.5pt;color:#6b7a90}
+.ft{position:absolute;left:12mm;right:12mm;bottom:5mm;font-size:7pt;color:#8a98aa;display:flex;justify-content:space-between}
+.grid{display:grid;gap:5mm;justify-content:center}
+.cut{outline:.3mm dashed #b8c4d2;outline-offset:1.5mm}
+/* role badges */
+.rb{width:58mm;height:58mm;border-radius:50%;background:conic-gradient(var(--g),var(--g2),var(--g));padding:2.4mm;display:grid}
+.rb>div{border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:1mm}
+.rb svg{width:15mm;height:15mm}
+.rb b{font-size:13pt;font-weight:800;line-height:1.05}
+.rb small{font-size:7.5pt;color:#4b5a70;max-width:40mm;line-height:1.15}
+.rb .tg{font-size:7pt;font-weight:800;color:#fff;background:var(--g);border-radius:9mm;padding:.6mm 2.4mm}
+/* tent */
+.tent{width:186mm;height:88mm;border:.3mm dashed #b8c4d2;display:grid;grid-template-rows:1fr 1fr;margin-bottom:4mm}
+.half{display:flex;align-items:center;gap:6mm;padding:0 9mm;background:linear-gradient(110deg,var(--g),var(--g2));color:#fff}
+.half.top{transform:rotate(180deg)}
+.half+.half{border-top:.4mm dashed rgba(255,255,255,.7)}
+.half svg{width:22mm;height:22mm;flex:none}
+.half b{font-size:24pt;font-weight:800;display:block;line-height:1}.half small{font-size:10pt;opacity:.92}
+/* capsules */
+.cap{width:56mm;height:36mm;border-radius:18mm;background:linear-gradient(120deg,var(--g),var(--g2));color:#fff;display:flex;align-items:center;gap:3mm;padding:0 6mm}
+.cap svg{width:12mm;height:12mm;flex:none}.cap b{font-size:11pt;line-height:1.05;display:block}.cap small{font-size:7.5pt;opacity:.9}
+/* stars */
+.sw{width:88mm;height:78mm;border-radius:5mm;border:.5mm solid #0B2545;padding:4mm;display:flex;flex-direction:column;gap:2.2mm}
+.sw .r{display:flex;gap:2mm;align-items:center;font-size:9pt;font-weight:700}
+.sw .r svg{width:6.5mm;height:6.5mm;flex:none}
+.sw .l{border-bottom:.3mm solid #b8c4d2;height:6mm}
+.sw .h{font-size:10.5pt;font-weight:800;color:#0B2545;display:flex;justify-content:space-between}
+/* reflection */
+.rf{width:42mm;height:42mm;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#fff;background:radial-gradient(circle at 30% 25%,var(--g2),var(--g));gap:.6mm}
+.rf b{font-size:9pt;line-height:1.05;max-width:32mm}.rf small{font-size:6.6pt;opacity:.92;max-width:30mm;line-height:1.1}
+.rf svg{width:9mm;height:9mm}
+/* medals */
+.md{width:56mm;height:70mm;display:flex;flex-direction:column;align-items:center;text-align:center}
+.md .ri{width:22mm;height:16mm;background:linear-gradient(90deg,var(--g2) 0 33%,#fff 33% 40%,var(--g) 40% 60%,#fff 60% 67%,var(--g2) 67%);clip-path:polygon(0 0,100% 0,82% 100%,18% 100%)}
+.md .cn{width:48mm;height:48mm;border-radius:50%;margin-top:-1mm;background:conic-gradient(from 20deg,var(--g),#ffe28a,var(--g),#fff3c4,var(--g));padding:2.2mm;display:grid}
+.md .cn>div{border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.4mm}
+.md .cn svg{width:10mm;height:10mm}
+.md b{font-size:10.5pt;line-height:1.05;font-weight:800;max-width:36mm}.md small{font-size:7pt;color:#4b5a70;max-width:36mm;line-height:1.1}
+.md .big{font-size:20pt;font-weight:800;color:var(--g);line-height:1}
+</style></head><body>
+<script>
+const I = window.ICONS;
+const DATA = {}; const LD = window.LD;
+const GR = {t0:["#43B36B","#1F7A45","leaf"],t1:["#3FA4E8","#1661A3","wave"],t2:["#F2A541","#C0661A","sun"]};
+const GL = LD.TEAMS.map((t, i) => ({id: "t" + i, name: (i + 1) + "-топ · " + t.name, title: LD.RQ[i].split("?")[0] + "?", city: t.name.split(" ")[0]}));
+const FOOT = `<div class="ft"><span>География · 10 «Б» · § 15 Антропогендік факторлар · Еспенбетова А.С.</span><span>Пунктир бойымен қиыңыз · A4 жабысқақ қағаз, түрлі түсті басу</span></div>`;
+const roles = [["mic","1-спикер","Өз ықпалын 1 мин түсіндіреді"],["mic","2-спикер","Екінші ықпалды 1 мин түсіндіреді"],["pen","Хатшы","Дескриптор бойынша балл қояды"],["poster","Постер қорғаушы","Постерді 1 минутта қорғайды"]];
+let h = "";
+// 1 roles
+h += `<section class="page"><div class="pt"><h2>Рөл белгілері</h2><small>топ × рөл · Ø 58 мм</small></div><div class="grid" style="grid-template-columns:repeat(3,58mm);gap:6mm 9mm">`;
+roles.forEach(r => GL.forEach(g => { const [c, c2] = GR[g.id];
+  h += `<div class="rb cut" style="--g:${c};--g2:${c2}"><div>${I[r[0]](c)}<b>${r[1]}</b><small>${r[2]}</small><span class="tg">${g.name.split("·")[0].trim()}</span></div></div>`; }));
+h += `</div>${FOOT}</section>`;
+// 2 tents
+h += `<section class="page"><div class="pt"><h2>Үстел тақтайшалары</h2><small>ортасынан бүктеңіз · жоғарғы жартысы аударылған</small></div>`;
+GL.forEach(g => { const [c, c2, ic] = GR[g.id]; const half = cls => `<div class="half ${cls}">${I[ic]("#fff")}<div><b>${g.name.split("·")[1].trim()}</b><small>${g.name.split("·")[0].trim()} · ${g.title}</small></div></div>`;
+  h += `<div class="tent" style="--g:${c};--g2:${c2}">${half("top")}${half("")}</div>`; });
+h += `${FOOT}</section>`;
+// 3 capsules
+h += `<section class="page"><div class="pt"><h2>«Экожүйе капсулалары» — топқа бөлу</h2><small>әр топқа 5 + 1 қосымша · оқушы өз тобының капсуласын алады</small></div><div class="grid" style="grid-template-columns:repeat(3,56mm);gap:5.5mm 6mm">`;
+for (let k = 0; k < 6; k++) GL.forEach(g => { const [c, c2, ic] = GR[g.id]; const st = {name: g.city};
+  h += `<div class="cap cut" style="--g:${c};--g2:${c2}">${I[ic]("#fff")}<div><b>${st.name}</b><small>${g.name.split("·")[0].trim()} · капсула${k === 5 ? " · қосымша" : ""}</small></div></div>`; });
+h += `</div>${FOOT}</section>`;
+// 4 stars
+h += `<section class="page"><div class="pt"><h2>«2 жұлдыз, 1 тілек»</h2><small>өзара бағалау · «Экозертхана» галереясы (тақта: 10-кезең)</small></div><div class="grid" style="grid-template-columns:repeat(2,88mm);gap:6mm 7mm">`;
+for (let k = 0; k < 6; k++) h += `<div class="sw cut"><div class="h"><span>Кімге: ____________</span><span style="color:#D99A00">★ ★ ✎</span></div>
+ <div class="r">${I.star("#D99A00")}Ұнады:</div><div class="l"></div><div class="l"></div>
+ <div class="r">${I.star("#D99A00")}Тағы ұнады:</div><div class="l"></div>
+ <div class="r">${I.bulb("#00AFCA")}Тілек:</div><div class="l"></div><div class="l"></div></div>`;
+h += `</div>${FOOT}</section>`;
+// 5 reflection
+const RC = [["#3BB273","#8BE0AE","leaf"],["#F2B33D","#FFD98A","bulb"],["#F0765F","#FFB4A4","leaf"],["#1F7A45","#43B36B","star"]];
+h += `<section class="page"><div class="pt"><h2>Кері байланыс: «Экоуәде ағашы»</h2><small>ағашқа жабыстырылатын «алмалар» · тақта: 15-кезең</small></div><div class="grid" style="grid-template-columns:repeat(4,42mm);gap:5mm 4.5mm">`;
+for (let k = 0; k < 5; k++) [{t:"Түсіндім",s:"тақырыпты толық"},{t:"Сұрағым бар",s:"тағы түсіндіріңізші"},{t:"Экоуәдем",s:"бір ағаш отырғызамын"},{t:"Басқаға үйретемін",s:"досыма түсіндіремін"}].forEach((r, i) => { const [c, c2, ic] = RC[i];
+  h += `<div class="rf cut" style="--g:${c};--g2:${c2}">${I[ic]("#fff")}<b>${r.t}</b><small>${r.s}</small></div>`; });
+h += `</div>${FOOT}</section>`;
+// 6 medals
+const meds = [["#12a86f","#0b7d52","10","Жоғары деңгей","8–10 балл"],["#0089B5","#006b8f","7","Орта деңгей","4–7 балл"],["#E0A400","#b88600","3","Өсу жолында","1–3 балл"],
+  ["#e23a24","#b8261a","mic","Үздік спикер","Ең түсінікті түсіндіру"],["#5b5bd6","#3f3fb0","pen","Үздік хатшы","Мұқият және әділ"],["#f78c14","#c96a00","poster","Үздік постер","Галерея таңдауы"],
+  ["#165C33","#1F7A45","leaf","Жер сақшысы","Ең жақсы экоуәде"],["#1661A3","#3FA4E8","wave","Эстафета жеңімпазы","Тақтадағы эстафета"],["#C0661A","#F2A541","medal","Экожарыс көшбасшысы","Квиз бойынша 1-орын"]];
+h += `<section class="page"><div class="pt"><h2>Медальдар</h2><small>10 балдық деңгейлер · номинациялар</small></div><div class="grid" style="grid-template-columns:repeat(3,56mm);gap:7mm 6mm">`;
+meds.forEach(m => { const inner = I[m[2]] ? I[m[2]](m[0]) : `<div class="big">${m[2]}</div>`;
+  h += `<div class="md cut" style="--g:${m[0]};--g2:${m[1]}"><div class="ri"></div><div class="cn"><div>${inner}<b>${m[3]}</b><small>${m[4]}</small></div></div></div>`; });
+h += `</div>${FOOT}</section>`;
+document.body.insertAdjacentHTML("beforeend", h);
+</script>
+</body></html>

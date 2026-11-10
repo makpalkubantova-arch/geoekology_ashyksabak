@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="kk"><head><meta charset="utf-8">
+<title>Постерге дайындық инфографикасы · Антропогендік факторлар</title>
+<link rel="stylesheet" href="../vendor/golos.css">
+<script src="lesson-data.js"></script><script src="../vendor/qrcode.js"></script><script src="icons.js"></script>
+<style>
+@page{size:A4 landscape;margin:0}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Golos Text',sans-serif;color:#13233a;background:#d9e3ee;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.page{width:297mm;height:210mm;background:#fff;margin:0 auto 8mm;padding:8mm 9mm 7mm;position:relative;overflow:hidden;page-break-after:always;display:flex;flex-direction:column;gap:3.2mm}
+@media print{body{background:#fff}.page{margin:0}}
+.hd{border-radius:9mm 2mm 9mm 2mm;padding:3mm 5mm;color:#fff;display:flex;gap:4mm;align-items:center;background:linear-gradient(120deg,var(--g),var(--g2))}
+.hd .ic{width:17mm;height:17mm;background:rgba(255,255,255,.18);border-radius:4mm;display:grid;place-items:center;flex:none}
+.hd .ic svg{width:11mm;height:11mm}
+.hd .k{font-size:8.5pt;font-weight:700;letter-spacing:.12em;opacity:.9}
+.hd h1{font-size:19pt;font-weight:800;line-height:1.05;margin:.6mm 0}
+.hd .q{font-size:11pt;font-weight:600;opacity:.95;max-width:165mm}
+.hd .rt{margin-left:auto;display:flex;gap:3mm;align-items:center}
+.badge{background:#fff;color:var(--g);border-radius:4mm;padding:2mm 3.5mm;text-align:center;font-weight:800;line-height:1}
+.badge b{display:block;font-size:20pt}.badge small{font-size:7.5pt;font-weight:700}
+.qr{background:#fff;border-radius:3mm;padding:1.2mm;width:22mm;height:22mm}.qr svg{width:100%;height:100%;display:block}
+.steps{display:grid;grid-template-columns:repeat(5,1fr);gap:2mm}
+.st{border-radius:3.5mm;padding:2mm 2.5mm;background:var(--soft);border:.4mm solid var(--g);position:relative;display:flex;gap:2mm;align-items:flex-start}
+.st .n{flex:none;width:7mm;height:7mm;border-radius:50%;background:var(--g);color:#fff;font-weight:800;display:grid;place-items:center;font-size:10pt}
+.st .tm{font-size:8pt;font-weight:800;color:var(--g)}
+.st b{display:block;font-size:9pt;line-height:1.15}
+.st small{font-size:7.6pt;color:#4b5a70;line-height:1.2;display:block;margin-top:.5mm}
+.st:not(:last-child)::after{content:"";position:absolute;right:-2.6mm;top:50%;margin-top:-1.6mm;border:1.6mm solid transparent;border-left-color:var(--g);z-index:2}
+.main{flex:1;display:grid;grid-template-columns:74mm 1fr 78mm;grid-template-rows:minmax(0,1fr);gap:3.5mm;min-height:0}
+.card{border:.35mm solid #d3deea;border-radius:4mm;padding:2.6mm;display:flex;flex-direction:column;gap:1.5mm;min-height:0;overflow:hidden}
+.ct{font-size:10pt;font-weight:800;color:var(--g);display:flex;gap:1.5mm;align-items:center;text-transform:uppercase;letter-spacing:.04em}
+.ct svg{width:5.5mm;height:5.5mm}
+/* poster mockup */
+.vat{flex:1;min-height:0;border:.6mm dashed var(--g);border-radius:3mm;padding:2mm;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto 1fr auto auto;gap:1.6mm;background:repeating-linear-gradient(45deg,#fff,#fff 3mm,#fafcfe 3mm,#fafcfe 6mm)}
+.z{border-radius:2mm;padding:1.6mm;font-size:7.8pt;line-height:1.2;color:#22344d;background:#fff;border:.3mm solid #c9d6e4;position:relative}
+.z i{font-style:normal;display:inline-grid;place-items:center;width:4.6mm;height:4.6mm;border-radius:50%;background:var(--g);color:#fff;font-weight:800;font-size:7.5pt;margin-right:1mm;vertical-align:middle}
+.z b{font-size:8.3pt}
+.z1{grid-column:1/3;text-align:center;background:var(--soft)}
+.z2{grid-column:1/3;display:grid;place-items:center;text-align:center;border-width:.5mm;border-color:var(--g)}
+.tip{font-size:7.6pt;color:#4b5a70;line-height:1.25}
+/* diagram */
+.dg{flex:1;position:relative;min-height:0}
+.dg svg{width:100%;height:100%}
+.fill{fill:#fff;stroke:var(--g);stroke-width:1.2}
+.hint{font-size:9px;fill:#97a6b8;font-style:italic}
+.lbl{font-size:11px;font-weight:800;fill:#13233a}
+/* facts */
+.fact{display:flex;gap:2mm;align-items:flex-start;font-size:7.8pt;line-height:1.18}
+.fact .num{flex:none;min-width:13mm;background:var(--g);color:#fff;border-radius:2mm;padding:.8mm 1.2mm;font-weight:800;text-align:center;font-size:8.6pt}
+.fact small{color:#6b7a90;display:block;font-size:7.2pt}
+.roles{display:grid;grid-template-columns:1fr 1fr;gap:1.4mm}
+.role{display:flex;gap:1.4mm;align-items:center;font-size:7.6pt;line-height:1.15;background:var(--soft);border-radius:2mm;padding:1.2mm}
+.role svg{width:6mm;height:6mm;flex:none}
+.rub{font-size:7.4pt;line-height:1.2;display:flex;gap:1.4mm;align-items:flex-start}
+.rub span{flex:none;width:3.6mm;height:3.6mm;border:.4mm solid var(--g);border-radius:1mm;margin-top:.2mm}
+.speech{background:#13233a;color:#fff;border-radius:3mm;padding:2.2mm 2.6mm;font-size:8pt;line-height:1.35}
+.speech b{color:var(--lime)}
+.ft{display:flex;justify-content:space-between;font-size:7.2pt;color:#7a889b}
+</style></head><body>
+<script>
+const SITE = "https://makpalkubantova-arch.github.io/geoekology_ashyksabak/";
+function qrSvg(t, col){const q=qrcode(0,"H");q.addData(t);q.make();const n=q.getModuleCount(),m=2,S=n+m*2;let p="";for(let r=0;r<n;r++)for(let c=0;c<n;c++)if(q.isDark(r,c))p+=`<rect x="${c+m}" y="${r+m}" width="1.02" height="1.02" rx=".3"/>`;return `<svg viewBox="0 0 ${S} ${S}"><rect width="${S}" height="${S}" fill="#fff"/><g fill="${col}">${p}</g></svg>`}
+const I = window.ICONS, D = window.LD, S7 = D.SEVEN;
+const PICK = [[0, 2], [5, 3], [1, 4]], ICO = ["leaf", "wave", "sun"];
+const HINT = [["ағаш кесу, өрт", "топырақ ашылады, эрозия", "Ертіс ормандары · Арал табаны", "сексеуіл, орман отырғызу"],
+              ["су суаруға алынады, ағынды су", "көл/теңіз деңгейі өзгереді", "Балқаш · Арал", "суды үнемдеу, тазарту"],
+              ["тың жер жырту, көмір жағу", "шаңды дауыл, жылыну", "Тың жерлер · ЖЭС", "орман белдеуі, газға көшу"]];
+function chain(i, c){
+ const W=360,H=330,lab=["Себеп","Салдар","Қазақстан мысалы","Қорғау шарасы"],col=[c,c,"#5B6B66","#1F7A45"];
+ let s=`<svg viewBox="0 0 ${W} ${H}"><defs><marker id="a${i}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="${c}"/></marker></defs>`;
+ lab.forEach((l,k)=>{const y=8+k*80; s+=`${k?`<path d="M180 ${y-22} V${y-2}" stroke="${c}" stroke-width="3" marker-end="url(#a${i})"/>`:""}<rect x="20" y="${y}" width="320" height="56" rx="14" fill="#fff" stroke="${col[k]}" stroke-width="2.5"/><rect x="20" y="${y}" width="96" height="56" rx="14" fill="${col[k]}"/><text x="68" y="${y+33}" text-anchor="middle" fill="#fff" font-size="10.5" font-weight="800">${l.split(" ")[0]}</text>${l.includes(" ")?`<text x="68" y="${y+46}" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">${l.split(" ")[1]}</text>`:""}<text class="hint" x="128" y="${y+33}">мыс.: ${HINT[i][k]}</text>`;});
+ return s+`</svg>`;
+}
+const steps=[["0:00–0:30","Сұрақты оқы","Рөлдерді нақтыла","bulb"],["0:30–1:30","Тізбекті жаз","Себеп → салдар (№3 парақ)","pen"],["1:30–4:00","Постер сал","Сызба + мысал + шара","brush"],["4:00–7:00","Галерея","Әр топ 1 мин қорғайды","mic"],["қорғау кезінде","2 жұлдыз, 1 тілек","Басқа топтарды бағала","star"]];
+let html="";
+D.TEAMS.forEach((T,i)=>{
+ const c=T.c2;
+ html+=`<section class="page" style="--g:${c};--g2:${T.ink};--soft:${T.soft};--lime:#c9f0a8">
+ <div class="hd"><div class="ic">${I[ICO[i]]("#fff")}</div><div><div class="k">ПОСТЕРГЕ ДАЙЫНДЫҚ · «ЭКОЗЕРТХАНА» · ТАҚТА: 10-КЕЗЕҢ</div><h1>${T.name}</h1><div class="q">${D.RQ[i]}</div></div>
+ <div class="rt"><div class="badge"><b>7</b><small>минут</small></div><div class="qr">${qrSvg(SITE+"live/host.html",T.ink)}</div></div></div>
+ <div class="steps">${steps.map((s,k)=>`<div class="st"><div class="n">${k+1}</div><div><div class="tm">${s[0]}</div><b>${s[1]}</b><small>${s[2]}</small></div></div>`).join("")}</div>
+ <div class="main">
+  <div class="card"><div class="ct">${I.poster(c)}Постер сызбасы</div>
+   <div class="vat">
+    <div class="z z1"><i>1</i><b>Зерттеу сұрағы + топ аты</b><br>${T.name}</div>
+    <div class="z z2"><div><i>2</i><b>Себеп → салдар тізбегі</b><br>сурет-сызбамен, бағыттауыш көрсеткілермен<br><span class="tip">постердің ортасы, ең үлкен бөлігі</span></div></div>
+    <div class="z"><i>3</i><b>Қазақстан мысалы</b><br>дерек + жыл</div>
+    <div class="z"><i>4</i><b>Қорғау шарасы</b><br>нақты, орындалатын</div>
+    <div class="z" style="grid-column:1/3"><i>5</i><b>Дереккөз:</b> оқулық 54–56-б., 20–21-сурет · ресми дерек</div>
+   </div>
+   <div class="tip">✎ Қарындашпен алдымен 5 аймақты сыз. Үлкен сурет, аз сөз, түрлі түсті маркер.</div>
+  </div>
+  <div class="card"><div class="ct">${I.pen(c)}Тізбек үлгісі — постерге көшір</div>
+   <div class="dg">${chain(i,c)}</div>
+   <div class="tip"><b style="color:${c}">Кеңес:</b> әр көрсеткінің жанына «неге?» деп бір сөз жаз — тізбек түсінікті болады.</div>
+  </div>
+  <div class="card"><div class="ct">${I.check(c)}Тексерілген деректер</div>
+   ${PICK[i].map(g=>`<div class="fact"><div class="num">${g+1}</div><div><b>${S7[g][1]}</b><br>${S7[g][5]}<small>${S7[g][4]}</small></div></div>`).join("")}
+   <div class="ct" style="margin-top:.6mm">${I.star(c)}Кім не істейді</div>
+   <div class="roles"><div class="role">${I.pen(c)}<span><b>Хатшы</b> тізбекті жазады, K5 қояды</span></div><div class="role">${I.book(c)}<span><b>Спикерлер</b> деректі оқулықпен тексереді</span></div><div class="role">${I.brush(c)}<span><b>Қалғаны</b> постерді салады</span></div><div class="role">${I.mic(c)}<span><b>Постер қорғаушы</b> 1 мин</span></div></div>
+   <div class="ct" style="margin-top:.6mm">${I.medal(c)}K5 дескриптор · 3 балл</div>
+   ${["Себеп → салдар байланысын көрсетеді","Қазақстандағы мысал келтіреді","Қорғау шарасын ұсынып, 1 минутта қорғайды"].map(r=>`<div class="rub"><span></span>${r}</div>`).join("")}
+  </div>
+ </div>
+ <div class="speech"><b>Қорғау сөзі (1 мин):</b> «Біз — ${T.name}. Біздің сұрағымыз: … . Себебі — … , сондықтан … (салдар). Қазақстанда мысалы … (дерек). Біздің ұсынысымыз: … . Табиғатқа жауаптымыз!»</div>
+ <div class="ft"><span>География · 10 «Б» · § 15 Антропогендік факторлар · ${D.teacher}</span><span>Тақта: 10-кезең «Постер» · Жұмыс парағы №3 · K5</span></div>
+ </section>`;
+});
+document.body.insertAdjacentHTML("beforeend",html);
+</script>
+</body></html>
