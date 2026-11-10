@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="kk"><head><meta charset="utf-8">
+<title>Спикер карточкалары · Антропогендік факторлар</title>
+<link rel="stylesheet" href="../vendor/golos.css">
+<script src="lesson-data.js"></script><script src="spiker-data.js"></script><script src="icons.js"></script>
+<style>
+@page{size:A4 landscape;margin:0}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Golos Text',sans-serif;color:#13233a;background:#d9e3ee;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.page{width:297mm;height:210mm;background:#fff;margin:0 auto 8mm;position:relative;overflow:hidden;page-break-after:always}
+@media print{body{background:#fff}.page{margin:0}}
+/* FRONT — сыныпқа көрсетілетін бет */
+.front{display:grid;grid-template-columns:118mm 1fr;color:#fff;background:var(--c2)}
+.front .ph{background:center/cover no-repeat;position:relative}
+.front .ph::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 55%,var(--c2))}
+.front .num{position:absolute;left:8mm;top:8mm;width:24mm;height:24mm;border-radius:50%;background:#fff;color:var(--c2);display:grid;place-items:center;font-size:40pt;font-weight:800;z-index:2;box-shadow:0 2mm 6mm rgba(0,0,0,.25)}
+.front .bd{padding:10mm 11mm 9mm 4mm;display:flex;flex-direction:column;gap:4mm}
+.front .k{font-size:10pt;font-weight:800;letter-spacing:.14em;opacity:.85}
+.front h1{font-size:30pt;line-height:1.05;font-weight:800}
+.front .big{display:flex;align-items:baseline;gap:4mm;background:rgba(255,255,255,.14);border-radius:5mm;padding:3mm 5mm}
+.front .big b{font-size:44pt;font-weight:800;color:#FFE38A;line-height:1;white-space:nowrap}
+.front .big span{font-size:13pt;font-weight:600;line-height:1.2}
+.steps{display:grid;grid-template-columns:1fr 1fr;gap:3.4mm;margin-top:auto}.st{min-height:24mm}
+.st{background:#fff;color:#13233a;border-radius:4mm;padding:2.6mm 3.4mm;display:flex;gap:2.6mm;align-items:flex-start}
+.st i{font-style:normal;flex:none;width:8mm;height:8mm;border-radius:50%;background:var(--c2);color:#fff;display:grid;place-items:center;font-weight:800;font-size:12pt}
+.st small{display:block;font-size:8pt;font-weight:800;color:var(--c2);text-transform:uppercase;letter-spacing:.06em}
+.st b{font-size:14pt;line-height:1.15}
+/* BACK — спикердің сөзі */
+.back{padding:9mm 11mm;display:grid;grid-template-columns:1fr 70mm;gap:7mm}
+.back .hd{grid-column:1/3;display:flex;align-items:center;gap:4mm;border-bottom:.8mm solid var(--c2);padding-bottom:3mm}
+.back .hd .n{width:13mm;height:13mm;border-radius:50%;background:var(--c2);color:#fff;display:grid;place-items:center;font-weight:800;font-size:20pt}
+.back .hd h2{font-size:17pt;line-height:1.1;color:var(--c2)}
+.back .hd p{font-size:9.5pt;color:#5B6B66;font-weight:700}
+.back .hd .who{margin-left:auto;text-align:right;font-size:10pt;font-weight:700;color:#5B6B66}
+.sp{display:flex;flex-direction:column;gap:2.4mm}
+.sp p{font-size:13.2pt;line-height:1.36;padding-left:18.5mm;position:relative}
+.sp p em{position:absolute;left:0;top:.6mm;font-style:normal;font-size:8pt;font-weight:800;color:#fff;background:var(--c2);border-radius:9mm;padding:.4mm 1.8mm}
+.side{display:flex;flex-direction:column;gap:3mm}
+.box{border-radius:4mm;padding:3mm 3.6mm;background:var(--soft);font-size:9.5pt;line-height:1.35}
+.box h3{font-size:9.5pt;color:var(--c2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:1mm}
+.box ol{padding-left:4.5mm}
+.tips li{margin-bottom:.8mm}
+.ft{position:absolute;left:11mm;right:11mm;bottom:4.5mm;display:flex;justify-content:space-between;font-size:7.5pt;color:#8a98aa}
+</style></head><body>
+<script>
+const D = window.LD, SP = window.SPEECH, S7 = D.SEVEN;
+const TEAMS = D.TEAMS, GREY = { name: "Мұғалім", c2: "#4B5A55", soft: "#EEF2F0", ink: "#2F3B37" };
+const LAB = ["Не болады?", "Себебі", "Жаңа дерек", "Қазақстан мысалы"];
+const TIME = ["0–5 с", "5–20 с", "20–30 с", "30–40 с", "40–50 с", "50–60 с"];
+let h = "";
+D.SPK.forEach((x, k) => {
+  const sp = SP.find(s => s.g === x.g), t = x.t < 0 ? GREY : TEAMS[x.t], c = S7[x.g];
+  const role = x.t < 0 ? "Мұғалім қорытады" : `${t.name} · ${x.r === "sp1" ? "1" : "2"}-спикер`;
+  h += `<section class="page front" style="--c2:${t.c2};--soft:${t.soft}">
+    <div class="ph" style="background-image:url(../live/img/${sp.img}.jpg)"><div class="num">${x.g + 1}</div></div>
+    <div class="bd"><div class="k">20-СУРЕТ · ${x.g + 1}-ЫҚПАЛ · ${role.toUpperCase()}</div><h1>${c[1]}</h1>
+      <div class="big"><b>${sp.big}</b><span>${sp.bigT}</span></div>
+      <div class="steps">${sp.kw.map((w, i) => `<div class="st"><i>${i + 1}</i><div><small>${LAB[i]}</small><b>${w}</b></div></div>`).join("")}</div></div>
+  </section>`;
+  h += `<section class="page back" style="--c2:${t.c2};--soft:${t.soft}">
+    <div class="hd"><div class="n">${x.g + 1}</div><div><h2>${c[1]}</h2><p>Тақта: 7-кезең «6 спикер» → ${k + 1}-батырма · таймер ${x.t < 0 ? 30 : 60} с · оқулық 54–56-б.</p></div><div class="who">${role}<br>Аты-жөні: ____________________</div></div>
+    <div class="sp">${sp.s.map((p, i) => `<p><em>${x.t < 0 ? "қорыту" : TIME[i] || ""}</em>${p}</p>`).join("")}</div>
+    <div class="side">
+      <div class="box"><h3>Карточканы қалай ұстаймын</h3><ol class="tips"><li>Суретті бетті сыныпқа қаратып, кеуде тұсында ұста.</li><li>Мына бетке қарап сөйле, бірақ сыныпқа жиі қара.</li><li>«1–4» қадамды саусақпен көрсетіп отыр.</li></ol></div>
+      <div class="box"><h3>Тақтада не болады</h3>Мұғалім ${k + 1}-батырманы басады: экранда бейне, мәтін, жаңа дерек және «4 қадам» жолағы шығады, ${x.t < 0 ? 30 : 60} секундтық таймер қосылады.</div>
+      <div class="box"><h3>Тыңдаушылар</h3>№1 кластер парағына жазады: не болады · жаңа дерек · Қазақстан мысалы.</div>
+      <div class="box"><h3>Бағалау · K2</h3>Спикер: ықпалды сурет, дерек, Қазақстан мысалымен түсіндіреді — <b>2 балл</b>.</div>
+    </div>
+    <div class="ft"><span>География · 10 «Б» · § 15 · ${D.teacher}</span><span>Екі жақты басу: қысқа жиегі бойынша аудару</span></div>
+  </section>`;
+});
+document.body.insertAdjacentHTML("beforeend", h);
+</script>
+</body></html>

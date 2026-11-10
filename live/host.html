@@ -416,6 +416,11 @@ body.fitmode { overflow-x: hidden; }
 .frow2.big .fbox { font-size: clamp(14px, 1.25vw, 19px); }
 @media (max-width: 980px) { .clrow, .clrow.b { grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; } }
 .rldone { text-align: center; display: flex; flex-direction: column; gap: 12px; align-items: center; padding: 40px 0; }
+.spkplan { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-top: 10px; }
+.spkplan div { background: #fff; border-radius: 14px; border-top: 6px solid var(--sc); padding: 10px 12px 12px; box-shadow: 0 6px 18px rgba(0,0,0,.08); animation: rise .45s ease both; }
+.spkplan i { font-style: normal; display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--sc); color: #fff; font-weight: 900; margin-right: 6px; }
+.spkplan small { font-weight: 900; color: var(--sc); text-transform: uppercase; letter-spacing: .04em; font-size: 13px; }
+.spkplan b { display: block; margin-top: 6px; font-size: clamp(15px, 1.35vw, 21px); line-height: 1.2; }
 .g1 { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 0; padding: 0 !important; overflow: hidden; animation: rise .5s ease both; }
 @media (max-width: 980px) { .g1 { grid-template-columns: minmax(0, 1fr); } }
 .g1m { position: relative; min-height: 46vh; background: #1F4A40; }
@@ -599,6 +604,8 @@ body.fitmode { overflow-x: hidden; }
   const ball10 = (p) => Math.max(1, Math.min(10, Math.floor(p * 10 / MAXC + 0.5)));
   const band10 = (b) => b >= 8 ? ['жоғары', '#1F7A45'] : b >= 4 ? ['орта', '#C0661A'] : ['төмен', '#B3261E'];
   /* өзін-өзі басқару: әр топтың 2 спикері → 7 ықпалдың біреуі; 7-ін мұғалім қорытады */
+  /* спикердің 4 қадамы: тақтада сыныпқа көрсетіледі (print/spiker-data.js-пен бірдей) */
+  const SPKW = [["Орман кесіледі, өртенеді","Ағаш дайындау, егістік пен жайылымға жер босату, өрт","Әлемде жыл сайын 10,9 млн га орман кесілді (FAO, 2025)","Ертіс бойындағы ленталы қарағайлы ормандар"],["Топырақтың құнарлы қабаты бұзылады","Жерді жырту, жайылымды шамадан тыс пайдалану, орманның кесілуі","Әлемде жыл сайын ≥100 млн га жер тозды (UNCCD)","Тың жерлердегі шаңды дауылдар"],["Құнарлы жер шөлге айналады","Құрғақшылық + халық өсуі, жерді толық игеру, техногендік әсер","Жылына 50–70 мың км² жер жарамсыз болады","Арал табаны; 2021–2025 ж. 920 мың га сексеуіл"],["Ауа, су, топырақ ластанады","Өндірістік және тұрмыстық қалдықтар, түтін","Ағынды сулардың 42%-ы тазартылмаған (UN-Water, 2022)","Теміртау комбинатының түтіні"],["Жер беті көбірек жылиды","Жылыжай газдары: CO₂, метан, фреон, азот тотығы","2024: CO₂ 423,9 ppm, бір жылда +3,5 ppm","Көмір ЖЭС-тері мен автокөліктер"],["Су айналымының тізбегі үзіледі","Өзен суы суаруға, су қоймаларына алынады","Бір буындағы өзгеріс — бүкіл тізбекке","Арал теңізі; Іле мен Балқаш"],["Орта бұрынғы күйіне орала алмайды","Ықпал өзгеру шегінен асады","Жайылымдардың 20–60%-ы тозған (ҚР ЭМ)","Тозған жайылымдар"]];
   const SPK = [{ t: 0, r: 'sp1', g: 0 }, { t: 0, r: 'sp2', g: 1 }, { t: 2, r: 'sp1', g: 2 }, { t: 1, r: 'sp1', g: 3 }, { t: 2, r: 'sp2', g: 4 }, { t: 1, r: 'sp2', g: 5 }, { t: -1, r: 'teacher', g: 6 }];
   const capNow = () => { try { return JSON.parse(localStorage.getItem('eco_teams_v1') || 'null'); } catch (e) { return null; } };
   const nrmN = (n) => String(n || '').toLowerCase().trim().replace(/\s+/g, ' ').replace(/[әғқңөұүһі]/g, (c) => ({ 'ә': 'а', 'ғ': 'г', 'қ': 'к', 'ң': 'н', 'ө': 'о', 'ұ': 'у', 'ү': 'у', 'һ': 'х', 'і': 'и' }[c]));
@@ -928,6 +935,8 @@ body.fitmode { overflow-x: hidden; }
     if ($('capbtn')) $('capbtn').onclick = () => { document.body.insertAdjacentHTML('beforeend', '<div class="capov" id="capov"><iframe src="../toptar.html?embed=1"></iframe><button class="gloss" id="capx">Топтар дайын ✓ — тақтаға оралу</button></div>'); $('capx').onclick = () => { $('capov').remove(); mounted = ''; mountSlide(); chrome(); }; };
     app.querySelectorAll('[data-spk]').forEach((b) => b.onclick = () => { const x = SPK[+b.dataset.spk]; app.querySelectorAll('[data-spk]').forEach((q) => q.classList.toggle('on', q === b));
       renderG1(x.g); const g1 = $('g1'); g1.querySelectorAll('.g1strip,#g1p,#g1n').forEach((e) => e.remove());
+      const LB = ['Не болады?', 'Себебі', 'Жаңа дерек', 'Қазақстан мысалы'], cc = x.t < 0 ? '#4B5A55' : T[x.t].c2;
+      g1.insertAdjacentHTML('beforeend', '<div class="spkplan" style="--sc:' + cc + '">' + SPKW[x.g].map((w, q) => '<div style="animation-delay:' + (q * 0.12) + 's"><i>' + (q + 1) + '</i><small>' + LB[q] + '</small><b>' + esc(w) + '</b></div>').join('') + '</div>');
       if (x.g === 4) g1.insertAdjacentHTML('beforeend', '<div class="glass ghd ghall" style="margin-top:10px">' + GHSVG + '</div>');
       miniTimer(x.t < 0 ? 30 : 60, (x.t < 0 ? 'Мұғалім' : '🎤 ' + (speakerOf(x.t, x.r) || 'спикер'))); g1.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
     if ($('pt4')) $('pt4').onclick = () => miniTimer(240, 'Постер жасау');

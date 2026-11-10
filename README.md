@@ -23,5 +23,6 @@
 | 4 | Наклейкалар | `materialdar/4-Naklejkalar.pdf`, `print/naklejka.html` |
 | 5 | Постерге дайындық инфографикасы | `materialdar/5-Poster-infografikalar.pdf`, `print/poster.html` |
 | 6 | 🎛 Тақта пульті (мұғалімге 1 бет) | `materialdar/6-Taqta-pulti.pdf`, `print/pult.html` |
+| 7 | 🎤 Спикер карточкалары (алды — инфографика, арты — 1 минуттық сөз; екі жақты басу) | `materialdar/7-Spiker-kartochkalary.pdf`, `print/spiker.html`, мәтіні `print/spiker-data.js` |
 
 Бастапқы ҚМЖ сақталған: `materialdar/KMZh-10B-p15-Espenbetova.docx`.
