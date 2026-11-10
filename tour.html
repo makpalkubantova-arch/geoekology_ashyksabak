@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Глобус-саяхат · 7 антропогендік ықпал</title>
+<link href="vendor/geo-fonts.css" rel="stylesheet">
+<style>
+:root{--amber:#E07A1F;--amber2:#F7B24A;--display:'Montserrat','Arial Black',Arial,sans-serif;--body:'Nunito','Segoe UI',Arial,sans-serif}
+html,body{margin:0;height:100%;background:#020814;overflow:hidden}
+#stage{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;overflow:hidden;font-family:var(--body);color:#fff;background:radial-gradient(1200px 800px at 70% 50%,#0B2340 0%,#030A18 60%,#01040B 100%)}
+#g{position:absolute;inset:0}
+.vig{position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(1,6,16,.82) 0%,rgba(1,6,16,.35) 34%,rgba(1,6,16,0) 52%),linear-gradient(0deg,rgba(1,6,16,.75) 0%,rgba(1,6,16,0) 22%)}
+.top{position:absolute;left:64px;right:64px;top:42px;display:flex;align-items:center;gap:22px}
+.brand{font:800 19px var(--display);letter-spacing:3px;color:var(--amber2);text-transform:uppercase;white-space:nowrap}
+.chips{display:flex;gap:10px;margin-left:auto}
+.chip{display:flex;align-items:center;gap:8px;height:52px;padding:0 16px;border-radius:16px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);font:800 20px var(--display);color:rgba(255,255,255,.55);transition:none}
+.chip i{font-style:normal;font-size:24px}
+.chip.on{background:linear-gradient(180deg,var(--amber2),var(--amber));color:#fff;border-color:transparent;box-shadow:0 10px 24px -8px rgba(224,122,31,.8)}
+.chip.done{color:#fff;background:rgba(30,154,90,.55);border-color:rgba(120,230,160,.5)}
+.panel{position:absolute;left:64px;top:150px;width:720px;padding:34px 38px 30px;border-radius:30px;background:linear-gradient(180deg,rgba(14,32,52,.86),rgba(8,20,36,.80));border:1px solid rgba(255,255,255,.16);box-shadow:0 30px 60px -20px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.18);backdrop-filter:blur(6px)}
+.eb{font:800 18px var(--display);letter-spacing:2.6px;text-transform:uppercase}
+.nm{font:800 44px/1.08 var(--display);margin:10px 0 18px;text-wrap:balance}
+.big{font:900 86px/1 var(--display);background:linear-gradient(180deg,#FFD58A,var(--amber2) 45%,var(--amber));-webkit-background-clip:text;background-clip:text;color:transparent;white-space:nowrap}
+.bigT{font:700 25px/1.3 var(--body);color:rgba(255,255,255,.9);margin-top:6px}
+.chart{margin-top:14px;height:250px}
+.src{margin-top:10px;font:700 17px var(--body);color:rgba(255,255,255,.55)}
+.kz{position:absolute;left:64px;width:720px;padding:16px 22px;border-radius:22px;background:linear-gradient(90deg,rgba(255,196,0,.95),rgba(247,178,74,.95));color:#2A1A00;font:800 23px/1.3 var(--body);box-shadow:0 18px 40px -16px rgba(255,180,0,.6)}
+.kz b{font-family:var(--display)}
+.sub{position:absolute;left:50%;bottom:44px;transform:translateX(-50%);max-width:1500px;padding:14px 30px;border-radius:20px;background:rgba(2,10,22,.72);border:1px solid rgba(255,255,255,.12);font:700 33px/1.32 var(--body);text-align:center;text-wrap:balance;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.hero{position:absolute;left:96px;top:300px;width:900px}
+.hero .t1{font:900 92px/1.02 var(--display);text-wrap:balance;text-shadow:0 10px 40px rgba(0,0,0,.6)}
+.hero .t1 em{font-style:normal;background:linear-gradient(180deg,#FFD58A,var(--amber2) 45%,var(--amber));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .t2{font:800 32px var(--body);margin-top:24px;color:rgba(255,255,255,.88)}
+.grid7{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+.grid7 div{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.08);font:800 19px/1.2 var(--body)}
+.grid7 i{font-style:normal;font-size:28px}
+.ov{will-change:opacity,transform}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="g"></div><div class="vig"></div>
+  <div class="top ov" id="top"><div class="brand">География · 10 «Б» · § 15</div><div class="chips" id="chips"></div></div>
+  <div class="hero ov" id="hero"></div>
+  <div class="panel ov" id="panel"></div>
+  <div class="kz ov" id="kz"></div>
+  <div class="sub ov" id="sub"></div>
+</div>
+<script src="vendor/topojson-client.min.js"></script>
+<script src="lesson-data.js"></script>
+<script src="tour-timing.js"></script>
+<script src="charts.js"></script>
+<script type="importmap">{"imports":{"three":"./vendor/three.module.min.js"}}</script>
+<script type="module">
+import { createGlobe, dist } from './globe.js';
+const LD = window.LD, T = window.TOUR_T, F = LD.factors, $ = (s) => document.querySelector(s);
+const K = () => Math.min(innerWidth / 1920, innerHeight / 1080); const fitS = () => { $('#stage').style.transform = `scale(${K()})`; }; addEventListener('resize', fitS); fitS();
+await Promise.all(['700 20px Montserrat','800 20px Montserrat','900 20px Montserrat','700 20px Nunito','800 20px Nunito'].map((f)=>document.fonts.load(f,'Қазақ'))); await document.fonts.ready;
+const G = await createGlobe($('#g'), { manual: true, shift: 0.17, labelMinX: 1010 });
+const clamp = (x) => Math.max(0, Math.min(1, x)), ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+const smooth = (a, b, x) => clamp((x - a) / (b - a));
+/* сахна: 0 кіріспе, 1..7 ықпалдар, 8 Қазақстан */
+const CAM = [[22, 20, 46], ...F.map((f) => f.cam), [44.5, 66, 21]];
+const SPOTS = [[], ...F.map((f) => f.spots.map((s) => [...s, f.c])), LD.kzSpots];
+const DISP = [[/он миллион тоғыз жүз мың гектар/, '10,9 млн гектар'], [/алты-жеті миллион гектар/, '6–7 млн гектар'], [/жүз миллион гектар/, '100 млн гектар'], [/қырық екі пайызы/, '42%-ы'], [/Мың тоғыз жүз алпысыншы жылы/g, '1960 жылы'], [/үш жүз он жеті бірлік/, '317 ppm'], [/екі мың жиырма төртінші жылы төрт жүз жиырма төрттен/, '2024 жылы 424 ppm-нен'], [/алпыс сегіз мың шаршы шақырым/, '68 мың км²'], [/екі мың төртінші жылы он жеті мың шаршы шақырымға/, '2004 жылы 17 мың км²-ге'], [/жиырмадан алпыс пайызға/, '20–60%-ға'], [/тоғыз жүз жиырма мың гектардан/, '920 мың гектардан'], [/сексен үш мың гектардан/, '83 мың гектардан']];
+const disp = (s) => DISP.reduce((a, [r, v]) => a.replace(r, v), s);
+const fmt = (v) => String(v).replace('.', ',');
+
+const TOTAL = T.reduce((s, x) => s + x.dur, 0);
+let lastScene = -1;
+function seek(t) {
+  let i = T.findIndex((x) => t < x.start + x.dur); if (i < 0) i = T.length - 1;
+  const sc = T[i], u = t - sc.start, d = sc.dur;
+  /* камера */
+  const a = CAM[Math.max(0, i - 1)], b = CAM[i];
+  let pose;
+  if (i === 0) { const k = ease(smooth(0, 9, u)); pose = { lat: 10 + 12 * k, lon: -40 + 60 * k + u * 1.2, d: 70 - 24 * k }; }
+  else { const pa = i === 1 ? { lat: 22, lon: 20 + T[0].dur * 1.2, d: 46 } : { lat: a[0], lon: a[1] + (T[i - 1].dur - 3.4) * 0.3, d: a[2] };
+    const k = smooth(0.2, 3.6, u), e = ease(k), far = Math.min(16, dist([pa.lat, pa.lon], [b[0], b[1]]) / 6);
+    let dl = ((b[1] - pa.lon + 540) % 360) - 180;
+    pose = { lat: pa.lat + (b[0] - pa.lat) * e, lon: pa.lon + dl * e + Math.max(0, u - 3.4) * (i === 8 ? 0.05 : 0.3), d: pa.d + (b[2] - pa.d) * e + far * Math.sin(Math.PI * e) }; }
+  G.pose(pose.lat, pose.lon, pose.d);
+  const f = i >= 1 && i <= 7 ? F[i - 1] : null;
+  G.setNight(f && f.night ? 0.92 * smooth(2.5, 4.5, u) * (1 - smooth(d - 1.2, d, u)) : 0);
+  G.setTint(1, 0.45, 0.2, f && f.tint ? 0.12 * smooth(3, 5, u) * (1 - smooth(d - 1.2, d, u)) : 0);
+  if (i !== lastScene) { G.clearMarkers(); SPOTS[i].forEach((s, k) => G.marker({ id: 'm' + k, lat: s[1], lon: s[2], label: s[0], color: s[3], size: i === 8 ? 1.0 : 1.1, t0: (sc.start + (i === 8 ? (k < 3 ? 4 + k * 0.8 : sc.subs[2].a) : 3.2 + k * 0.7)) * 1000, fs: 24 })); lastScene = i; }
+  /* жоғарғы чиптер */
+  $('#chips').innerHTML = F.map((x, k) => `<div class="chip ${k === i - 1 ? 'on' : k < i - 1 || i === 8 ? 'done' : ''}"><i>${x.ic}</i>${x.n}</div>`).join('');
+  $('#top').style.opacity = smooth(0.5, 1.5, t);
+  /* кіріспе */
+  const hero = $('#hero');
+  if (i === 0) { hero.innerHTML = `<div class="t1">Жер шарындағы <em>7 антропогендік</em> ықпал</div><div class="t2">🌍 Дүниежүзінен — Қазақстанға · ${LD.lesson.topic}</div>`; const o = smooth(1.2, 2.6, u) * (1 - smooth(d - 1.4, d - 0.3, u)); hero.style.opacity = o; hero.style.transform = `translateY(${(1 - o) * 30}px)`; } else hero.style.opacity = 0;
+  /* панель */
+  const P = $('#panel'), KZ = $('#kz'); const pin = smooth(2.4, 3.3, u) * (1 - smooth(d - 0.9, d - 0.15, u));
+  if (f) {
+    P.innerHTML = `<div class="eb" style="color:${f.c === '#7C6BB5' ? '#B9AEF0' : f.c}">${f.n}-ЫҚПАЛ · ${f.sphere}</div><div class="nm">${f.ic} ${f.name}</div><div class="big">${f.big}</div><div class="bigT">${f.bigT}</div><div class="chart">${GC.chart(f.chart, f.c, smooth(3.6, 6.2, u))}</div><div class="src">Дерек көзі: ${f.src}</div>`;
+    KZ.innerHTML = `🇰🇿 <b>Қазақстанда:</b> ${f.kz}`; KZ.style.top = Math.min(150 + P.offsetHeight + 16, 1080 - 150 - KZ.offsetHeight) + 'px';
+    const ko = smooth(7, 8, u) * (1 - smooth(d - 0.9, d - 0.15, u)); KZ.style.opacity = ko; KZ.style.transform = `translateX(${(1 - ko) * -40}px)`;
+  } else if (i === 8) {
+    P.innerHTML = `<div class="eb" style="color:var(--amber2)">ҚАЗАҚСТАН · ҚОРЫТЫНДЫ</div><div class="nm">7 ықпал — бір кластерде</div><div class="grid7">${F.map((x, k) => `<div style="opacity:${smooth(3 + k * 0.35, 3.6 + k * 0.35, u)};border-left:5px solid ${x.c}"><i>${x.ic}</i>${x.short}</div>`).join('')}</div><div style="margin-top:16px;display:flex;gap:16px;align-items:baseline;opacity:${smooth(sc.subs[2].a, sc.subs[2].a + 1, u)}"><span class="big" style="font-size:60px">83,2 мың га</span><span class="bigT" style="margin:0">Жетісай ауданында тұзданған суармалы жер (2025)</span></div><div style="margin-top:8px;display:flex;gap:16px;align-items:baseline;opacity:${smooth(sc.subs[3].a, sc.subs[3].a + 1, u)}"><span class="big" style="font-size:60px;background:linear-gradient(180deg,#B8F5C8,#43B36B);-webkit-background-clip:text;background-clip:text">920 мың га</span><span class="bigT" style="margin:0">сексеуіл — Арал табанында (2021–2025)</span></div>`;
+    KZ.innerHTML = `🎯 <b>Мақсат:</b> антропогендік факторларды топтастыру және графикалық түрде ұсыну`; KZ.style.top = Math.min(150 + P.offsetHeight + 16, 1080 - 150 - KZ.offsetHeight) + 'px';
+    const ko = smooth(sc.subs[4].a, sc.subs[4].a + 1, u); KZ.style.opacity = ko; KZ.style.transform = `translateX(${(1 - ko) * -40}px)`;
+  } else { P.innerHTML = ''; KZ.style.opacity = 0; }
+  P.style.opacity = f || i === 8 ? pin : 0; P.style.transform = `translateX(${(1 - pin) * -60}px)`;
+  /* субтитр */
+  const s = sc.subs.find((x) => u >= x.a - 0.15 && u < x.b + 0.3); const SB = $('#sub');
+  if (s) { SB.textContent = disp(s.t); SB.style.opacity = 1; } else SB.style.opacity = 0;
+  G.frame(t * 1000);
+}
+window.TOUR = { seek, TOTAL, ready: true };
+if (/[?&]play/.test(location.search)) { const t0 = performance.now(); (function lp() { const t = (performance.now() - t0) / 1000; if (t < TOTAL) { seek(t); requestAnimationFrame(lp); } })(); }
+else seek(+(new URLSearchParams(location.search).get('t') || 0));
+</script>
+</body>
+</html>

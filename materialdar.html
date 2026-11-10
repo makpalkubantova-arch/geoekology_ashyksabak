@@ -41,7 +41,7 @@ td a{font-weight:700;text-decoration:none}
   <div class="k">📁 АШЫҚ САБАҚ МАТЕРИАЛДАРЫ · ГЕОГРАФИЯ · 10 «Б» · ИНТЕРАКТИВТІ ТАҚТАМЕН</div>
   <h1>Геоэкологиядағы антропогендік факторлар</h1>
   <p>§ 15 · оқулық 54–56-беттер, 20–21-сурет<br>Еспенбетова Айжан Сатыбалдиевна · Д. Қонаев атындағы №9 ІТ мектеп-лицейі, Жетісай ауданы · 13.11.2026, №205 кабинет</p>
-  <div class="acts"><a class="btn p" href="live/host.html">▶ Тақтаны ашу</a><a class="btn g" href="toptar.html">🫧 Капсулалар</a><a class="btn g" href="print/pult.html" target="_blank">🎛 Тақта пульті</a><a class="btn g" href="index.html">🏠 Басты бет</a></div>
+  <div class="acts"><a class="btn p" href="index.html">▶ Тақтаны ашу</a><a class="btn g" href="tour.html?play" target="_blank">🌍 Глобус-саяхат</a><a class="btn g" href="media/globus-sayahat.mp4" download>🎬 Бейнені жүктеу (MP4)</a></div>
  </div>
  <div class="qrbox"><div id="qr"></div>Тақта</div>
 </section>
@@ -50,7 +50,7 @@ td a{font-weight:700;text-decoration:none}
 <table id="map"></table>
 <p class="tip">💡 Наклейкаларды A4 жабысқақ қағазға түрлі түсті басыңыз. Постер инфографикасы мен №3 парақты әр топқа бір данадан беріңіз; тақта пультін өзіңізге басып алыңыз. Әр құжаттағы «Тақта: N» белгісі host.html төменгі жолағындағы N-батырмаға сәйкес келеді.</p>
 <script>
-const SITE = location.href.replace(/materialdar\.html.*$/, "") + "live/host.html";
+const SITE = location.href.replace(/materialdar\.html.*$/, "") + "index.html";
 const q = qrcode(0, "H"); q.addData(SITE); q.make(); const n = q.getModuleCount(), m = 2, S = n + 2 * m; let p = "";
 for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (q.isDark(r, c)) p += `<rect x="${c + m}" y="${r + m}" width="1.02" height="1.02" rx=".3"/>`;
 document.getElementById("qr").innerHTML = `<svg viewBox="0 0 ${S} ${S}"><g fill="#165C33">${p}</g></svg>`;
