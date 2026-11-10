@@ -42,16 +42,21 @@
     pick(['A', 'B', 'C'], 'sp1'); pick(['B', 'A', 'C'], 'sp2'); pick(['B', 'C', 'A'], 'hat'); pick(['!A', '*'], 'pos');
     return free;
   };
+  /* Жол: «Аты-жөні - A» немесе «Аты-жөні - 2» немесе «Аты-жөні - A - 2» (әріп — деңгей, сан — топ нөмірі) */
   C.parseRoster = function (text) {
     return String(text || '').split(/\n+/).map((line) => line.trim()).filter(Boolean).map((line) => {
-      const m = line.match(/^(.*?)[\s,;\-–—:]+([ABCАВСабвсabc])\s*$/);
-      let name = m ? m[1] : line, l = m ? m[2].toUpperCase() : 'B';
+      line = line.replace(/^\d+[.)]\s+/, '');
+      let l = '', g = null, m;
+      for (let k = 0; k < 2; k++) {
+        if ((m = line.match(/^(.*?)[\s,;\-–—:]+([ABCАВСабвсabc])\s*$/)) && !l) { l = m[2].toUpperCase(); line = m[1]; continue; }
+        if ((m = line.match(/^(.*?)[\s,;\-–—:]+([1-9])\s*$/)) && g == null) { g = +m[2] - 1; line = m[1]; continue; }
+      }
       l = { 'А': 'A', 'В': 'B', 'С': 'C' }[l] || l;
-      name = name.replace(/^\d+[.)]\s*/, '').trim();
-      return { name, l: ['A', 'B', 'C'].includes(l) ? l : 'B' };
+      const o = { name: line.trim(), l: ['A', 'B', 'C'].includes(l) ? l : 'B' };
+      if (g != null) o.fixG = g;
+      return o;
     }).filter((p) => p.name);
   };
-
   /* Пайыз → 10 балл: 85%+ → 9–10, 65–84% → 7–8, 65%-дан төмен → 1–6 */
   C.pct = (p, M) => (M ? Math.round((p * 100) / M) : 0);
   C.ball10 = (p, M) => { const q = M ? (p * 100) / M : 0; if (q >= 95) return 10; if (q >= 85) return 9; if (q >= 75) return 8; if (q >= 65) return 7; return Math.max(1, Math.min(6, Math.ceil((q / 65) * 6 - 1e-9))); };
