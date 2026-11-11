@@ -114,11 +114,11 @@ select,input,textarea{width:100%;font:700 18px 'Nunito',sans-serif;padding:14px;
     const c = mine.filter((a, i) => a && GT.isRight(LD.quiz[i], a.v)).length; const k7 = LD.quizPts(c, LD.quiz.length);
     const fb = (game.feedback || {})[db.uid];
     app.innerHTML = `<div class="card" style="text-align:center"><div class="big">${c}/${LD.quiz.length}</div><h2>${mine.some(Boolean) ? 'Экожарыс аяқталды! ' + LD.quizK + ': ' + k7 + ' ұпай' : 'Кері байланыс'}</h2></div>
-      <div class="card"><h2>Бүгінгі сабақты түсінуім</h2>${LD.feedback.map((f) => `<button class="opt ${fb && fb.k === f.k ? 'sel' : ''}" data-f="${f.k}">${f.icon} <b>${esc(f.t)}</b><br><span class="mut" style="font-weight:600;font-size:15px">${esc(f.d)}</span></button>`).join('')}
-      <textarea id="ft" rows="2" maxlength="200" placeholder="🌱 Менің экоуәдем: ... (міндетті емес)">${fb && fb.text ? esc(fb.text) : ''}</textarea><button class="btn" id="fs">Жіберу</button><p id="fm" class="mut"></p></div>`;
+      <div class="card"><h2>🌳 Экоуәде ағашы</h2><p class="mut" style="font-weight:700">Таңда да, экоуәдеңді жаз — тақтадағы ағашқа сенің жапырағың өседі.</p>${LD.feedback.map((f) => `<button class="opt ${fb && fb.k === f.k ? 'sel' : ''}" data-f="${f.k}">${f.icon} <b>${esc(f.t)}</b><br><span class="mut" style="font-weight:600;font-size:15px">${esc(f.d)}</span></button>`).join('')}
+      <textarea id="ft" rows="2" maxlength="200" placeholder="🌱 Менің экоуәдем: ... (міндетті емес)">${fb && fb.text ? esc(fb.text) : ''}</textarea><button class="btn" id="fs">🍃 Жапырақты ағашқа жіберу</button><p id="fm" class="mut"></p></div>`;
     let sel = fb ? fb.k : null;
     app.querySelectorAll('[data-f]').forEach((b) => b.onclick = () => { app.querySelectorAll('[data-f]').forEach((x) => x.classList.remove('sel')); b.classList.add('sel'); sel = b.dataset.f; });
-    document.getElementById('fs').onclick = async () => { if (!sel) return alert('Деңгейді таңдаңыз'); try { await db.set(P + '/feedback/' + db.uid, { name: me.name, k: sel, text: document.getElementById('ft').value.slice(0, 200) }); document.getElementById('fm').textContent = '✓ Рақмет! Жіберілді.'; } catch (e) { alert('Қате: ' + (e.code || e.message)); } };
+    document.getElementById('fs').onclick = async () => { if (!sel) return alert('Деңгейді таңдаңыз'); try { await db.set(P + '/feedback/' + db.uid, { name: me.name, k: sel, text: document.getElementById('ft').value.slice(0, 200), t: db.TS }); document.getElementById('fm').textContent = '✓ Жапырағың ағашта! Тақтаға қара.'; } catch (e) { alert('Қате: ' + (e.code || e.message)); } };
   }
 })();
 </script>

@@ -202,6 +202,7 @@
   R.end = () => `<div style="display:grid;grid-template-rows:auto 1fr;gap:12px;height:100%"><div style="display:flex;gap:10px">${[['rate', '🏅 Рейтинг'], ['aw', '🎖 Номинациялар'], ['fb', '💬 Кері байланыс'], ['hw', '🏠 Үй тапсырмасы']].map(([k, t]) => `<button class="btn ${S.endTab === k ? '' : 'sec'} etab" data-t="${k}" style="flex:1">${t}</button>`).join('')}</div><div id="endBox" style="min-height:0"></div></div>`;
   function endBox() {
     const box = $('#endBox'); if (!box) return; const rows = rating(), tot = groupTotals(rows);
+    if (S.endTab !== 'fb') { box.dataset.tab = S.endTab; clearInterval(TREE.timer); }
     if (S.endTab === 'rate') {
       const order = LD.groups.map((g, i) => ({ g, i, t: tot[i] })).sort((a, b) => b.t - a.t), mx = Math.max(1, ...tot);
       const pod = [1, 0, 2].map((k) => { const o = order[k]; const h = [230, 300, 180][[1, 0, 2].indexOf(k)]; return o ? `<div style="text-align:center;width:250px"><div style="font-size:54px">${o.g.icon}</div><div style="font:800 23px var(--display);color:${o.g.ink}">${esc(o.g.name)}</div><div style="height:${h}px;margin-top:8px;border-radius:20px 20px 0 0;background:linear-gradient(180deg,${o.g.c},${o.g.c2});display:flex;flex-direction:column;align-items:center;padding-top:12px;color:#fff"><b style="font:900 56px var(--display)">${k + 1}</b><span style="font:800 22px var(--display)">${o.t} ұпай</span></div></div>` : ''; }).join('');
@@ -216,15 +217,68 @@
         <div style="min-width:0"><div style="font:800 15px var(--display);letter-spacing:2px;color:${a.c}">${esc(a.t).toUpperCase()}</div><div style="font:900 30px/1.1 var(--display);margin-top:4px;color:var(--deep)">${esc(a.who || '—')}</div><div class="mut" style="font-size:17px;font-weight:700;margin-top:4px">${esc(a.why)}</div></div></div>`).join('')}</div>`;
       requestAnimationFrame(() => requestAnimationFrame(() => $$('.aw', box).forEach((x) => { x.style.opacity = 1; x.style.transform = 'none'; })));
     } else if (S.endTab === 'fb') {
-      const fb = (S.game || {}).feedback || {}, gs = (S.game || {}).guests || {}, cnt = {}, notes = [];
-      Object.values(fb).forEach((f) => { if (f && f.k) { cnt[f.k] = (cnt[f.k] || 0) + 1; if (f.text) notes.push('🧑‍🎓 ' + f.name + ': ' + f.text); } });
-      Object.values(gs).forEach((x) => { if (x && x.kind === 'fb' && x.text) notes.push('👩‍🏫 ' + (x.name || 'Қонақ') + ': ' + x.text); });
-      const all = Object.values(cnt).reduce((a, b) => a + b, 0) || 1, col = ['#1E9A5A', '#F2A541', '#D2452F'];
-      box.innerHTML = `<div style="display:grid;grid-template-columns:1fr 1fr 1fr 330px;gap:14px;height:100%">${LD.feedback.map((f, i) => `<div class="card" style="border-top:10px solid ${col[i]};display:flex;flex-direction:column;gap:8px"><div style="font-size:64px">${f.icon}</div><div style="font:800 26px var(--display);color:${col[i]}">${esc(f.t)}</div><div class="mut" style="font-size:19px;font-weight:700">${esc(f.d)}</div><div style="margin-top:auto;display:flex;align-items:center;gap:12px"><div class="bar" style="height:22px"><i style="width:${(cnt[f.k] || 0) / all * 100}%;background:${col[i]}"></i></div><b style="font:900 44px var(--display)">${cnt[f.k] || 0}</b></div></div>`).join('')}
-        <div class="card" style="text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px"><b style="font:800 19px var(--display)">👩‍🏫 Қонақтарға</b><div class="qrbox" style="width:200px;height:200px">${GT.qr(link('quiz.html', '&guest=1'), 200)}</div><div style="text-align:left;font-size:16px;font-weight:700;line-height:1.35;overflow:hidden;flex:1;width:100%">${notes.slice(-6).map((n) => `<div style="background:#F6F1E6;border-radius:10px;padding:6px 10px;margin-top:6px">${esc(n)}</div>`).join('') || '<span class="mut">Пікірлер осында шығады</span>'}</div></div></div>`;
+      treeTab(box);
     } else {
       box.innerHTML = `<div class="card" style="height:100%"><b style="font:800 28px var(--display)">🏠 Деңгейлік үй тапсырмасы</b>${LD.homework.map((h) => `<div style="display:flex;gap:16px;margin-top:18px;font-size:25px;font-weight:700;line-height:1.35;background:#F6F1E6;border-radius:18px;padding:16px 18px"><b class="lv lv${h.lvl}" style="font-size:28px;height:fit-content">${h.lvl}</b><span>${esc(h.t)}</span></div>`).join('')}<div class="mut" style="margin-top:18px;font-size:20px;font-weight:700">Оқулық, 54–56-беттер · 20–21-суреттер</div></div>`;
     }
+  }
+
+
+  /* ---------- Кері байланыс: «Экоуәде ағашы» — оқушы жапырағы, қонақ пікірі алтын алма ---------- */
+  const TREE = { leaf: new Set(), apple: new Set(), timer: null, ix: 0 };
+  const LEAFC = { easy: '#3BB273', mid: '#F2B33D', hard: '#F0765F' };
+  const LEAFP = 'M0,-17 C12,-12 14,7 0,17 C-14,7 -12,-12 0,-17Z';
+  const SPOTS = (() => { const a = []; for (let k = 0; k < 70; k++) { const r = Math.sqrt((k + .5) / 70), t = k * 2.39996; a.push([300 + Math.cos(t) * r * 225, 205 + Math.sin(t) * r * 150, (k * 47) % 70 - 35]); } return a; })();
+  const APPLES = [[150, 260], [450, 250], [230, 120], [380, 110], [300, 70], [110, 190], [500, 180], [200, 320], [410, 330], [340, 200], [255, 215], [470, 300]];
+  function treeSvg() {
+    return '<svg viewBox="0 0 600 560" role="img" aria-label="Экоуәде ағашы" style="width:100%;height:100%;display:block"><defs><radialGradient id="crown" cx="50%" cy="45%" r="55%"><stop offset="0" stop-color="#DDF2D6"/><stop offset="1" stop-color="#C6E7BD" stop-opacity=".25"/></radialGradient><radialGradient id="gold" cx="35%" cy="30%"><stop offset="0" stop-color="#FFF1B8"/><stop offset=".55" stop-color="#F6C343"/><stop offset="1" stop-color="#C98A0B"/></radialGradient><linearGradient id="trunk" x1="0" x2="1"><stop offset="0" stop-color="#8A5A32"/><stop offset="1" stop-color="#6B4325"/></linearGradient></defs>' +
+      '<ellipse cx="300" cy="530" rx="230" ry="22" fill="#CFE6C4"/><ellipse cx="300" cy="205" rx="262" ry="185" fill="url(#crown)"/>' +
+      '<path d="M282 530 C286 450 280 400 270 360 C250 330 210 300 170 280 M292 400 C300 360 330 320 390 285 M300 530 C304 460 306 410 300 340 C298 300 300 260 300 200 M300 330 C340 300 380 250 420 210 M300 300 C260 270 230 230 200 190 M300 250 C300 200 290 150 280 110" stroke="url(#trunk)" stroke-width="14" fill="none" stroke-linecap="round"/>' +
+      '<path d="M268 530 C278 470 282 420 280 380 L320 380 C318 420 322 470 332 530 Z" fill="url(#trunk)"/><g id="leaves"></g></svg>';
+  }
+  function treeNotes() {
+    const fb = (S.game || {}).feedback || {}, gs = (S.game || {}).guests || {}, n = [];
+    Object.keys(fb).forEach((u) => { const f = fb[u]; if (f && f.text) n.push({ u, t: f.text, who: f.name || 'Оқушы', c: LEAFC[f.k] || LEAFC.easy, g: false }); });
+    Object.keys(gs).forEach((u) => { const x = gs[u]; if (x && x.kind === 'fb' && x.text) n.push({ u: 'g:' + u, t: x.text, who: x.name || 'Ұстаз', g: true }); });
+    return n;
+  }
+  function treeQuote(u) {
+    const q = $('#tquote'); if (!q) return; const all = treeNotes(); if (!all.length) return;
+    const it = (u && all.find((x) => x.u === u)) || all[TREE.ix++ % all.length];
+    q.style.opacity = 0; setTimeout(() => { q.innerHTML = `<span style="display:inline-block;padding:4px 12px;border-radius:999px;font:800 14px var(--body);background:${it.g ? '#FFF1D6' : 'var(--good-bg)'};color:${it.g ? '#8A5300' : '#13603A'}">${it.g ? '🍎 Ұстаз пікірі' : '🍃 Экоуәде'}</span><div style="margin-top:10px">«${esc(it.t)}»</div><div class="mut" style="font:800 18px var(--body);margin-top:8px">— ${esc(it.who)}</div>`; q.style.opacity = 1; }, 350);
+  }
+  function treeTab(box) {
+    if (box.dataset.tab !== 'fb' || !$('#leaves', box)) {
+      box.dataset.tab = 'fb'; TREE.leaf = new Set(); TREE.apple = new Set(); clearInterval(TREE.timer);
+      box.innerHTML = `<div style="display:grid;grid-template-columns:1.25fr .75fr;gap:16px;height:100%">
+        <div class="card" style="position:relative;padding:10px;background:radial-gradient(80% 70% at 50% 35%,#F3FBEF,#fff 70%);display:flex;align-items:center;justify-content:center;min-height:0">
+          <div style="position:absolute;left:20px;top:14px;font:900 22px var(--display)">🌳 Экоуәде ағашы · <b id="lcnt" style="font-size:1.6em;color:var(--good)">0</b> жапырақ</div>${treeSvg()}</div>
+        <div style="display:flex;flex-direction:column;gap:14px;min-height:0">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">${LD.feedback.map((f) => `<div class="card" style="padding:10px;text-align:center;border-top:8px solid ${LEAFC[f.k]}"><div style="font-size:34px">${f.icon}</div><b id="fc_${f.k}" style="display:block;font:900 40px var(--display);color:${LEAFC[f.k]}">0</b><div style="font:800 15px var(--body)">${esc(f.t)}</div></div>`).join('')}</div>
+          <div class="card" style="flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center"><div id="tquote" style="font:800 30px/1.2 var(--display);transition:opacity .35s"><span class="mut" style="font-size:22px">Оқушылар телефоннан «экоуәдесін» жазғанда, жапырақ ағашқа өседі. Жапырақты бассаңыз — ойы шығады.</span></div></div>
+          <div class="card" style="display:flex;gap:14px;align-items:center;padding:12px 16px;background:linear-gradient(160deg,#FFF8E8,#fff)"><div class="qrbox" style="width:130px;height:130px;flex:none">${GT.qr(link('quiz.html', '&guest=1'), 130)}</div><div style="font:700 17px var(--body)"><b style="font-family:var(--display)">🍎 Ұстаздар пікірі</b><br>Сканерлеп, «2 жұлдыз, 1 тілек» жазыңыз — ағашта алтын алма пайда болады.</div></div>
+        </div></div>`;
+      TREE.timer = setInterval(() => { if (!$('#tquote')) return clearInterval(TREE.timer); treeQuote(); }, 6000);
+    }
+    const g = $('#leaves', box), fb = (S.game || {}).feedback || {}, gs = (S.game || {}).guests || {}, cnt = { easy: 0, mid: 0, hard: 0 }, NS = 'http://www.w3.org/2000/svg';
+    Object.keys(fb).sort((a, b) => (fb[a].t || 0) - (fb[b].t || 0)).forEach((u) => {
+      const f = fb[u]; if (!f || !f.k) return; cnt[f.k] = (cnt[f.k] || 0) + 1;
+      if (TREE.leaf.has(u)) return; const k = TREE.leaf.size; TREE.leaf.add(u);
+      const p = SPOTS[(k * 29 + 11) % SPOTS.length], off = Math.floor(k / SPOTS.length) * 9, el = document.createElementNS(NS, 'g');
+      el.setAttribute('transform', `translate(${p[0] + off},${p[1] + off}) rotate(${p[2]}) scale(1.9)`);
+      el.innerHTML = `<g class="leaf"><path d="${LEAFP}" fill="${LEAFC[f.k] || LEAFC.easy}" stroke="rgba(255,255,255,.8)" stroke-width="1.2"/><path d="M0,-13 L0,14" stroke="rgba(255,255,255,.75)" stroke-width="1.6"/></g>`;
+      el.style.cursor = 'pointer'; el.onclick = () => treeQuote(u); g.appendChild(el);
+      const lf = el.firstChild; setTimeout(() => lf.classList.add('sway'), 950);
+    });
+    Object.keys(gs).filter((u) => gs[u] && gs[u].kind === 'fb').sort((a, b) => (gs[a].t || 0) - (gs[b].t || 0)).forEach((u) => {
+      if (TREE.apple.has(u)) return; const k = TREE.apple.size; TREE.apple.add(u);
+      const p = APPLES[k % APPLES.length], el = document.createElementNS(NS, 'g');
+      el.setAttribute('transform', `translate(${p[0]},${p[1]}) scale(1.6)`);
+      el.innerHTML = '<g class="apple"><path d="M0,-16 C2,-22 6,-24 9,-25" stroke="#6B4325" stroke-width="2.4" fill="none"/><path d="M2,-18 C8,-24 14,-22 15,-18 C10,-15 6,-15 2,-18Z" fill="#3BB273"/><circle r="15" fill="url(#gold)" stroke="#fff" stroke-width="1.5"/><ellipse cx="-5" cy="-5" rx="4" ry="6" fill="rgba(255,255,255,.55)"/><path d="M0,-6 l2.4,5 5.4,.6 -4,3.7 1.1,5.3 -4.9,-2.7 -4.9,2.7 1.1,-5.3 -4,-3.7 5.4,-.6z" fill="#fff" opacity=".9"/></g>';
+      el.style.cursor = 'pointer'; el.onclick = () => treeQuote('g:' + u); g.appendChild(el);
+    });
+    const lc = $('#lcnt', box); if (lc) lc.textContent = TREE.leaf.size;
+    Object.keys(cnt).forEach((k) => { const e = $('#fc_' + k, box); if (e) e.textContent = cnt[k]; });
   }
 
   /* ---------- Номинациялар (медальдар): рейтинг бойынша автоматты ---------- */
