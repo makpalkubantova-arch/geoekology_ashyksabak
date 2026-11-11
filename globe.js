@@ -134,7 +134,7 @@ export async function createGlobe(el, opts) {
     if (fly) { const k = Math.min(1, (now - fly.t0) / fly.ms); Object.assign(st, interp(fly.a, fly.b, k)); if (k >= 1) { const r = fly.res; fly = null; r(); } }
     else if (st.spin && !drag) st.lon += st.spin * 0.016;
     const p = ll2v(st.lat, st.lon, st.d); cam.position.copy(p); cam.up.set(0, 1, 0); cam.lookAt(0, 0, 0);
-    if (opts.offsetX) { cam.setViewOffset(W(), H(), -opts.offsetX * W(), 0, W(), H()); }
+    if (shiftX) cam.setViewOffset(W(), H(), -shiftX * W(), 0, W(), H()); else cam.clearViewOffset();
     /* күн камераның сол жақ үстінде */
     U.sun.value.set(-0.6, 0.55, 0.75).normalize();
     cam.updateMatrixWorld(); const camDir = cam.position.clone().normalize(), w = W(), h = H();

@@ -97,7 +97,7 @@
   R.hello = () => `<div class="card dark" style="height:100%;padding:0;overflow:hidden;display:grid;grid-template-columns:1.25fr .75fr">
     <div style="position:relative;overflow:hidden;border-radius:26px 0 0 26px"><video class="bgv" src="${MEDIA}bg_earth.mp4" autoplay muted loop playsinline></video><div class="shade"></div>
       <div style="position:absolute;left:44px;right:40px;top:40px;bottom:36px;display:flex;flex-direction:column">
-        <div style="font:800 18px var(--display);letter-spacing:3px;color:var(--amber2)">ГЕОГРАФИЯ · 10 «Б» · § 15</div>
+        <div style="font:800 18px var(--display);letter-spacing:3px;color:var(--amber2)">ГЕОГРАФИЯ · 10 «Б»</div>
         <h1 style="font-size:66px;margin-top:14px;color:#fff">Сәлеметсіздер ме, құрметті қонақтар мен оқушылар!</h1>
         <div style="font:800 30px var(--display);margin-top:18px;color:#FFD58A">${esc(LD.lesson.topic)}</div>
         <div style="font-size:21px;margin-top:8px;opacity:.85">${esc(LD.lesson.teacher)} · ${esc(LD.lesson.school)}</div>
@@ -223,7 +223,7 @@
       box.innerHTML = `<div style="display:grid;grid-template-columns:1fr 1fr 1fr 330px;gap:14px;height:100%">${LD.feedback.map((f, i) => `<div class="card" style="border-top:10px solid ${col[i]};display:flex;flex-direction:column;gap:8px"><div style="font-size:64px">${f.icon}</div><div style="font:800 26px var(--display);color:${col[i]}">${esc(f.t)}</div><div class="mut" style="font-size:19px;font-weight:700">${esc(f.d)}</div><div style="margin-top:auto;display:flex;align-items:center;gap:12px"><div class="bar" style="height:22px"><i style="width:${(cnt[f.k] || 0) / all * 100}%;background:${col[i]}"></i></div><b style="font:900 44px var(--display)">${cnt[f.k] || 0}</b></div></div>`).join('')}
         <div class="card" style="text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px"><b style="font:800 19px var(--display)">👩‍🏫 Қонақтарға</b><div class="qrbox" style="width:200px;height:200px">${GT.qr(link('quiz.html', '&guest=1'), 200)}</div><div style="text-align:left;font-size:16px;font-weight:700;line-height:1.35;overflow:hidden;flex:1;width:100%">${notes.slice(-6).map((n) => `<div style="background:#F6F1E6;border-radius:10px;padding:6px 10px;margin-top:6px">${esc(n)}</div>`).join('') || '<span class="mut">Пікірлер осында шығады</span>'}</div></div></div>`;
     } else {
-      box.innerHTML = `<div class="card" style="height:100%"><b style="font:800 28px var(--display)">🏠 Деңгейлік үй тапсырмасы</b>${LD.homework.map((h) => `<div style="display:flex;gap:16px;margin-top:18px;font-size:25px;font-weight:700;line-height:1.35;background:#F6F1E6;border-radius:18px;padding:16px 18px"><b class="lv lv${h.lvl}" style="font-size:28px;height:fit-content">${h.lvl}</b><span>${esc(h.t)}</span></div>`).join('')}<div class="mut" style="margin-top:18px;font-size:20px;font-weight:700">Оқулық § 15, 54–56-беттер · 20–21-суреттер</div></div>`;
+      box.innerHTML = `<div class="card" style="height:100%"><b style="font:800 28px var(--display)">🏠 Деңгейлік үй тапсырмасы</b>${LD.homework.map((h) => `<div style="display:flex;gap:16px;margin-top:18px;font-size:25px;font-weight:700;line-height:1.35;background:#F6F1E6;border-radius:18px;padding:16px 18px"><b class="lv lv${h.lvl}" style="font-size:28px;height:fit-content">${h.lvl}</b><span>${esc(h.t)}</span></div>`).join('')}<div class="mut" style="margin-top:18px;font-size:20px;font-weight:700">Оқулық, 54–56-беттер · 20–21-суреттер</div></div>`;
     }
   }
 
@@ -395,7 +395,7 @@
     }
     if (s.id === 'end') endBox();
     const conn = S.db ? (S.db.demo ? '🟡 офлайн' : '🟢 ' + S.code) : '⏳ қосылуда';
-    $('#sub').textContent = `${LD.lesson.subject} · ${LD.lesson.grade} · ${LD.lesson.section} · ${conn}`;
+    $('#sub').textContent = `${LD.lesson.subject} · ${LD.lesson.grade}${LD.lesson.section ? ' · ' + LD.lesson.section : ''} · ${conn}`;
     if (OV.kind === 'rate') renderRate();
   }
   function setMeta(o) { if (!S.db) return; S.db.update('games/' + S.code + '/meta', o).catch((e) => banner('⚠️ Байланыс: ' + (e.code || e.message), 5000)); }

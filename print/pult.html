@@ -45,7 +45,7 @@ D.STAGES.forEach((s, i) => {
   tm += s.min;
 });
 document.body.innerHTML = `<section class="page">
- <div class="hd"><div><div class="k">ТАҚТА ПУЛЬТІ · МҰҒАЛІМНІҢ БІР БЕТТІК ШПАРГАЛКАСЫ</div><h1>16 кезең — 16 батырма · 45 минут</h1><p>§ 15 «Геоэкологиядағы антропогендік факторлар» · 10 «Б» · ${D.teacher} · тақтаның төменгі жолағындағы нөмірлі батырмалар осы кестеге сәйкес</p></div>
+ <div class="hd"><div><div class="k">ТАҚТА ПУЛЬТІ · МҰҒАЛІМНІҢ БІР БЕТТІК ШПАРГАЛКАСЫ</div><h1>16 кезең — 16 батырма · 45 минут</h1><p>«Геоэкологиядағы антропогендік факторлар» · 10 «Б» · ${D.teacher} · тақтаның төменгі жолағындағы нөмірлі батырмалар осы кестеге сәйкес</p></div>
  <div class="qrs"><div class="qr">${qrSvg(SITE + "live/host.html")}Тақта</div><div class="qr">${qrSvg(SITE + "materialdar.html")}Материалдар</div></div></div>
  <table><colgroup><col style="width:9mm"><col style="width:68mm"><col style="width:15mm"><col style="width:52mm"><col><col style="width:44mm"></colgroup><tr><th></th><th>Кезең · әдіс</th><th>Уақыт</th><th>Тақтада не басамын</th><th>Оқушылар</th><th>Балл · парақ · наклейка</th></tr>${rows}</table>
  <div class="ft"><div><b>Бастау алдында:</b> host.html ашу → ойын коды шығады. 3-кезеңде «🫧 Капсулаларды ашу»; хатшылар QR арқылы hatshy.html ашады.</div><div><b>Телефон тек 2 жерде:</b> хатшы (K1–K6 балл) және 12–13-кезеңде квиз (join.html QR). Қалғаны — тақта, парақ, постер.</div><div><b>Баға:</b> K1–K7 = ${D.CR.reduce((a, c) => a + c.p, 0)} ұпай → 10 балл (8–10 жоғары · 4–7 орта · 1–3 төмен). 14-кезеңде кесте → «📋 Excel».</div></div>
