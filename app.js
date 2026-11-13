@@ -100,7 +100,11 @@
         <div style="font:800 18px var(--display);letter-spacing:3px;color:var(--amber2)">ГЕОГРАФИЯ · 10 «Б»</div>
         <h1 style="font-size:66px;margin-top:14px;color:#fff">Сәлеметсіздер ме, құрметті қонақтар мен оқушылар!</h1>
         <div style="font:800 30px var(--display);margin-top:18px;color:#FFD58A">${esc(LD.lesson.topic)}</div>
-        <div style="font-size:21px;margin-top:8px;opacity:.85">${esc(LD.lesson.teacher)} · ${esc(LD.lesson.school)}</div>
+        <div style="margin-top:16px;padding:13px 18px;background:rgba(5,17,29,.65);border-left:4px solid #F7B24A;border-radius:0 14px 14px 0;max-width:100%">
+          <div style="font:800 16px var(--display);letter-spacing:1.5px;color:#F7B24A;margin-bottom:7px">САБАҚТЫҢ ОҚУ МАҚСАТЫ</div>
+          <div style="font:700 21px/1.35 var(--body);color:#fff">${esc(LD.lesson.objective)}</div>
+        </div>
+        <div style="font-size:21px;margin-top:12px;opacity:.85">${esc(LD.lesson.teacher)} · ${esc(LD.lesson.school)}</div>
         <div style="margin-top:auto;font:italic 800 28px var(--body);border-left:5px solid var(--amber2);padding-left:16px">${esc(LD.lesson.quote)}</div></div></div>
     <div style="padding:30px 30px;background:#FBFAF6;color:var(--ink);display:flex;flex-direction:column;gap:12px">
       <div style="font:800 18px var(--display);letter-spacing:2px;color:var(--amber)">🎯 БҮГІН САБАҚТА</div>
