@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Қонақтар залы · Геоэкология · Экожарыс</title>
+<link href="vendor/geo-fonts.css" rel="stylesheet">
+<style>
+:root{--ink:#18312b;--muted:#62776e;--gold:#eaa63e;--green:#21855f;--line:rgba(29,83,59,.12)}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;color:var(--ink);font-family:'Nunito','Segoe UI',Arial,sans-serif;background:radial-gradient(ellipse at 5% 2%,#fce5c6,transparent 47%),radial-gradient(ellipse at 94% 25%,#d3e8e5,transparent 52%),linear-gradient(160deg,#f5f8ef,#e9f1eb)}
+header{padding:17px max(20px,calc((100vw - 1080px)/2));display:flex;justify-content:space-between;align-items:center;gap:20px;background:#ffffffb8;border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}
+.brand{font:900 20px 'Montserrat',Arial,sans-serif}.brand span{color:#db8c27}.read{font-size:12px;font-weight:900;border:1px solid #bedfce;background:#e8f8ed;color:#1e7651;border-radius:30px;padding:9px 14px;white-space:nowrap}
+main{max-width:1080px;margin:auto;padding:45px 20px 65px}.eyebrow{font:900 12px 'Montserrat',Arial,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#a86f27}
+h1{font:900 clamp(30px,5vw,56px)/1.12 'Montserrat',Arial,sans-serif;letter-spacing:-1.4px;margin:14px 0 18px;max-width:890px}h1 span{color:#d88b28}
+.intro{color:#60776e;font-size:17px;line-height:1.7;max-width:830px}.grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(270px,.8fr);gap:18px;margin-top:32px}
+.card{background:#fffffff0;border:1px solid #fff;box-shadow:0 20px 50px #234d3414;border-radius:24px;padding:28px}
+.pill{display:inline-flex;gap:10px;align-items:center;font-size:13px;font-weight:900;background:#ebf7ee;color:#267a51;border-radius:30px;padding:9px 13px}.dot{width:8px;height:8px;border-radius:50%;background:#2eb37b;box-shadow:0 0 0 5px #caeeda}
+h2{font:900 clamp(24px,3vw,34px)/1.2 'Montserrat',Arial,sans-serif;margin:23px 0 10px}.counter{font-weight:900;color:#bd7e2a;font-size:14px}.bodycopy{font-size:17px;line-height:1.65;color:#526f63}
+.details{display:grid;gap:11px;margin-top:22px}.detail{border-radius:14px;padding:16px;background:#f3f8f2}.detail b{display:block;text-transform:uppercase;font-size:11px;letter-spacing:.08em;color:#6d8b79;margin-bottom:6px}.detail span{display:block;font-weight:700;line-height:1.5}
+.side{display:grid;gap:15px}.side h3{font:900 19px 'Montserrat',Arial,sans-serif;margin:0}
+.sidebox{background:#f3f8f2;border-radius:14px;padding:15px}.sidebox b{display:block;font-size:12px;color:#638571;margin-bottom:6px}.sidebox span{font-weight:800;line-height:1.6}
+label{font-weight:800;font-size:13px;color:#5c7869}input{width:100%;margin:8px 0 0;border:1px solid #cfdfd3;border-radius:12px;padding:14px;font:900 18px 'Montserrat',Arial,sans-serif;color:#174735;letter-spacing:.08em;text-transform:uppercase;background:#fff}
+button,a.button{border:0;display:block;width:100%;text-align:center;text-decoration:none;cursor:pointer;background:linear-gradient(115deg,#268b65,#2fa978);color:white;border-radius:13px;padding:14px;font:900 15px 'Montserrat',Arial,sans-serif}
+a.button.secondary{background:#fff;color:#287d60;border:1px solid #cde1d3}
+.note{color:#6b8474;font-size:12px;line-height:1.65}
+footer{max-width:1080px;margin:auto;padding:0 20px 25px;color:#738b79;font-size:12px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.card{padding:21px}.brand{font-size:15px}.read{font-size:10px;padding:8px}main{padding:30px 17px 50px}}
+</style>
+</head>
+<body>
+<header><div class="brand">🌍 ГЕОЭКОЛОГИЯ <span>· ЭКОЖАРЫС</span></div><div class="read">👁️ ҚОНАҚ · ТЕК КӨРУ</div></header>
+<main>
+<div class="eyebrow">10 «Б» сынып · География · Ашық сабақ</div>
+<h1>Геоэкологиядағы <span>антропогендік факторлар</span></h1>
+<p class="intro">Құрметті қонақтар! Мұғалімнің сабағы қай кезеңде екенін осы жерден көре аласыз. Сіз сайтты ашқан кезде мұғалімнің экраны, таймері және оқушылардың ұпайлары өзгермейді.</p>
+<div class="grid">
+<section class="card">
+<div class="pill"><i class="dot"></i><span id="status">Сабақпен байланыс орнатылуда…</span></div>
+<h2 id="stageTitle">Сабақ кезеңі</h2><div class="counter" id="progress">Кезең анықталуда</div>
+<p class="bodycopy" id="stageLead">Сабақтың ағымдағы кезеңі осында көрсетіледі.</p>
+<div class="details"><div class="detail"><b>🎯 Оқу мақсаты</b><span id="goal"></span></div><div class="detail"><b>🧭 Оқыту әдісі</b><span id="method"></span></div><div class="detail"><b>👥 Жұмыс түрі</b><span id="mode"></span></div></div>
+</section>
+<aside class="card side">
+<h3>Қонақтарға ақпарат</h3>
+<div class="sidebox"><b>Мұғалім</b><span>Еспенбетова Айжан Сатыбалдиевна</span></div>
+<div class="sidebox"><b>Сынып</b><span>10 «Б» · География</span></div>
+<div class="sidebox"><b>Сабақ коды</b><span id="activeCode">Әзірге көрсетілмеген</span></div>
+<div><label for="codeInput">Сабақты бақылау коды (GE1234)</label><input id="codeInput" maxlength="6" placeholder="GE1234" autocomplete="off" spellcheck="false"></div>
+<button id="connect">Сабаққа бақылаушы ретінде қосылу</button>
+<a id="feedback" class="button secondary" href="quiz.html">💬 Қонақ ретінде пікір қалдыру</a>
+<a class="button secondary" href="materialdar.html">📚 Сабақ материалдары</a>
+<p class="note">Бұл бет тек Firebase-тегі сабақ кезеңі туралы мәліметті оқиды. Мұнда ұпай енгізу, оқушы болып кіру, таймерді басқару немесе нәтижені өшіру функциялары жоқ. Мұғалім экранының бейнетрансляциясы емес.</p>
+</aside></div>
+</main><footer>© Геоэкология · ЭкоЖарыс · Қонақтарға арналған бақылау беті</footer>
+<script src="lesson-data.js"></script>
+<script src="core.js"></script>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id), CODE=/^GE[0-9]{4}$/;
+$('goal').textContent=LD.lesson.objective||LD.lesson.goal||'Геоэкология';
+const params=new URLSearchParams(location.search);
+let code=(params.get('c')||'').toUpperCase(),unsub=null,db=null;
+function render(id){
+ const idx=LD.stages.findIndex(s=>s.id===id),s=LD.stages[idx>=0?idx:0];
+ $('stageTitle').textContent=s.title;
+ $('progress').textContent='Кезең '+((idx>=0?idx:0)+1)+' / '+LD.stages.length;
+ $('stageLead').textContent=s.method?.essence||s.kicker||'Оқушылар осы кезең тапсырмасын орындайды.';
+ $('method').textContent=s.method?.name||'Сабақ кезеңі';
+ $('mode').textContent=s.mode||'Сыныппен жұмыс';
+}
+function feedbackLink(c){
+ $('feedback').href='quiz.html?c='+encodeURIComponent(c)+'&guest=1';
+}
+async function connect(c){
+ if(!CODE.test(c)){$('status').textContent='GE және төрт саннан тұратын кодты енгізіңіз';return}
+ if(unsub){unsub();unsub=null}
+ code=c;
+ $('activeCode').textContent=code;
+ $('codeInput').value=code;
+ feedbackLink(code);
+ history.replaceState(null,'','?c='+encodeURIComponent(code));
+ $('status').textContent='Firebase-ке қосылуда…';
+ try{
+   if(!db)db=await GT.backend();
+   if(db.demo){$('status').textContent='Firebase қолжетімсіз: жергілікті демо көрсетілмейді';return}
+   unsub=db.on('games/'+code+'/meta',function(meta){
+     if(!meta){$('status').textContent='Бұл кодпен сабақ табылмады';render(LD.stages[0].id);return}
+     $('status').textContent='Сабақ кезеңі автоматты жаңартылады';
+     render(meta.stage||LD.stages[0].id);
+   });
+ }catch(e){$('status').textContent='Қосылу мүмкін болмады. Кодты және интернетті тексеріңіз.'}
+}
+$('connect').onclick=()=>connect($('codeInput').value.trim().toUpperCase());
+$('codeInput').onkeydown=e=>{if(e.key==='Enter')$('connect').click()};
+render(LD.stages[0].id);
+if(CODE.test(code))connect(code);else $('status').textContent='Мұғалімнің GE-кодын енгізіңіз';
+})();
+</script></body></html>
